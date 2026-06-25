@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Nobel Prep — Stoichiometry Quiz A</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
+  :root{--navy:#1B2A4A;--navy2:#243660;--gold:#C9A84C;--gold2:#e8c56a;--white:#FFFFFF;--off:#F7F8FA;--gray1:#E8EAF0;--gray2:#9AA0B2;--gray3:#555D72;--green:#2D7D46;--green-bg:#EBF7EF;--red:#C0392B;--red-bg:#FDECEA;--radius:10px;--shadow:0 2px 12px rgba(27,42,74,0.10);}
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{font-family:'Inter',sans-serif;background:var(--off);color:var(--navy);min-height:100vh;}
+  header{background:var(--navy);padding:16px 28px 0;position:sticky;top:0;z-index:100;box-shadow:0 2px 10px rgba(0,0,0,0.25);}
+  .header-top{display:flex;align-items:center;justify-content:space-between;padding-bottom:14px;}
+  .logo{display:flex;align-items:center;gap:12px;}
+  .logo-badge{width:38px;height:38px;background:var(--gold);border-radius:8px;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:15px;color:var(--navy);}
+  .logo-text h1{font-size:16px;font-weight:700;color:var(--white);}
+  .logo-text p{font-size:11px;color:var(--gold);margin-top:1px;}
+  .quiz-badge{background:var(--gold);color:var(--navy);font-size:11px;font-weight:700;padding:4px 12px;border-radius:20px;letter-spacing:0.5px;}
+  .progress-bar-wrap{width:100%;height:3px;background:rgba(255,255,255,0.15);}
+  .progress-bar{height:100%;background:var(--gold);width:0%;transition:width 0.4s ease;}
+  main{max-width:780px;margin:0 auto;padding:28px 16px 80px;}
+  .name-card{background:var(--white);border-radius:var(--radius);box-shadow:var(--shadow);padding:24px 28px;margin-bottom:24px;border-left:4px solid var(--gold);}
+  .name-card h2{font-size:14px;font-weight:600;color:var(--navy2);margin-bottom:12px;}
+  .name-row{display:flex;gap:12px;flex-wrap:wrap;}
+  .name-row input{flex:1;min-width:180px;padding:10px 14px;border:1.5px solid var(--gray1);border-radius:8px;font-family:'Inter',sans-serif;font-size:14px;color:var(--navy);outline:none;transition:border-color 0.2s;}
+  .name-row input:focus{border-color:var(--gold);}
+  .notation-guide{background:#EEF1F8;border-radius:8px;padding:10px 14px;font-size:12px;color:var(--navy2);margin-bottom:20px;border-left:3px solid var(--navy);}
+  .notation-guide strong{display:block;margin-bottom:4px;color:var(--navy);}
+  .notation-guide code{font-family:'JetBrains Mono',monospace;background:var(--white);padding:1px 5px;border-radius:3px;}
+  .section-header{background:var(--navy2);color:var(--white);padding:10px 18px;border-radius:8px 8px 0 0;font-size:12px;font-weight:600;letter-spacing:0.8px;text-transform:uppercase;display:flex;align-items:center;gap:8px;margin-top:24px;}
+  .section-header .badge{background:var(--gold);color:var(--navy);padding:2px 8px;border-radius:10px;font-size:10px;}
+  .q-card{background:var(--white);border:1px solid var(--gray1);border-top:none;padding:20px 22px;}
+  .q-card:last-of-type{border-radius:0 0 var(--radius) var(--radius);}
+  .q-card.answered-correct{border-left:4px solid var(--green);}
+  .q-card.answered-wrong{border-left:4px solid var(--red);}
+  .q-card.selected-only{border-left:4px solid var(--gold);}
+  .q-card.unanswered-warn{border-left:4px solid #F39C12;animation:shake 0.3s;}
+  @keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-4px)}75%{transform:translateX(4px)}}
+  .q-num{font-size:10px;font-weight:700;color:var(--gold);letter-spacing:1px;text-transform:uppercase;margin-bottom:6px;}
+  .q-text{font-size:14px;font-weight:500;line-height:1.65;color:var(--navy);margin-bottom:14px;}
+  .q-hint{font-size:11px;color:var(--gray2);font-style:italic;margin-bottom:10px;padding:6px 10px;background:var(--off);border-radius:6px;border-left:3px solid var(--gold);}
+  .options{display:flex;flex-direction:column;gap:8px;}
+  .option-btn{display:flex;align-items:center;gap:10px;padding:10px 14px;border-radius:8px;border:1.5px solid var(--gray1);background:var(--off);cursor:pointer;font-family:'Inter',sans-serif;font-size:13.5px;color:var(--navy);text-align:left;transition:all 0.15s;width:100%;}
+  .option-btn:hover:not(:disabled){border-color:var(--gold);background:#FEF9EE;}
+  .option-btn.selected{border-color:var(--navy);background:#EEF1F8;font-weight:500;}
+  .option-btn.correct{border-color:var(--green);background:var(--green-bg);color:var(--green);font-weight:600;}
+  .option-btn.wrong{border-color:var(--red);background:var(--red-bg);color:var(--red);}
+  .option-btn.reveal-correct{border-color:var(--green);background:var(--green-bg);color:var(--green);font-weight:600;}
+  .opt-letter{width:24px;height:24px;border-radius:50%;background:var(--gray1);color:var(--gray3);font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+  .option-btn.correct .opt-letter,.option-btn.reveal-correct .opt-letter{background:var(--green);color:var(--white);}
+  .option-btn.wrong .opt-letter{background:var(--red);color:var(--white);}
+  .sa-wrap{display:flex;flex-direction:column;gap:8px;}
+  .sa-input{width:100%;padding:10px 14px;border-radius:8px;border:1.5px solid var(--gray1);font-family:'JetBrains Mono',monospace;font-size:14px;color:var(--navy);outline:none;transition:border-color 0.2s;background:var(--off);}
+  .sa-input:focus{border-color:var(--gold);background:var(--white);}
+  .sa-input.correct{border-color:var(--green);background:var(--green-bg);}
+  .sa-input.wrong{border-color:var(--red);background:var(--red-bg);}
+  .sa-hint-text{font-size:11px;color:var(--gray2);font-family:'JetBrains Mono',monospace;}
+  .feedback{margin-top:10px;padding:10px 14px;border-radius:8px;font-size:13px;font-weight:500;display:none;}
+  .feedback.correct{background:var(--green-bg);color:var(--green);display:flex;align-items:flex-start;gap:8px;}
+  .feedback.wrong{background:var(--red-bg);color:var(--red);display:flex;align-items:flex-start;gap:8px;}
+  .feedback-icon{font-size:16px;flex-shrink:0;}
+  .feedback-text{line-height:1.5;}
+  .progress-pill{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:var(--navy);color:var(--white);padding:10px 24px;border-radius:30px;font-size:13px;font-weight:600;box-shadow:0 4px 20px rgba(0,0,0,0.2);display:flex;gap:16px;align-items:center;z-index:200;}
+  .progress-pill span{color:var(--gold);}
+  .submit-section{margin-top:32px;text-align:center;}
+  .submit-btn{padding:14px 48px;background:var(--gold);color:var(--navy);border:none;border-radius:10px;font-size:15px;font-weight:700;font-family:'Inter',sans-serif;cursor:pointer;box-shadow:0 4px 16px rgba(201,168,76,0.35);transition:all 0.2s;}
+  .submit-btn:hover{background:var(--gold2);transform:translateY(-1px);}
+  .submit-btn:disabled{background:var(--gray2);color:var(--white);transform:none;box-shadow:none;cursor:default;}
+  .result-card{display:none;background:var(--white);border-radius:var(--radius);box-shadow:0 8px 32px rgba(27,42,74,0.15);padding:36px 32px;text-align:center;margin-top:32px;border-top:5px solid var(--gold);}
+  .result-score{font-size:56px;font-weight:700;color:var(--navy);line-height:1;}
+  .result-label{font-size:14px;color:var(--gray2);margin-top:6px;margin-bottom:24px;}
+  .result-badge{display:inline-block;padding:8px 24px;border-radius:30px;font-size:15px;font-weight:700;margin-bottom:20px;}
+  .result-badge.pass{background:var(--green-bg);color:var(--green);}
+  .result-badge.fail{background:var(--red-bg);color:var(--red);}
+  .result-breakdown{font-size:13px;color:var(--gray3);}
+</style>
+</head>
+<body>
+<header>
+  <div class="header-top">
+    <div class="logo"><div class="logo-badge">NP</div><div class="logo-text"><h1>Nobel Prep</h1><p>AP Chemistry · Stoichiometry</p></div></div>
+    <div class="quiz-badge">QUIZ A</div>
+  </div>
+  <div class="progress-bar-wrap"><div class="progress-bar" id="progressBar"></div></div>
+</header>
+<main>
+  <div class="name-card">
+    <h2>Student Information</h2>
+    <div class="name-row">
+      <input type="text" id="studentName" placeholder="Full Name"/>
+      <input type="text" id="studentPeriod" placeholder="Period" style="max-width:120px;"/>
+    </div>
+  </div>
+  <div class="notation-guide">
+    <strong>📝 Short Answer Format</strong>
+    Scientific notation → E-notation: <code>3.08e-4</code> = 3.08 × 10⁻⁴ &nbsp;|&nbsp; Correct SF required. &nbsp;Answers revealed after submission.
+  </div>
+
+  <div class="section-header">Section 1 — Multiple Choice <span class="badge">Q1–Q8</span></div>
+
+  <div class="q-card" id="qcard-1"><div class="q-num">Question 1</div><div class="q-text">How many moles of H<sub>2</sub>O are produced when 4.50 mol of O<sub>2</sub> reacts completely?<br><br>&nbsp;&nbsp;&nbsp;2H<sub>2</sub> + O<sub>2</sub> → 2H<sub>2</sub>O</div><div class="options" id="opts-1"><button class="option-btn" onclick="selectMCQ(1,'A','9.00')"><span class="opt-letter">A</span>9.00 mol</button><button class="option-btn" onclick="selectMCQ(1,'B','4.50')"><span class="opt-letter">B</span>4.50 mol</button><button class="option-btn" onclick="selectMCQ(1,'C','2.25')"><span class="opt-letter">C</span>2.25 mol</button><button class="option-btn" onclick="selectMCQ(1,'D','1.50')"><span class="opt-letter">D</span>1.50 mol</button></div><div class="feedback" id="fb-1"></div></div>
+
+  <div class="q-card" id="qcard-2"><div class="q-num">Question 2</div><div class="q-text">What is the molar mass of Ca(NO<sub>3</sub>)<sub>2</sub>?<br><span style="font-size:12px;color:#9AA0B2;">(Ca=40.08, N=14.01, O=16.00)</span></div><div class="options" id="opts-2"><button class="option-btn" onclick="selectMCQ(2,'A','164.10')"><span class="opt-letter">A</span>164.10 g/mol</button><button class="option-btn" onclick="selectMCQ(2,'B','102.10')"><span class="opt-letter">B</span>102.10 g/mol</button><button class="option-btn" onclick="selectMCQ(2,'C','182.10')"><span class="opt-letter">C</span>182.10 g/mol</button><button class="option-btn" onclick="selectMCQ(2,'D','148.10')"><span class="opt-letter">D</span>148.10 g/mol</button></div><div class="feedback" id="fb-2"></div></div>
+
+  <div class="q-card" id="qcard-3"><div class="q-num">Question 3</div><div class="q-text">Which is the limiting reagent when 3.0 mol Fe reacts with 4.0 mol S?<br><br>&nbsp;&nbsp;&nbsp;Fe + S → FeS</div><div class="options" id="opts-3"><button class="option-btn" onclick="selectMCQ(3,'A','Fe')"><span class="opt-letter">A</span>Fe, because it runs out first</button><button class="option-btn" onclick="selectMCQ(3,'B','S')"><span class="opt-letter">B</span>S, because it runs out first</button><button class="option-btn" onclick="selectMCQ(3,'C','both')"><span class="opt-letter">C</span>Both react completely</button><button class="option-btn" onclick="selectMCQ(3,'D','neither')"><span class="opt-letter">D</span>Neither; excess of both</button></div><div class="feedback" id="fb-3"></div></div>
+
+  <div class="q-card" id="qcard-4"><div class="q-num">Question 4</div><div class="q-text">Theoretical yield = 25.0 g, actual yield = 19.5 g. What is the percent yield?</div><div class="options" id="opts-4"><button class="option-btn" onclick="selectMCQ(4,'A','78.0')"><span class="opt-letter">A</span>78.0%</button><button class="option-btn" onclick="selectMCQ(4,'B','128')"><span class="opt-letter">B</span>128%</button><button class="option-btn" onclick="selectMCQ(4,'C','76.9')"><span class="opt-letter">C</span>76.9%</button><button class="option-btn" onclick="selectMCQ(4,'D','22.0')"><span class="opt-letter">D</span>22.0%</button></div><div class="feedback" id="fb-4"></div></div>
+
+  <div class="q-card" id="qcard-5"><div class="q-num">Question 5</div><div class="q-text">What is the percent composition of nitrogen in NH<sub>3</sub>?<br><span style="font-size:12px;color:#9AA0B2;">(N=14.01, H=1.008)</span></div><div class="options" id="opts-5"><button class="option-btn" onclick="selectMCQ(5,'A','82.27')"><span class="opt-letter">A</span>82.27%</button><button class="option-btn" onclick="selectMCQ(5,'B','17.76')"><span class="opt-letter">B</span>17.76%</button><button class="option-btn" onclick="selectMCQ(5,'C','77.41')"><span class="opt-letter">C</span>77.41%</button><button class="option-btn" onclick="selectMCQ(5,'D','46.67')"><span class="opt-letter">D</span>46.67%</button></div><div class="feedback" id="fb-5"></div></div>
+
+  <div class="q-card" id="qcard-6"><div class="q-num">Question 6</div><div class="q-text">How many molecules are in 2.00 mol of CO<sub>2</sub>?<br><span style="font-size:12px;color:#9AA0B2;">(N<sub>A</sub> = 6.022 × 10²³)</span></div><div class="options" id="opts-6"><button class="option-btn" onclick="selectMCQ(6,'A','1.20e24')"><span class="opt-letter">A</span>1.20 × 10²⁴</button><button class="option-btn" onclick="selectMCQ(6,'B','6.02e23')"><span class="opt-letter">B</span>6.02 × 10²³</button><button class="option-btn" onclick="selectMCQ(6,'C','3.01e23')"><span class="opt-letter">C</span>3.01 × 10²³</button><button class="option-btn" onclick="selectMCQ(6,'D','2.40e24')"><span class="opt-letter">D</span>2.40 × 10²⁴</button></div><div class="feedback" id="fb-6"></div></div>
+
+  <div class="q-card" id="qcard-7"><div class="q-num">Question 7</div><div class="q-text">Empirical formula CH<sub>2</sub>O, molar mass 180.16 g/mol. What is the molecular formula?<br><span style="font-size:12px;color:#9AA0B2;">(CH<sub>2</sub>O = 30.03 g/mol)</span></div><div class="options" id="opts-7"><button class="option-btn" onclick="selectMCQ(7,'A','C6H12O6')"><span class="opt-letter">A</span>C<sub>6</sub>H<sub>12</sub>O<sub>6</sub></button><button class="option-btn" onclick="selectMCQ(7,'B','C3H6O3')"><span class="opt-letter">B</span>C<sub>3</sub>H<sub>6</sub>O<sub>3</sub></button><button class="option-btn" onclick="selectMCQ(7,'C','C4H8O4')"><span class="opt-letter">C</span>C<sub>4</sub>H<sub>8</sub>O<sub>4</sub></button><button class="option-btn" onclick="selectMCQ(7,'D','C2H4O2')"><span class="opt-letter">D</span>C<sub>2</sub>H<sub>4</sub>O<sub>2</sub></button></div><div class="feedback" id="fb-7"></div></div>
+
+  <div class="q-card" id="qcard-8"><div class="q-num">Question 8</div><div class="q-text">In a combustion reaction of a hydrocarbon, which products are always formed?</div><div class="options" id="opts-8"><button class="option-btn" onclick="selectMCQ(8,'A','CO2+H2O')"><span class="opt-letter">A</span>CO<sub>2</sub> and H<sub>2</sub>O</button><button class="option-btn" onclick="selectMCQ(8,'B','CO+H2')"><span class="opt-letter">B</span>CO and H<sub>2</sub></button><button class="option-btn" onclick="selectMCQ(8,'C','CO2+SO2')"><span class="opt-letter">C</span>CO<sub>2</sub> and SO<sub>2</sub></button><button class="option-btn" onclick="selectMCQ(8,'D','H2O+N2')"><span class="opt-letter">D</span>H<sub>2</sub>O and N<sub>2</sub></button></div><div class="feedback" id="fb-8"></div></div>
+
+  <div class="section-header" style="margin-top:28px;">Section 2 — Short Answer <span class="badge">Q9–Q15</span></div>
+
+  <div class="q-card" id="qcard-9"><div class="q-num">Question 9</div><div class="q-text">How many grams of NaCl (MM = 58.44 g/mol) are in 3.50 mol of NaCl?</div><div class="q-hint">⚙ 4 significant figures.</div><div class="sa-wrap"><input class="sa-input" type="text" id="sa-9" placeholder="Type your answer"/><div class="sa-hint-text">Unit: g</div></div><div class="feedback" id="fb-9"></div></div>
+
+  <div class="q-card" id="qcard-10"><div class="q-num">Question 10</div><div class="q-text">How many moles of Al<sub>2</sub>O<sub>3</sub> (MM = 101.96 g/mol) are in 25.0 g?</div><div class="q-hint">⚙ 3 significant figures. E-notation if needed.</div><div class="sa-wrap"><input class="sa-input" type="text" id="sa-10" placeholder="Type your answer"/><div class="sa-hint-text">Unit: mol</div></div><div class="feedback" id="fb-10"></div></div>
+
+  <div class="q-card" id="qcard-11"><div class="q-num">Question 11</div><div class="q-text">N<sub>2</sub> + 3H<sub>2</sub> → 2NH<sub>3</sub><br><br>If 5.40 g of H<sub>2</sub> (MM = 2.016 g/mol) reacts completely, how many grams of NH<sub>3</sub> (MM = 17.03 g/mol) are produced?</div><div class="q-hint">⚙ 3 significant figures.</div><div class="sa-wrap"><input class="sa-input" type="text" id="sa-11" placeholder="Type your answer"/><div class="sa-hint-text">Unit: g</div></div><div class="feedback" id="fb-11"></div></div>
+
+  <div class="q-card" id="qcard-12"><div class="q-num">Question 12</div><div class="q-text">How many atoms of carbon are in 0.500 mol of C<sub>6</sub>H<sub>12</sub>O<sub>6</sub>?<br><span style="font-size:12px;color:#9AA0B2;">(N<sub>A</sub> = 6.022 × 10²³)</span></div><div class="q-hint">⚙ 3 significant figures. E-notation required.</div><div class="sa-wrap"><input class="sa-input" type="text" id="sa-12" placeholder="Type your answer"/><div class="sa-hint-text">Unit: atoms</div></div><div class="feedback" id="fb-12"></div></div>
+
+  <div class="q-card" id="qcard-13"><div class="q-num">Question 13</div><div class="q-text">2Al + 3Cl<sub>2</sub> → 2AlCl<sub>3</sub><br><br>10.0 g Al (MM=26.98) and 20.0 g Cl<sub>2</sub> (MM=70.90). What mass of AlCl<sub>3</sub> (MM=133.34) is produced?</div><div class="q-hint">⚙ Find limiting reagent. 3 significant figures.</div><div class="sa-wrap"><input class="sa-input" type="text" id="sa-13" placeholder="Type your answer"/><div class="sa-hint-text">Unit: g</div></div><div class="feedback" id="fb-13"></div></div>
+
+  <div class="q-card" id="qcard-14"><div class="q-num">Question 14</div><div class="q-text">A compound is 40.00% C, 6.72% H, and 53.28% O by mass. What is its empirical formula?<br><span style="font-size:12px;color:#9AA0B2;">(C=12.01, H=1.008, O=16.00)</span></div><div class="q-hint">⚙ Standard notation, e.g.: CH2O</div><div class="sa-wrap"><input class="sa-input" type="text" id="sa-14" placeholder="Type your answer"/></div><div class="feedback" id="fb-14"></div></div>
+
+  <div class="q-card" id="qcard-15"><div class="q-num">Question 15</div><div class="q-text">2H<sub>2</sub>O<sub>2</sub> → 2H<sub>2</sub>O + O<sub>2</sub><br><br>Theoretical yield of O<sub>2</sub> = 8.00 g, actual yield = 6.52 g. What is the percent yield?</div><div class="q-hint">⚙ 3 significant figures. Do NOT include % symbol.</div><div class="sa-wrap"><input class="sa-input" type="text" id="sa-15" placeholder="Type your answer"/><div class="sa-hint-text">Unit: %</div></div><div class="feedback" id="fb-15"></div></div>
+
+  <div class="submit-section">
+    <button class="submit-btn" id="submitBtn" onclick="submitQuiz()">Submit &amp; See Results</button>
+    <p style="font-size:12px;color:#9AA0B2;margin-top:12px;">Answers will be revealed after submission.</p>
+  </div>
+  <div class="result-card" id="resultCard">
+    <div class="result-score" id="resultScore">—</div>
+    <div class="result-label">out of 15 questions</div>
+    <div class="result-badge" id="resultBadge"></div>
+    <div class="result-breakdown" id="resultBreakdown"></div>
+  </div>
+</main>
+<div class="progress-pill">Answered: <span id="pillCount">0</span> / 15</div>
+
+<script>
+// MCQ 정답 해시 (SHA-256)
+const MCQ_HASHES={
+  1:'4cc019de7a747650855142af31a90fa652d0e00ee24e804acf171b4c82d675e9',
+  2:'05a4695d74c26accfa214146c1cfececa98ed914521815f6bc77eef608ce930a',
+  3:'2c9dcded5b6e7e0ee0e0dc6555b45b9ac044efd2b6daa1a1982c3887ddc6d6d4',
+  4:'c83ba7181764d32007e6c3129f7fed30810cb2bcb659c1d9f0e06b8533ea22d1',
+  5:'b45ba57275c4876805727835929e05672fd1b55167db0fc9cc4eb5bf8e9c323b',
+  6:'c97ec134e590a36721d1005a3fcbac929fe302bf3190825c5cf67a2fc0b8adae',
+  7:'c2b5b424b21701111bd88903596094439c5ded514b527b8b8a7aca1e97190450',
+  8:'ab973d98ba7a44299ab4cb56a3f00002acd25446f63a0a939d411845e689e056'
+};
+// SA: 숫자형은 값+SF 채점, 실험식은 해시
+const SA_ANSWERS={
+  9: {value:204.5,sf:4,type:'number',unit:'g'},
+  10:{value:0.245,sf:3,type:'number',unit:'mol'},
+  11:{value:30.6, sf:3,type:'number',unit:'g'},
+  12:{value:1.807e24,sf:3,type:'number',unit:'atoms'},
+  13:{value:25.1, sf:3,type:'number',unit:'g'},
+  14:{hash:'e6df58499629a8d57bc0fe16ba1fba139fcdf8e83e2176d9c9f13481042f5a80',type:'formula'},
+  15:{value:81.5, sf:3,type:'number',unit:'%'}
+};
+const selections={};
+async function hashStr(s){const norm=s.trim().toLowerCase().replace(/\s+/g,'');const buf=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(norm));return Array.from(new Uint8Array(buf)).map(b=>b.toString(16).padStart(2,'0')).join('');}
+function parseEN(s){s=s.trim().toLowerCase().replace(/\s+/g,'');const v=parseFloat(s);return isNaN(v)?null:v;}
+function countSF(s){s=s.trim().toLowerCase().replace(/\s+/g,'');let coef=s.split('e')[0].replace(/^-/,'');const m=coef.replace('.','').match(/^0*([1-9][0-9]*0*)$/);if(!m)return null;let d=m[1];if(!coef.includes('.'))d=d.replace(/0+$/,'');return d.length;}
+function checkNum(raw,key){const uv=parseEN(raw);if(uv===null)return{ok:false,reason:'Cannot parse answer. Check format.'};const relErr=Math.abs(uv-key.value)/(Math.abs(key.value)||1);if(relErr>0.006)return{ok:false,reason:'Incorrect value.'};const uSF=countSF(raw.trim().toLowerCase().split('e')[0]);if(uSF===null)return{ok:false,reason:'Cannot determine SF.'};if(uSF!==key.sf)return{ok:false,reason:`Value is correct — but SF is wrong. Need ${key.sf} SF (you entered ${uSF} SF).`};return{ok:true};}
+function selectMCQ(qNum,letter,value){if(document.getElementById('resultCard').style.display==='block')return;document.querySelectorAll(`#opts-${qNum} .option-btn`).forEach(b=>b.classList.remove('selected'));event.currentTarget.classList.add('selected');selections[qNum]=value;const card=document.getElementById(`qcard-${qNum}`);card.classList.remove('unanswered-warn');card.classList.add('selected-only');updateProgress();}
+function updateProgress(){let c=0;for(let i=1;i<=8;i++)if(selections[i])c++;for(let i=9;i<=15;i++){const el=document.getElementById(`sa-${i}`);if(el&&el.value.trim())c++;}document.getElementById('pillCount').textContent=c;document.getElementById('progressBar').style.width=(c/15*100)+'%';}
+document.addEventListener('DOMContentLoaded',()=>{for(let i=9;i<=15;i++){const el=document.getElementById(`sa-${i}`);if(el)el.addEventListener('input',updateProgress);}});
+async function submitQuiz(){
+  let missing=[];
+  for(let i=1;i<=8;i++)if(!selections[i])missing.push(i);
+  for(let i=9;i<=15;i++){const el=document.getElementById(`sa-${i}`);if(!el||!el.value.trim())missing.push(i);}
+  if(missing.length>0){missing.forEach(n=>{const c=document.getElementById(`qcard-${n}`);c.classList.remove('unanswered-warn');void c.offsetWidth;c.classList.add('unanswered-warn');});document.getElementById(`qcard-${missing[0]}`).scrollIntoView({behavior:'smooth',block:'center'});return;}
+  document.querySelectorAll('.option-btn').forEach(b=>b.disabled=true);
+  document.querySelectorAll('.sa-input').forEach(i=>i.disabled=true);
+  document.getElementById('submitBtn').disabled=true;
+  let total=0;const det=[];
+  for(let i=1;i<=8;i++){const uv=selections[i];const uh=await hashStr(uv);const isOk=uh===MCQ_HASHES[i];if(isOk)total++;det.push(`Q${i}:${isOk?'O':'X'}`);document.querySelectorAll(`#opts-${i} .option-btn`).forEach(btn=>{const v=btn.getAttribute('onclick').match(/'([^']+)'\)$/)[1];btn.classList.remove('selected','selected-only');if(v===uv&&isOk)btn.classList.add('correct');else if(v===uv&&!isOk)btn.classList.add('wrong');});const btns=document.querySelectorAll(`#opts-${i} .option-btn`);for(const btn of btns){const v=btn.getAttribute('onclick').match(/'([^']+)'\)$/)[1];const vh=await hashStr(v);if(vh===MCQ_HASHES[i])btn.classList.add('reveal-correct');}const fb=document.getElementById(`fb-${i}`);fb.className='feedback '+(isOk?'correct':'wrong');fb.innerHTML=isOk?`<span class="feedback-icon">✓</span><span class="feedback-text">Correct!</span>`:`<span class="feedback-icon">✗</span><span class="feedback-text">Incorrect. The correct answer is highlighted above.</span>`;const card=document.getElementById(`qcard-${i}`);card.classList.remove('selected-only','unanswered-warn');card.classList.add(isOk?'answered-correct':'answered-wrong');}
+  for(let i=9;i<=15;i++){const raw=document.getElementById(`sa-${i}`).value.trim();const key=SA_ANSWERS[i];let result;if(key.type==='formula'){const uh=await hashStr(raw);result={ok:uh===key.hash,reason:'Incorrect. Check your empirical formula.'};}else{result=checkNum(raw,key);}if(result.ok)total++;det.push(`Q${i}:${result.ok?'O':'X'}`);document.getElementById(`sa-${i}`).classList.add(result.ok?'correct':'wrong');const fb=document.getElementById(`fb-${i}`);fb.className='feedback '+(result.ok?'correct':'wrong');fb.innerHTML=result.ok?`<span class="feedback-icon">✓</span><span class="feedback-text">Correct!</span>`:`<span class="feedback-icon">✗</span><span class="feedback-text">${result.reason}</span>`;const card=document.getElementById(`qcard-${i}`);card.classList.remove('selected-only','unanswered-warn');card.classList.add(result.ok?'answered-correct':'answered-wrong');}
+  const name=document.getElementById('studentName').value.trim()||'Anonymous';
+  const period=document.getElementById('studentPeriod').value.trim()||'—';
+  const pct=Math.round(total/15*100),pass=total>=12;
+  const mcqS=det.slice(0,8).filter(s=>s.includes(':O')).length;
+  const saS=det.slice(8).filter(s=>s.includes(':O')).length;
+  document.getElementById('resultScore').textContent=`${total} / 15`;
+  const badge=document.getElementById('resultBadge');badge.textContent=pass?'✓ Pass':'✗ Needs Review';badge.className='result-badge '+(pass?'pass':'fail');
+  document.getElementById('resultBreakdown').innerHTML=`${name} &nbsp;·&nbsp; Period ${period} &nbsp;·&nbsp; ${pct}% &nbsp;|&nbsp; MCQ: ${mcqS}/8 &nbsp;·&nbsp; Short Answer: ${saS}/7`;
+  const rc=document.getElementById('resultCard');rc.style.display='block';rc.scrollIntoView({behavior:'smooth'});
+  sendToSheets({name,period,total,pct,mcqScore:mcqS,saScore:saS,pass,details:det.join(',')});
+}
+const SHEETS_URL='https://script.google.com/macros/s/AKfycbwLwHDVeASbqg4dPWZ3rmgw4wl-iq5i33W6GF28diEDm9u99-jzOt5422wD4PTviHjXZw/exec';
+function sendToSheets(d){fetch(SHEETS_URL,{method:'POST',mode:'no-cors',headers:{'Content-Type':'application/json'},body:JSON.stringify({quiz:'Stoichiometry A',name:d.name,period:d.period,score:d.total,total:15,percent:d.pct,pass:d.pass?'Pass':'Fail',mcq:d.mcqScore,sa:d.saScore,timestamp:new Date().toISOString(),details:d.details})}).catch(()=>{});}
+</script>
+</body>
+</html>

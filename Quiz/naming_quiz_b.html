@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Nobel Prep — Naming Compounds Quiz B</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
+  :root{--navy:#1B2A4A;--navy2:#243660;--gold:#C9A84C;--white:#FFFFFF;--off:#F7F8FA;--gray1:#E8EAF0;--gray2:#9AA0B2;--gray3:#555D72;--green:#2D7D46;--green-bg:#EBF7EF;--red:#C0392B;--red-bg:#FDECEA;--teal:#1A7A8A;--teal-bg:#E6F4F6;--radius:10px;--shadow:0 2px 12px rgba(27,42,74,0.10);}
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{font-family:'Inter',sans-serif;background:var(--off);color:var(--navy);min-height:100vh;}
+  header{background:var(--navy);padding:16px 28px 0;position:sticky;top:0;z-index:100;box-shadow:0 2px 10px rgba(0,0,0,0.25);}
+  .header-top{display:flex;align-items:center;justify-content:space-between;padding-bottom:14px;}
+  .logo{display:flex;align-items:center;gap:12px;}
+  .logo-badge{width:38px;height:38px;background:var(--gold);border-radius:8px;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:15px;color:var(--navy);}
+  .logo-text h1{font-size:16px;font-weight:700;color:var(--white);}
+  .logo-text p{font-size:11px;color:var(--gold);margin-top:1px;}
+  .quiz-badge{background:var(--teal);color:var(--white);font-size:11px;font-weight:700;padding:4px 12px;border-radius:20px;}
+  .progress-bar-wrap{width:100%;height:3px;background:rgba(255,255,255,0.15);}
+  .progress-bar{height:100%;background:var(--teal);width:0%;transition:width 0.4s ease;}
+  main{max-width:780px;margin:0 auto;padding:28px 16px 80px;}
+  .name-card{background:var(--white);border-radius:var(--radius);box-shadow:var(--shadow);padding:24px 28px;margin-bottom:24px;border-left:4px solid var(--teal);}
+  .name-card h2{font-size:14px;font-weight:600;color:var(--navy2);margin-bottom:12px;}
+  .name-row{display:flex;gap:12px;flex-wrap:wrap;}
+  .name-row input{flex:1;min-width:180px;padding:10px 14px;border:1.5px solid var(--gray1);border-radius:8px;font-family:'Inter',sans-serif;font-size:14px;color:var(--navy);outline:none;transition:border-color 0.2s;}
+  .name-row input:focus{border-color:var(--teal);}
+  .section-header{background:var(--navy2);color:var(--white);padding:10px 18px;border-radius:8px 8px 0 0;font-size:12px;font-weight:600;letter-spacing:0.8px;text-transform:uppercase;display:flex;align-items:center;gap:8px;margin-top:24px;}
+  .section-header .badge{background:var(--teal);color:var(--white);padding:2px 8px;border-radius:10px;font-size:10px;}
+  .q-card{background:var(--white);border:1px solid var(--gray1);border-top:none;padding:20px 22px;}
+  .q-card:last-of-type{border-radius:0 0 var(--radius) var(--radius);}
+  .q-card.answered-correct{border-left:4px solid var(--green);}
+  .q-card.answered-wrong{border-left:4px solid var(--red);}
+  .q-card.selected-only{border-left:4px solid var(--teal);}
+  .q-card.unanswered-warn{border-left:4px solid #F39C12;animation:shake 0.3s;}
+  @keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-4px)}75%{transform:translateX(4px)}}
+  .q-num{font-size:10px;font-weight:700;color:var(--teal);letter-spacing:1px;text-transform:uppercase;margin-bottom:6px;}
+  .q-text{font-size:14px;font-weight:500;line-height:1.65;color:var(--navy);margin-bottom:14px;}
+  .options{display:flex;flex-direction:column;gap:8px;}
+  .option-btn{display:flex;align-items:center;gap:10px;padding:10px 14px;border-radius:8px;border:1.5px solid var(--gray1);background:var(--off);cursor:pointer;font-family:'Inter',sans-serif;font-size:13.5px;color:var(--navy);text-align:left;transition:all 0.15s;width:100%;}
+  .option-btn:hover:not(:disabled){border-color:var(--teal);background:var(--teal-bg);}
+  .option-btn.selected{border-color:var(--navy);background:#EEF1F8;font-weight:500;}
+  .option-btn.correct{border-color:var(--green);background:var(--green-bg);color:var(--green);font-weight:600;}
+  .option-btn.wrong{border-color:var(--red);background:var(--red-bg);color:var(--red);}
+  .option-btn.reveal-correct{border-color:var(--green);background:var(--green-bg);color:var(--green);font-weight:600;}
+  .opt-letter{width:24px;height:24px;border-radius:50%;background:var(--gray1);color:var(--gray3);font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+  .option-btn.correct .opt-letter,.option-btn.reveal-correct .opt-letter{background:var(--green);color:var(--white);}
+  .option-btn.wrong .opt-letter{background:var(--red);color:var(--white);}
+  .sa-wrap{display:flex;flex-direction:column;gap:8px;}
+  .sa-input{width:100%;padding:10px 14px;border-radius:8px;border:1.5px solid var(--gray1);font-family:'Inter',sans-serif;font-size:14px;color:var(--navy);outline:none;transition:border-color 0.2s;background:var(--off);}
+  .sa-input:focus{border-color:var(--teal);background:var(--white);}
+  .sa-input.correct{border-color:var(--green);background:var(--green-bg);}
+  .sa-input.wrong{border-color:var(--red);background:var(--red-bg);}
+  .feedback{margin-top:10px;padding:10px 14px;border-radius:8px;font-size:13px;font-weight:500;display:none;}
+  .feedback.correct{background:var(--green-bg);color:var(--green);display:flex;align-items:flex-start;gap:8px;}
+  .feedback.wrong{background:var(--red-bg);color:var(--red);display:flex;align-items:flex-start;gap:8px;}
+  .feedback-icon{font-size:16px;flex-shrink:0;}
+  .feedback-text{line-height:1.5;}
+  .progress-pill{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:var(--navy);color:var(--white);padding:10px 24px;border-radius:30px;font-size:13px;font-weight:600;box-shadow:0 4px 20px rgba(0,0,0,0.2);display:flex;gap:16px;align-items:center;z-index:200;}
+  .progress-pill span{color:var(--teal);}
+  .submit-section{margin-top:32px;text-align:center;}
+  .submit-btn{padding:14px 48px;background:var(--teal);color:var(--white);border:none;border-radius:10px;font-size:15px;font-weight:700;font-family:'Inter',sans-serif;cursor:pointer;box-shadow:0 4px 16px rgba(26,122,138,0.35);transition:all 0.2s;}
+  .submit-btn:hover{background:#155f6e;transform:translateY(-1px);}
+  .submit-btn:disabled{background:var(--gray2);color:var(--white);transform:none;box-shadow:none;cursor:default;}
+  .result-card{display:none;background:var(--white);border-radius:var(--radius);box-shadow:0 8px 32px rgba(27,42,74,0.15);padding:36px 32px;text-align:center;margin-top:32px;border-top:5px solid var(--teal);}
+  .result-score{font-size:56px;font-weight:700;color:var(--navy);line-height:1;}
+  .result-label{font-size:14px;color:var(--gray2);margin-top:6px;margin-bottom:24px;}
+  .result-badge{display:inline-block;padding:8px 24px;border-radius:30px;font-size:15px;font-weight:700;margin-bottom:20px;}
+  .result-badge.pass{background:var(--green-bg);color:var(--green);}
+  .result-badge.fail{background:var(--red-bg);color:var(--red);}
+  .result-breakdown{font-size:13px;color:var(--gray3);}
+</style>
+</head>
+<body>
+<header>
+  <div class="header-top">
+    <div class="logo">
+      <div class="logo-badge">NP</div>
+      <div class="logo-text"><h1>Nobel Prep</h1><p>AP Chemistry · Naming Compounds</p></div>
+    </div>
+    <div class="quiz-badge">QUIZ B</div>
+  </div>
+  <div class="progress-bar-wrap"><div class="progress-bar" id="progressBar"></div></div>
+</header>
+<main>
+  <div class="name-card">
+    <h2>Student Information</h2>
+    <div class="name-row">
+      <input type="text" id="studentName" placeholder="Full Name"/>
+      <input type="text" id="studentPeriod" placeholder="Period" style="max-width:120px;"/>
+    </div>
+  </div>
+
+  <div class="section-header">Section 1 — Formula → Name <span class="badge">Q1–Q10</span></div>
+
+  <div class="q-card" id="qcard-1"><div class="q-num">Question 1</div><div class="q-text">What is the name of <strong>CaCl<sub>2</sub></strong>?</div><div class="options" id="opts-1"><button class="option-btn" onclick="selectMCQ(1,'A','Calcium chloride')"><span class="opt-letter">A</span>Calcium chloride</button><button class="option-btn" onclick="selectMCQ(1,'B','Calcium dichloride')"><span class="opt-letter">B</span>Calcium dichloride</button><button class="option-btn" onclick="selectMCQ(1,'C','Carbon chloride')"><span class="opt-letter">C</span>Carbon chloride</button><button class="option-btn" onclick="selectMCQ(1,'D','Calcium(II) chloride')"><span class="opt-letter">D</span>Calcium(II) chloride</button></div><div class="feedback" id="fb-1"></div></div>
+
+  <div class="q-card" id="qcard-2"><div class="q-num">Question 2</div><div class="q-text">What is the name of <strong>Li<sub>2</sub>S</strong>?</div><div class="options" id="opts-2"><button class="option-btn" onclick="selectMCQ(2,'A','Lithium sulfide')"><span class="opt-letter">A</span>Lithium sulfide</button><button class="option-btn" onclick="selectMCQ(2,'B','Lithium sulfate')"><span class="opt-letter">B</span>Lithium sulfate</button><button class="option-btn" onclick="selectMCQ(2,'C','Dilithium sulfide')"><span class="opt-letter">C</span>Dilithium sulfide</button><button class="option-btn" onclick="selectMCQ(2,'D','Lithium sulfite')"><span class="opt-letter">D</span>Lithium sulfite</button></div><div class="feedback" id="fb-2"></div></div>
+
+  <div class="q-card" id="qcard-3"><div class="q-num">Question 3</div><div class="q-text">What is the name of <strong>Cr<sub>2</sub>O<sub>3</sub></strong>?</div><div class="options" id="opts-3"><button class="option-btn" onclick="selectMCQ(3,'A','Chromium(III) oxide')"><span class="opt-letter">A</span>Chromium(III) oxide</button><button class="option-btn" onclick="selectMCQ(3,'B','Chromium(VI) oxide')"><span class="opt-letter">B</span>Chromium(VI) oxide</button><button class="option-btn" onclick="selectMCQ(3,'C','Dichromium trioxide')"><span class="opt-letter">C</span>Dichromium trioxide</button><button class="option-btn" onclick="selectMCQ(3,'D','Chromium oxide')"><span class="opt-letter">D</span>Chromium oxide</button></div><div class="feedback" id="fb-3"></div></div>
+
+  <div class="q-card" id="qcard-4"><div class="q-num">Question 4</div><div class="q-text">What is the name of <strong>SnO<sub>2</sub></strong>?</div><div class="options" id="opts-4"><button class="option-btn" onclick="selectMCQ(4,'A','Tin(IV) oxide')"><span class="opt-letter">A</span>Tin(IV) oxide</button><button class="option-btn" onclick="selectMCQ(4,'B','Tin(II) oxide')"><span class="opt-letter">B</span>Tin(II) oxide</button><button class="option-btn" onclick="selectMCQ(4,'C','Tin dioxide')"><span class="opt-letter">C</span>Tin dioxide</button><button class="option-btn" onclick="selectMCQ(4,'D','Stannic oxide only')"><span class="opt-letter">D</span>Stannic oxide only</button></div><div class="feedback" id="fb-4"></div></div>
+
+  <div class="q-card" id="qcard-5"><div class="q-num">Question 5</div><div class="q-text">What is the name of <strong>NH<sub>4</sub>OH</strong>?</div><div class="options" id="opts-5"><button class="option-btn" onclick="selectMCQ(5,'A','Ammonium hydroxide')"><span class="opt-letter">A</span>Ammonium hydroxide</button><button class="option-btn" onclick="selectMCQ(5,'B','Nitrogen hydroxide')"><span class="opt-letter">B</span>Nitrogen hydroxide</button><button class="option-btn" onclick="selectMCQ(5,'C','Ammonium oxide')"><span class="opt-letter">C</span>Ammonium oxide</button><button class="option-btn" onclick="selectMCQ(5,'D','Ammonia hydroxide')"><span class="opt-letter">D</span>Ammonia hydroxide</button></div><div class="feedback" id="fb-5"></div></div>
+
+  <div class="q-card" id="qcard-6"><div class="q-num">Question 6</div><div class="q-text">What is the name of <strong>Mg(HCO<sub>3</sub>)<sub>2</sub></strong>?</div><div class="options" id="opts-6"><button class="option-btn" onclick="selectMCQ(6,'A','Magnesium bicarbonate')"><span class="opt-letter">A</span>Magnesium bicarbonate</button><button class="option-btn" onclick="selectMCQ(6,'B','Magnesium carbonate')"><span class="opt-letter">B</span>Magnesium carbonate</button><button class="option-btn" onclick="selectMCQ(6,'C','Magnesium hydrogen carbonate')"><span class="opt-letter">C</span>Magnesium hydrogen carbonate</button><button class="option-btn" onclick="selectMCQ(6,'D','A or C')"><span class="opt-letter">D</span>A or C (both accepted)</button></div><div class="feedback" id="fb-6"></div></div>
+
+  <div class="q-card" id="qcard-7"><div class="q-num">Question 7</div><div class="q-text">What is the name of <strong>SO<sub>3</sub></strong>?</div><div class="options" id="opts-7"><button class="option-btn" onclick="selectMCQ(7,'A','Sulfur trioxide')"><span class="opt-letter">A</span>Sulfur trioxide</button><button class="option-btn" onclick="selectMCQ(7,'B','Sulfur(VI) oxide')"><span class="opt-letter">B</span>Sulfur(VI) oxide</button><button class="option-btn" onclick="selectMCQ(7,'C','Trisulfur oxide')"><span class="opt-letter">C</span>Trisulfur oxide</button><button class="option-btn" onclick="selectMCQ(7,'D','Sulfuric oxide')"><span class="opt-letter">D</span>Sulfuric oxide</button></div><div class="feedback" id="fb-7"></div></div>
+
+  <div class="q-card" id="qcard-8"><div class="q-num">Question 8</div><div class="q-text">What is the name of <strong>P<sub>4</sub>O<sub>10</sub></strong>?</div><div class="options" id="opts-8"><button class="option-btn" onclick="selectMCQ(8,'A','Tetraphosphorus decoxide')"><span class="opt-letter">A</span>Tetraphosphorus decoxide</button><button class="option-btn" onclick="selectMCQ(8,'B','Phosphorus oxide')"><span class="opt-letter">B</span>Phosphorus oxide</button><button class="option-btn" onclick="selectMCQ(8,'C','Tetraphosphorus oxide')"><span class="opt-letter">C</span>Tetraphosphorus oxide</button><button class="option-btn" onclick="selectMCQ(8,'D','Phosphorus decaoxide')"><span class="opt-letter">D</span>Phosphorus decaoxide</button></div><div class="feedback" id="fb-8"></div></div>
+
+  <div class="q-card" id="qcard-9"><div class="q-num">Question 9</div><div class="q-text">What is the name of <strong>HClO<sub>3</sub>(aq)</strong>?</div><div class="options" id="opts-9"><button class="option-btn" onclick="selectMCQ(9,'A','Chloric acid')"><span class="opt-letter">A</span>Chloric acid</button><button class="option-btn" onclick="selectMCQ(9,'B','Chlorous acid')"><span class="opt-letter">B</span>Chlorous acid</button><button class="option-btn" onclick="selectMCQ(9,'C','Perchloric acid')"><span class="opt-letter">C</span>Perchloric acid</button><button class="option-btn" onclick="selectMCQ(9,'D','Hypochlorous acid')"><span class="opt-letter">D</span>Hypochlorous acid</button></div><div class="feedback" id="fb-9"></div></div>
+
+  <div class="q-card" id="qcard-10"><div class="q-num">Question 10</div><div class="q-text">What is the name of <strong>H<sub>3</sub>PO<sub>4</sub>(aq)</strong>?</div><div class="options" id="opts-10"><button class="option-btn" onclick="selectMCQ(10,'A','Phosphoric acid')"><span class="opt-letter">A</span>Phosphoric acid</button><button class="option-btn" onclick="selectMCQ(10,'B','Phosphorous acid')"><span class="opt-letter">B</span>Phosphorous acid</button><button class="option-btn" onclick="selectMCQ(10,'C','Hydrogen phosphate')"><span class="opt-letter">C</span>Hydrogen phosphate</button><button class="option-btn" onclick="selectMCQ(10,'D','Triphosphoric acid')"><span class="opt-letter">D</span>Triphosphoric acid</button></div><div class="feedback" id="fb-10"></div></div>
+
+  <div class="section-header" style="margin-top:28px;">Section 2 — Name → Formula <span class="badge">Q11–Q15</span></div>
+
+  <div class="q-card" id="qcard-11"><div class="q-num">Question 11</div><div class="q-text">Write the chemical formula for <strong>Iron(II) sulfate</strong>.</div><div class="sa-wrap"><input class="sa-input" type="text" id="sa-11" placeholder="Type your answer"/></div><div class="feedback" id="fb-11"></div></div>
+  <div class="q-card" id="qcard-12"><div class="q-num">Question 12</div><div class="q-text">Write the chemical formula for <strong>Manganese(II) oxide</strong>.</div><div class="sa-wrap"><input class="sa-input" type="text" id="sa-12" placeholder="Type your answer"/></div><div class="feedback" id="fb-12"></div></div>
+  <div class="q-card" id="qcard-13"><div class="q-num">Question 13</div><div class="q-text">Write the chemical formula for <strong>Calcium phosphate</strong>.</div><div class="sa-wrap"><input class="sa-input" type="text" id="sa-13" placeholder="Type your answer"/></div><div class="feedback" id="fb-13"></div></div>
+  <div class="q-card" id="qcard-14"><div class="q-num">Question 14</div><div class="q-text">Write the chemical formula for <strong>Dinitrogen tetroxide</strong>.</div><div class="sa-wrap"><input class="sa-input" type="text" id="sa-14" placeholder="Type your answer"/></div><div class="feedback" id="fb-14"></div></div>
+  <div class="q-card" id="qcard-15"><div class="q-num">Question 15</div><div class="q-text">Write the chemical formula for <strong>Hydrobromic acid</strong>.</div><div class="sa-wrap"><input class="sa-input" type="text" id="sa-15" placeholder="Type your answer"/></div><div class="feedback" id="fb-15"></div></div>
+
+  <div class="submit-section">
+    <button class="submit-btn" id="submitBtn" onclick="submitQuiz()">Submit &amp; See Results</button>
+    <p style="font-size:12px;color:#9AA0B2;margin-top:12px;">Answers will be revealed after submission.</p>
+  </div>
+  <div class="result-card" id="resultCard">
+    <div class="result-score" id="resultScore">—</div>
+    <div class="result-label">out of 15 questions</div>
+    <div class="result-badge" id="resultBadge"></div>
+    <div class="result-breakdown" id="resultBreakdown"></div>
+  </div>
+</main>
+<div class="progress-pill">Answered: <span id="pillCount">0</span> / 15</div>
+
+<script>
+const MCQ_HASHES={1:'657e7a514dc393607ac92c6ef0454b1c9db5af4072d3490567376e0aacf897c2',2:'84cd6d7142ff0f8da72c1cd5d0ba68aad31b561ca81309492e7db37eb3cbaef9',3:'01d77cfb2177616971faeca23c5ddb0bbcefc24020af16b14d4e92c59323dd10',4:'92210559875d8c7bc48947d3c3b456331d72fd044951becdfef5cda11dece099',5:'15299428516061de637dd8c113472790fbdd1d821c2e50131d10ae67432456de',6:'16c6388e647726001fad7e0498a7b24a6573870e13199e79ea959b77cf60b862',7:'b789d2d3d75f1cc5cf245e581756f0a619013d5b82110f11507176e589ba098b',8:'e8b47e353f24a65057e1352bd32fc423aa06d8ff00a9aeca65a4a5e5601648e1',9:'94e9c24163c2ad9b8a51d255ff88b488c65dfa0398409777104b99016c64fb26',10:'4b93d5c762f5d02fa9e24f2f0db74a640e9b78ab86b28702206eb09ee6d812c9'};
+const SA_HASHES={11:'39132b4acd5ab351345dae98e4c8d488f7e0e629eb50f8d3531ac365d139cbcb',12:'cf63b8eb216845d24edd4b249b146957b42199cd12759647df90cb57525b4e90',13:'95dba98820cad71b8601c80811ceb750ff62b6c4865b03635006074c0bd1cb74',14:'7d1b3ce1a07cd7ba165720e75e1a81853b70300f72a6372c9a2da3b222bff1c2',15:'1c7de028367e7c86151df47e17a76b023acb35bfea69f789552786746616f4b9'};
+const selections={};
+async function hashStr(s){const norm=s.trim().toLowerCase().replace(/\s+/g,'');const buf=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(norm));return Array.from(new Uint8Array(buf)).map(b=>b.toString(16).padStart(2,'0')).join('');}
+function selectMCQ(qNum,letter,value){if(document.getElementById('resultCard').style.display==='block')return;document.querySelectorAll(`#opts-${qNum} .option-btn`).forEach(b=>b.classList.remove('selected'));event.currentTarget.classList.add('selected');selections[qNum]=value;const card=document.getElementById(`qcard-${qNum}`);card.classList.remove('unanswered-warn');card.classList.add('selected-only');updateProgress();}
+function updateProgress(){let c=0;for(let i=1;i<=10;i++)if(selections[i])c++;for(let i=11;i<=15;i++){const el=document.getElementById(`sa-${i}`);if(el&&el.value.trim())c++;}document.getElementById('pillCount').textContent=c;document.getElementById('progressBar').style.width=(c/15*100)+'%';}
+document.addEventListener('DOMContentLoaded',()=>{for(let i=11;i<=15;i++){const el=document.getElementById(`sa-${i}`);if(el)el.addEventListener('input',updateProgress);}});
+async function submitQuiz(){
+  let missing=[];
+  for(let i=1;i<=10;i++)if(!selections[i])missing.push(i);
+  for(let i=11;i<=15;i++){const el=document.getElementById(`sa-${i}`);if(!el||!el.value.trim())missing.push(i);}
+  if(missing.length>0){missing.forEach(n=>{const c=document.getElementById(`qcard-${n}`);c.classList.remove('unanswered-warn');void c.offsetWidth;c.classList.add('unanswered-warn');});document.getElementById(`qcard-${missing[0]}`).scrollIntoView({behavior:'smooth',block:'center'});return;}
+  document.querySelectorAll('.option-btn').forEach(b=>b.disabled=true);
+  document.querySelectorAll('.sa-input').forEach(i=>i.disabled=true);
+  document.getElementById('submitBtn').disabled=true;
+  let total=0;const det=[];
+  for(let i=1;i<=10;i++){const uv=selections[i];const uh=await hashStr(uv);const isOk=uh===MCQ_HASHES[i];if(isOk)total++;det.push(`Q${i}:${isOk?'O':'X'}`);document.querySelectorAll(`#opts-${i} .option-btn`).forEach(btn=>{const v=btn.getAttribute('onclick').match(/'([^']+)'\)$/)[1];btn.classList.remove('selected','selected-only');if(v===uv&&isOk)btn.classList.add('correct');else if(v===uv&&!isOk)btn.classList.add('wrong');});const btns=document.querySelectorAll(`#opts-${i} .option-btn`);for(const btn of btns){const v=btn.getAttribute('onclick').match(/'([^']+)'\)$/)[1];const vh=await hashStr(v);if(vh===MCQ_HASHES[i])btn.classList.add('reveal-correct');}const fb=document.getElementById(`fb-${i}`);fb.className='feedback '+(isOk?'correct':'wrong');fb.innerHTML=isOk?`<span class="feedback-icon">✓</span><span class="feedback-text">Correct!</span>`:`<span class="feedback-icon">✗</span><span class="feedback-text">Incorrect. The correct answer is highlighted above.</span>`;const card=document.getElementById(`qcard-${i}`);card.classList.remove('selected-only','unanswered-warn');card.classList.add(isOk?'answered-correct':'answered-wrong');}
+  for(let i=11;i<=15;i++){const raw=document.getElementById(`sa-${i}`).value.trim();const uh=await hashStr(raw);const isOk=uh===SA_HASHES[i];if(isOk)total++;det.push(`Q${i}:${isOk?'O':'X'}`);document.getElementById(`sa-${i}`).classList.add(isOk?'correct':'wrong');const fb=document.getElementById(`fb-${i}`);fb.className='feedback '+(isOk?'correct':'wrong');fb.innerHTML=isOk?`<span class="feedback-icon">✓</span><span class="feedback-text">Correct!</span>`:`<span class="feedback-icon">✗</span><span class="feedback-text">Incorrect. Check your formula and try again next time.</span>`;const card=document.getElementById(`qcard-${i}`);card.classList.remove('selected-only','unanswered-warn');card.classList.add(isOk?'answered-correct':'answered-wrong');}
+  const name=document.getElementById('studentName').value.trim()||'Anonymous';
+  const period=document.getElementById('studentPeriod').value.trim()||'—';
+  const pct=Math.round(total/15*100),pass=total>=12;
+  const mcqS=det.slice(0,10).filter(s=>s.includes(':O')).length;
+  const saS=det.slice(10).filter(s=>s.includes(':O')).length;
+  document.getElementById('resultScore').textContent=`${total} / 15`;
+  const badge=document.getElementById('resultBadge');badge.textContent=pass?'✓ Pass':'✗ Needs Review';badge.className='result-badge '+(pass?'pass':'fail');
+  document.getElementById('resultBreakdown').innerHTML=`${name} &nbsp;·&nbsp; Period ${period} &nbsp;·&nbsp; ${pct}% &nbsp;|&nbsp; Formula→Name: ${mcqS}/10 &nbsp;·&nbsp; Name→Formula: ${saS}/5`;
+  const rc=document.getElementById('resultCard');rc.style.display='block';rc.scrollIntoView({behavior:'smooth'});
+  sendToSheets({name,period,total,pct,mcqScore:mcqS,saScore:saS,pass,details:det.join(',')});
+}
+const SHEETS_URL='https://script.google.com/macros/s/AKfycbx4MCfpZmwfJrmZvZKtN3lyoDOtrC-Wu_BNaYlI9ImCtHgxA8rg7s3ahuI5aMVAj32YfQ/exec';
+function sendToSheets(d){fetch(SHEETS_URL,{method:'POST',mode:'no-cors',headers:{'Content-Type':'application/json'},body:JSON.stringify({quiz:'Naming B',name:d.name,period:d.period,score:d.total,total:15,percent:d.pct,pass:d.pass?'Pass':'Fail',mcq:d.mcqScore,sa:d.saScore,timestamp:new Date().toISOString(),details:d.details})}).catch(()=>{});}
+</script>
+</body>
+</html>

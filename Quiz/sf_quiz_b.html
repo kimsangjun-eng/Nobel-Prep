@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Nobel Prep — Significant Figures Quiz B</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
+  :root{--navy:#1B2A4A;--navy2:#243660;--gold:#C9A84C;--white:#FFFFFF;--off:#F7F8FA;--gray1:#E8EAF0;--gray2:#9AA0B2;--gray3:#555D72;--green:#2D7D46;--green-bg:#EBF7EF;--red:#C0392B;--red-bg:#FDECEA;--teal:#1A7A8A;--teal-bg:#E6F4F6;--radius:10px;--shadow:0 2px 12px rgba(27,42,74,0.10);}
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{font-family:'Inter',sans-serif;background:var(--off);color:var(--navy);min-height:100vh;}
+  header{background:var(--navy);padding:16px 28px 0;position:sticky;top:0;z-index:100;box-shadow:0 2px 10px rgba(0,0,0,0.25);}
+  .header-top{display:flex;align-items:center;justify-content:space-between;padding-bottom:14px;}
+  .logo{display:flex;align-items:center;gap:12px;}
+  .logo-badge{width:38px;height:38px;background:var(--gold);border-radius:8px;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:15px;color:var(--navy);}
+  .logo-text h1{font-size:16px;font-weight:700;color:var(--white);}
+  .logo-text p{font-size:11px;color:var(--gold);margin-top:1px;}
+  .quiz-badge{background:var(--teal);color:var(--white);font-size:11px;font-weight:700;padding:4px 12px;border-radius:20px;}
+  .progress-bar-wrap{width:100%;height:3px;background:rgba(255,255,255,0.15);}
+  .progress-bar{height:100%;background:var(--teal);width:0%;transition:width 0.4s ease;}
+  main{max-width:780px;margin:0 auto;padding:28px 16px 80px;}
+  .name-card{background:var(--white);border-radius:var(--radius);box-shadow:var(--shadow);padding:24px 28px;margin-bottom:24px;border-left:4px solid var(--teal);}
+  .name-card h2{font-size:14px;font-weight:600;color:var(--navy2);margin-bottom:12px;}
+  .name-row{display:flex;gap:12px;flex-wrap:wrap;}
+  .name-row input{flex:1;min-width:180px;padding:10px 14px;border:1.5px solid var(--gray1);border-radius:8px;font-family:'Inter',sans-serif;font-size:14px;color:var(--navy);outline:none;transition:border-color 0.2s;}
+  .name-row input:focus{border-color:var(--teal);}
+  .sf-guide{background:var(--teal-bg);border-radius:8px;padding:12px 16px;font-size:12px;color:var(--navy2);margin-bottom:20px;border-left:3px solid var(--teal);line-height:1.8;}
+  .sf-guide strong{display:block;margin-bottom:6px;color:var(--navy);font-size:13px;}
+  .sf-guide code{font-family:'JetBrains Mono',monospace;background:var(--white);padding:1px 5px;border-radius:3px;font-size:11px;}
+  .section-header{background:var(--navy2);color:var(--white);padding:10px 18px;border-radius:8px 8px 0 0;font-size:12px;font-weight:600;letter-spacing:0.8px;text-transform:uppercase;display:flex;align-items:center;gap:8px;margin-top:24px;}
+  .section-header .badge{background:var(--teal);color:var(--white);padding:2px 8px;border-radius:10px;font-size:10px;}
+  .q-card{background:var(--white);border:1px solid var(--gray1);border-top:none;padding:20px 22px;}
+  .q-card:last-of-type{border-radius:0 0 var(--radius) var(--radius);}
+  .q-card.answered-correct{border-left:4px solid var(--green);}
+  .q-card.answered-wrong{border-left:4px solid var(--red);}
+  .q-card.selected-only{border-left:4px solid var(--teal);}
+  .q-card.unanswered-warn{border-left:4px solid #F39C12;animation:shake 0.3s;}
+  @keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-4px)}75%{transform:translateX(4px)}}
+  .q-num{font-size:10px;font-weight:700;color:var(--teal);letter-spacing:1px;text-transform:uppercase;margin-bottom:6px;}
+  .q-text{font-size:14px;font-weight:500;line-height:1.7;color:var(--navy);margin-bottom:14px;}
+  .q-text code{font-family:'JetBrains Mono',monospace;background:#EEF1F8;padding:2px 7px;border-radius:4px;font-size:13px;}
+  .q-hint{font-size:11px;color:var(--gray2);font-style:italic;margin-bottom:10px;padding:6px 10px;background:var(--off);border-radius:6px;border-left:3px solid var(--teal);}
+  .options{display:flex;flex-direction:column;gap:8px;}
+  .option-btn{display:flex;align-items:center;gap:10px;padding:10px 14px;border-radius:8px;border:1.5px solid var(--gray1);background:var(--off);cursor:pointer;font-family:'JetBrains Mono',monospace;font-size:13px;color:var(--navy);text-align:left;transition:all 0.15s;width:100%;}
+  .option-btn:hover:not(:disabled){border-color:var(--teal);background:var(--teal-bg);}
+  .option-btn.selected{border-color:var(--navy);background:#EEF1F8;font-weight:500;}
+  .option-btn.correct{border-color:var(--green);background:var(--green-bg);color:var(--green);font-weight:600;}
+  .option-btn.wrong{border-color:var(--red);background:var(--red-bg);color:var(--red);}
+  .option-btn.reveal-correct{border-color:var(--green);background:var(--green-bg);color:var(--green);font-weight:600;}
+  .opt-letter{width:24px;height:24px;border-radius:50%;background:var(--gray1);color:var(--gray3);font-size:11px;font-weight:700;font-family:'Inter',sans-serif;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+  .option-btn.correct .opt-letter,.option-btn.reveal-correct .opt-letter{background:var(--green);color:var(--white);}
+  .option-btn.wrong .opt-letter{background:var(--red);color:var(--white);}
+  .sa-wrap{display:flex;flex-direction:column;gap:6px;}
+  .sa-input{width:100%;padding:10px 14px;border-radius:8px;border:1.5px solid var(--gray1);font-family:'JetBrains Mono',monospace;font-size:14px;color:var(--navy);outline:none;transition:border-color 0.2s;background:var(--off);}
+  .sa-input:focus{border-color:var(--teal);background:var(--white);}
+  .sa-input.correct{border-color:var(--green);background:var(--green-bg);}
+  .sa-input.wrong{border-color:var(--red);background:var(--red-bg);}
+  .sa-hint-text{font-size:11px;color:var(--gray2);font-family:'JetBrains Mono',monospace;}
+  .feedback{margin-top:10px;padding:10px 14px;border-radius:8px;font-size:13px;font-weight:500;display:none;}
+  .feedback.correct{background:var(--green-bg);color:var(--green);display:flex;align-items:flex-start;gap:8px;}
+  .feedback.wrong{background:var(--red-bg);color:var(--red);display:flex;align-items:flex-start;gap:8px;}
+  .feedback-icon{font-size:16px;flex-shrink:0;}
+  .feedback-text{line-height:1.5;}
+  .progress-pill{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:var(--navy);color:var(--white);padding:10px 24px;border-radius:30px;font-size:13px;font-weight:600;box-shadow:0 4px 20px rgba(0,0,0,0.2);display:flex;gap:16px;align-items:center;z-index:200;}
+  .progress-pill span{color:var(--teal);}
+  .submit-section{margin-top:32px;text-align:center;}
+  .submit-btn{padding:14px 48px;background:var(--teal);color:var(--white);border:none;border-radius:10px;font-size:15px;font-weight:700;font-family:'Inter',sans-serif;cursor:pointer;box-shadow:0 4px 16px rgba(26,122,138,0.35);transition:all 0.2s;}
+  .submit-btn:hover{background:#155f6e;transform:translateY(-1px);}
+  .submit-btn:disabled{background:var(--gray2);color:var(--white);transform:none;box-shadow:none;cursor:default;}
+  .result-card{display:none;background:var(--white);border-radius:var(--radius);box-shadow:0 8px 32px rgba(27,42,74,0.15);padding:36px 32px;text-align:center;margin-top:32px;border-top:5px solid var(--teal);}
+  .result-score{font-size:56px;font-weight:700;color:var(--navy);line-height:1;}
+  .result-label{font-size:14px;color:var(--gray2);margin-top:6px;margin-bottom:24px;}
+  .result-badge{display:inline-block;padding:8px 24px;border-radius:30px;font-size:15px;font-weight:700;margin-bottom:20px;}
+  .result-badge.pass{background:var(--green-bg);color:var(--green);}
+  .result-badge.fail{background:var(--red-bg);color:var(--red);}
+  .result-breakdown{font-size:13px;color:var(--gray3);}
+</style>
+</head>
+<body>
+<header>
+  <div class="header-top">
+    <div class="logo"><div class="logo-badge">NP</div><div class="logo-text"><h1>Nobel Prep</h1><p>AP Chemistry · Significant Figures</p></div></div>
+    <div class="quiz-badge">QUIZ B</div>
+  </div>
+  <div class="progress-bar-wrap"><div class="progress-bar" id="progressBar"></div></div>
+</header>
+<main>
+  <div class="name-card">
+    <h2>Student Information</h2>
+    <div class="name-row">
+      <input type="text" id="studentName" placeholder="Full Name"/>
+      <input type="text" id="studentPeriod" placeholder="Period" style="max-width:120px;"/>
+    </div>
+  </div>
+  <div class="sf-guide">
+    <strong>📐 Significant Figures Rules (Quick Reference)</strong>
+    • Non-zero digits: always significant &nbsp;|&nbsp; Zeros between non-zeros: significant<br>
+    • Leading zeros: NOT significant &nbsp;|&nbsp; Trailing zeros with decimal: significant<br>
+    • Sci. notation: <code>3.40 × 10³</code> = 3 SF &nbsp;|&nbsp; Answers revealed after submission.
+  </div>
+
+  <div class="section-header">Section 1 — Counting Significant Figures <span class="badge">Q1–Q8</span></div>
+
+  <div class="q-card" id="qcard-1"><div class="q-num">Question 1</div><div class="q-text">How many significant figures are in <code>0.02030</code>?</div><div class="options" id="opts-1"><button class="option-btn" onclick="selectMCQ(1,'A','3')"><span class="opt-letter">A</span>3</button><button class="option-btn" onclick="selectMCQ(1,'B','4')"><span class="opt-letter">B</span>4</button><button class="option-btn" onclick="selectMCQ(1,'C','5')"><span class="opt-letter">C</span>5</button><button class="option-btn" onclick="selectMCQ(1,'D','2')"><span class="opt-letter">D</span>2</button></div><div class="feedback" id="fb-1"></div></div>
+
+  <div class="q-card" id="qcard-2"><div class="q-num">Question 2</div><div class="q-text">How many significant figures are in <code>10,500</code>?</div><div class="options" id="opts-2"><button class="option-btn" onclick="selectMCQ(2,'A','3')"><span class="opt-letter">A</span>3</button><button class="option-btn" onclick="selectMCQ(2,'B','5')"><span class="opt-letter">B</span>5</button><button class="option-btn" onclick="selectMCQ(2,'C','4')"><span class="opt-letter">C</span>4</button><button class="option-btn" onclick="selectMCQ(2,'D','2')"><span class="opt-letter">D</span>2</button></div><div class="feedback" id="fb-2"></div></div>
+
+  <div class="q-card" id="qcard-3"><div class="q-num">Question 3</div><div class="q-text">How many significant figures are in <code>3.0600</code>?</div><div class="options" id="opts-3"><button class="option-btn" onclick="selectMCQ(3,'A','5')"><span class="opt-letter">A</span>5</button><button class="option-btn" onclick="selectMCQ(3,'B','4')"><span class="opt-letter">B</span>4</button><button class="option-btn" onclick="selectMCQ(3,'C','3')"><span class="opt-letter">C</span>3</button><button class="option-btn" onclick="selectMCQ(3,'D','6')"><span class="opt-letter">D</span>6</button></div><div class="feedback" id="fb-3"></div></div>
+
+  <div class="q-card" id="qcard-4"><div class="q-num">Question 4</div><div class="q-text">How many significant figures are in <code>7.10 × 10⁴</code>?</div><div class="options" id="opts-4"><button class="option-btn" onclick="selectMCQ(4,'A','3')"><span class="opt-letter">A</span>3</button><button class="option-btn" onclick="selectMCQ(4,'B','2')"><span class="opt-letter">B</span>2</button><button class="option-btn" onclick="selectMCQ(4,'C','5')"><span class="opt-letter">C</span>5</button><button class="option-btn" onclick="selectMCQ(4,'D','1')"><span class="opt-letter">D</span>1</button></div><div class="feedback" id="fb-4"></div></div>
+
+  <div class="q-card" id="qcard-5"><div class="q-num">Question 5</div><div class="q-text">How many significant figures are in <code>0.000702</code>?</div><div class="options" id="opts-5"><button class="option-btn" onclick="selectMCQ(5,'A','3')"><span class="opt-letter">A</span>3</button><button class="option-btn" onclick="selectMCQ(5,'B','6')"><span class="opt-letter">B</span>6</button><button class="option-btn" onclick="selectMCQ(5,'C','4')"><span class="opt-letter">C</span>4</button><button class="option-btn" onclick="selectMCQ(5,'D','2')"><span class="opt-letter">D</span>2</button></div><div class="feedback" id="fb-5"></div></div>
+
+  <div class="q-card" id="qcard-6"><div class="q-num">Question 6</div><div class="q-text">Divide: <code>9.84 ÷ 3.2</code> — how many SF should the answer have?</div><div class="options" id="opts-6"><button class="option-btn" onclick="selectMCQ(6,'A','2')"><span class="opt-letter">A</span>2</button><button class="option-btn" onclick="selectMCQ(6,'B','3')"><span class="opt-letter">B</span>3</button><button class="option-btn" onclick="selectMCQ(6,'C','1')"><span class="opt-letter">C</span>1</button><button class="option-btn" onclick="selectMCQ(6,'D','4')"><span class="opt-letter">D</span>4</button></div><div class="feedback" id="fb-6"></div></div>
+
+  <div class="q-card" id="qcard-7"><div class="q-num">Question 7</div><div class="q-text">Subtract: <code>47.80 − 3.256</code> — to which decimal place should the answer be rounded?</div><div class="options" id="opts-7"><button class="option-btn" onclick="selectMCQ(7,'A','hundredths (0.01)')"><span class="opt-letter">A</span>Hundredths place (0.01)</button><button class="option-btn" onclick="selectMCQ(7,'B','tenths (0.1)')"><span class="opt-letter">B</span>Tenths place (0.1)</button><button class="option-btn" onclick="selectMCQ(7,'C','thousandths (0.001)')"><span class="opt-letter">C</span>Thousandths place (0.001)</button><button class="option-btn" onclick="selectMCQ(7,'D','ones (1)')"><span class="opt-letter">D</span>Ones place (1)</button></div><div class="feedback" id="fb-7"></div></div>
+
+  <div class="q-card" id="qcard-8"><div class="q-num">Question 8</div><div class="q-text">Which of the following has <strong>2 significant figures</strong>?</div><div class="options" id="opts-8"><button class="option-btn" onclick="selectMCQ(8,'A','0.0058')"><span class="opt-letter">A</span>0.0058</button><button class="option-btn" onclick="selectMCQ(8,'B','2.30')"><span class="opt-letter">B</span>2.30</button><button class="option-btn" onclick="selectMCQ(8,'C','580')"><span class="opt-letter">C</span>580</button><button class="option-btn" onclick="selectMCQ(8,'D','5.80')"><span class="opt-letter">D</span>5.80</button></div><div class="feedback" id="fb-8"></div></div>
+
+  <div class="section-header" style="margin-top:28px;">Section 2 — Calculations with Correct SF <span class="badge">Q9–Q15</span></div>
+
+  <div class="q-card" id="qcard-9"><div class="q-num">Question 9</div><div class="q-text">Calculate with correct SF:<br><code>6.8 × 3.15</code></div><div class="q-hint">⚙ Apply the correct SF rule for multiplication.</div><div class="sa-wrap"><input class="sa-input" type="text" id="sa-9" placeholder="Type your answer"/><div class="sa-hint-text">multiplication rule</div></div><div class="feedback" id="fb-9"></div></div>
+
+  <div class="q-card" id="qcard-10"><div class="q-num">Question 10</div><div class="q-text">Calculate with correct SF:<br><code>45.6 ÷ 1.23</code></div><div class="q-hint">⚙ Apply the correct SF rule for division.</div><div class="sa-wrap"><input class="sa-input" type="text" id="sa-10" placeholder="Type your answer"/><div class="sa-hint-text">division rule</div></div><div class="feedback" id="fb-10"></div></div>
+
+  <div class="q-card" id="qcard-11"><div class="q-num">Question 11</div><div class="q-text">Calculate with correct SF:<br><code>108.5 + 3.42 + 0.6</code></div><div class="q-hint">⚙ Apply the correct SF rule for addition.</div><div class="sa-wrap"><input class="sa-input" type="text" id="sa-11" placeholder="Type your answer"/><div class="sa-hint-text">addition rule</div></div><div class="feedback" id="fb-11"></div></div>
+
+  <div class="q-card" id="qcard-12"><div class="q-num">Question 12</div><div class="q-text">Calculate with correct SF:<br><code>56.08 − 14.3</code></div><div class="q-hint">⚙ Apply the correct SF rule for subtraction.</div><div class="sa-wrap"><input class="sa-input" type="text" id="sa-12" placeholder="Type your answer"/><div class="sa-hint-text">subtraction rule</div></div><div class="feedback" id="fb-12"></div></div>
+
+  <div class="q-card" id="qcard-13"><div class="q-num">Question 13</div><div class="q-text">Express <code>65,200</code> in scientific notation with 3 significant figures.</div><div class="q-hint">⚙ Use E-notation: e.g. 6.52e4</div><div class="sa-wrap"><input class="sa-input" type="text" id="sa-13" placeholder="Type your answer"/><div class="sa-hint-text">E-notation required</div></div><div class="feedback" id="fb-13"></div></div>
+
+  <div class="q-card" id="qcard-14"><div class="q-num">Question 14</div><div class="q-text">Calculate with correct SF:<br><code>(3.20 × 10²) ÷ (8.0 × 10⁻¹)</code></div><div class="q-hint">⚙ Use E-notation if needed.</div><div class="sa-wrap"><input class="sa-input" type="text" id="sa-14" placeholder="Type your answer"/><div class="sa-hint-text">scientific notation</div></div><div class="feedback" id="fb-14"></div></div>
+
+  <div class="q-card" id="qcard-15"><div class="q-num">Question 15</div><div class="q-text">Calculate with correct SF:<br><code>(4.52 − 2.1) × 3.00</code></div><div class="q-hint">⚙ Multi-step: apply subtraction rule first, then multiplication rule.</div><div class="sa-wrap"><input class="sa-input" type="text" id="sa-15" placeholder="Type your answer"/><div class="sa-hint-text">multi-step calculation</div></div><div class="feedback" id="fb-15"></div></div>
+
+  <div class="submit-section">
+    <button class="submit-btn" id="submitBtn" onclick="submitQuiz()">Submit &amp; See Results</button>
+    <p style="font-size:12px;color:#9AA0B2;margin-top:12px;">Answers will be revealed after submission.</p>
+  </div>
+  <div class="result-card" id="resultCard">
+    <div class="result-score" id="resultScore">—</div>
+    <div class="result-label">out of 15 questions</div>
+    <div class="result-badge" id="resultBadge"></div>
+    <div class="result-breakdown" id="resultBreakdown"></div>
+  </div>
+</main>
+<div class="progress-pill">Answered: <span id="pillCount">0</span> / 15</div>
+
+<script>
+const MCQ_HASHES={
+  1:'4e07408562bedb8b60ce05c1decfe3ad16b72230967de01f640b7e4729b49fce',
+  2:'4e07408562bedb8b60ce05c1decfe3ad16b72230967de01f640b7e4729b49fce',
+  3:'ef2d127de37b942baad06145e54b0c619a1f22327b2ebbcfbec78f5564afe39d',
+  4:'4e07408562bedb8b60ce05c1decfe3ad16b72230967de01f640b7e4729b49fce',
+  5:'4e07408562bedb8b60ce05c1decfe3ad16b72230967de01f640b7e4729b49fce',
+  6:'d4735e3a265e16eee03f59718b9b5d03019c07d8b6c51f90da3a666eec13ab35',
+  7:'b6a31f45cab55c6f239cb99a218c2ae67aebd8420204411ece231ede68c4e83a',
+  8:'8fb210324619dded58a7bd36edfa64d6fa0c98e5da3d5f885c1bc74c8ce5d3c8'
+};
+const SA_ANSWERS={
+  9: {value:21,   sf:2,type:'number',unit:''},
+  10:{value:37.1, sf:3,type:'number',unit:''},
+  11:{value:112.5,sf:4,type:'number',unit:''},
+  12:{value:41.8, sf:3,type:'number',unit:''},
+  13:{value:6.52e4,sf:3,type:'enot',correctStr:'6.52e4'},
+  14:{value:400,  sf:2,type:'enot',correctStr:'4.0e2'},
+  15:{value:7.2,  sf:2,type:'number',unit:''}
+};
+const selections={};
+async function hashStr(s){const norm=s.trim().toLowerCase().replace(/\s+/g,'');const buf=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(norm));return Array.from(new Uint8Array(buf)).map(b=>b.toString(16).padStart(2,'0')).join('');}
+function parseEN(s){s=s.trim().toLowerCase().replace(/\s+/g,'');const v=parseFloat(s);return isNaN(v)?null:v;}
+function countSF(s){s=s.trim().toLowerCase().replace(/\s+/g,'');let coef=s.split('e')[0].replace(/^-/,'');const m=coef.replace('.','').match(/^0*([1-9][0-9]*0*)$/);if(!m)return null;let d=m[1];if(!coef.includes('.'))d=d.replace(/0+$/,'');return d.length;}
+function checkNum(raw,key){const uv=parseEN(raw);if(uv===null)return{ok:false,reason:'Cannot parse answer.'};const relErr=Math.abs(uv-key.value)/(Math.abs(key.value)||1);if(relErr>0.006)return{ok:false,reason:'Incorrect value.'};const uSF=countSF(raw.trim().toLowerCase().split('e')[0]);if(uSF===null)return{ok:false,reason:'Cannot determine SF count.'};if(uSF!==key.sf)return{ok:false,reason:`Value is correct — but SF is wrong. Need ${key.sf} SF (you entered ${uSF} SF).`};return{ok:true};}
+function checkENot(raw,key){const uv=parseEN(raw);if(uv===null)return{ok:false,reason:`Use E-notation (e.g. ${key.correctStr})`};const relErr=Math.abs(uv-key.value)/Math.abs(key.value);if(relErr>0.006)return{ok:false,reason:'Incorrect value.'};if(!raw.toLowerCase().includes('e'))return{ok:false,reason:'Must use E-notation format.'};const uSF=countSF(raw.trim().toLowerCase().split('e')[0]);if(uSF===null||uSF!==key.sf)return{ok:false,reason:`Value is correct — but SF is wrong. Need ${key.sf} SF in coefficient.`};return{ok:true};}
+function selectMCQ(qNum,letter,value){if(document.getElementById('resultCard').style.display==='block')return;document.querySelectorAll(`#opts-${qNum} .option-btn`).forEach(b=>b.classList.remove('selected'));event.currentTarget.classList.add('selected');selections[qNum]=value;const card=document.getElementById(`qcard-${qNum}`);card.classList.remove('unanswered-warn');card.classList.add('selected-only');updateProgress();}
+function updateProgress(){let c=0;for(let i=1;i<=8;i++)if(selections[i])c++;for(let i=9;i<=15;i++){const el=document.getElementById(`sa-${i}`);if(el&&el.value.trim())c++;}document.getElementById('pillCount').textContent=c;document.getElementById('progressBar').style.width=(c/15*100)+'%';}
+document.addEventListener('DOMContentLoaded',()=>{for(let i=9;i<=15;i++){const el=document.getElementById(`sa-${i}`);if(el)el.addEventListener('input',updateProgress);}});
+async function submitQuiz(){
+  let missing=[];
+  for(let i=1;i<=8;i++)if(!selections[i])missing.push(i);
+  for(let i=9;i<=15;i++){const el=document.getElementById(`sa-${i}`);if(!el||!el.value.trim())missing.push(i);}
+  if(missing.length>0){missing.forEach(n=>{const c=document.getElementById(`qcard-${n}`);c.classList.remove('unanswered-warn');void c.offsetWidth;c.classList.add('unanswered-warn');});document.getElementById(`qcard-${missing[0]}`).scrollIntoView({behavior:'smooth',block:'center'});return;}
+  document.querySelectorAll('.option-btn').forEach(b=>b.disabled=true);
+  document.querySelectorAll('.sa-input').forEach(i=>i.disabled=true);
+  document.getElementById('submitBtn').disabled=true;
+  let total=0;const det=[];
+  for(let i=1;i<=8;i++){const uv=selections[i];const uh=await hashStr(uv);const isOk=uh===MCQ_HASHES[i];if(isOk)total++;det.push(`Q${i}:${isOk?'O':'X'}`);document.querySelectorAll(`#opts-${i} .option-btn`).forEach(btn=>{const v=btn.getAttribute('onclick').match(/'([^']+)'\)$/)[1];btn.classList.remove('selected','selected-only');if(v===uv&&isOk)btn.classList.add('correct');else if(v===uv&&!isOk)btn.classList.add('wrong');});const btns=document.querySelectorAll(`#opts-${i} .option-btn`);for(const btn of btns){const v=btn.getAttribute('onclick').match(/'([^']+)'\)$/)[1];const vh=await hashStr(v);if(vh===MCQ_HASHES[i])btn.classList.add('reveal-correct');}const fb=document.getElementById(`fb-${i}`);fb.className='feedback '+(isOk?'correct':'wrong');fb.innerHTML=isOk?`<span class="feedback-icon">✓</span><span class="feedback-text">Correct!</span>`:`<span class="feedback-icon">✗</span><span class="feedback-text">Incorrect. The correct answer is highlighted above.</span>`;const card=document.getElementById(`qcard-${i}`);card.classList.remove('selected-only','unanswered-warn');card.classList.add(isOk?'answered-correct':'answered-wrong');}
+  for(let i=9;i<=15;i++){const raw=document.getElementById(`sa-${i}`).value.trim();const key=SA_ANSWERS[i];let result=key.type==='enot'?checkENot(raw,key):checkNum(raw,key);if(result.ok)total++;det.push(`Q${i}:${result.ok?'O':'X'}`);document.getElementById(`sa-${i}`).classList.add(result.ok?'correct':'wrong');const fb=document.getElementById(`fb-${i}`);fb.className='feedback '+(result.ok?'correct':'wrong');fb.innerHTML=result.ok?`<span class="feedback-icon">✓</span><span class="feedback-text">Correct!</span>`:`<span class="feedback-icon">✗</span><span class="feedback-text">${result.reason}</span>`;const card=document.getElementById(`qcard-${i}`);card.classList.remove('selected-only','unanswered-warn');card.classList.add(result.ok?'answered-correct':'answered-wrong');}
+  const name=document.getElementById('studentName').value.trim()||'Anonymous';
+  const period=document.getElementById('studentPeriod').value.trim()||'—';
+  const pct=Math.round(total/15*100),pass=total>=12;
+  const mcqS=det.slice(0,8).filter(s=>s.includes(':O')).length;
+  const saS=det.slice(8).filter(s=>s.includes(':O')).length;
+  document.getElementById('resultScore').textContent=`${total} / 15`;
+  const badge=document.getElementById('resultBadge');badge.textContent=pass?'✓ Pass':'✗ Needs Review';badge.className='result-badge '+(pass?'pass':'fail');
+  document.getElementById('resultBreakdown').innerHTML=`${name} &nbsp;·&nbsp; Period ${period} &nbsp;·&nbsp; ${pct}% &nbsp;|&nbsp; Counting SF: ${mcqS}/8 &nbsp;·&nbsp; Calculations: ${saS}/7`;
+  const rc=document.getElementById('resultCard');rc.style.display='block';rc.scrollIntoView({behavior:'smooth'});
+  sendToSheets({name,period,total,pct,mcqScore:mcqS,saScore:saS,pass,details:det.join(',')});
+}
+const SHEETS_URL='https://script.google.com/macros/s/AKfycbwIR-tZZDqI5u7HMlILgjamMG67pWV4p23aDuKlbbEBtqggR_qkX77kGxhHCfzcJCbN/exec';
+function sendToSheets(d){fetch(SHEETS_URL,{method:'POST',mode:'no-cors',headers:{'Content-Type':'application/json'},body:JSON.stringify({quiz:'SF B',name:d.name,period:d.period,score:d.total,total:15,percent:d.pct,pass:d.pass?'Pass':'Fail',mcq:d.mcqScore,sa:d.saScore,timestamp:new Date().toISOString(),details:d.details})}).catch(()=>{});}
+</script>
+</body>
+</html>
