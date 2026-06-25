@@ -316,7 +316,13 @@ function updateProgress(){
   document.getElementById('progressBar').style.width=(c/15*100)+'%';
 }
 
-document.addEventListener('DOMContentLoaded',()=>{
+document.addEventListener('DOMContentLoaded',async()=>{
+  // 각 버튼에 미리 해시 저장
+  const allBtns=document.querySelectorAll('.option-btn');
+  for(const btn of allBtns){
+    const match=btn.getAttribute('onclick').match(/'([^']+)'\)$/);
+    if(match){const h=await hashStr(match[1]);btn.setAttribute('data-hash',h);}
+  }
   for(let i=11;i<=15;i++){
     const el=document.getElementById(`sa-${i}`);
     if(el) el.addEventListener('input',updateProgress);
@@ -355,8 +361,7 @@ async function submitQuiz(){
     const btns=document.querySelectorAll(`#opts-${i} .option-btn`);
     for(const btn of btns){
       const v=btn.getAttribute('onclick').match(/'([^']+)'\)$/)[1];
-      const vh=await hashStr(v);
-      if(vh===MCQ_HASHES[i]) btn.classList.add('reveal-correct');
+      if(btn.getAttribute('data-hash')===MCQ_HASHES[i]) btn.classList.add('reveal-correct');
     }
     const fb=document.getElementById(`fb-${i}`);
     fb.className='feedback '+(isOk?'correct':'wrong');
