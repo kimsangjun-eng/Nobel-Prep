@@ -6,7 +6,12 @@
 <title>Nobel Prep — Significant Figures Quiz A</title>
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
-  :root{--navy:#1B2A4A;--navy2:#243660;--gold:#C9A84C;--gold2:#e8c56a;--white:#FFFFFF;--off:#F7F8FA;--gray1:#E8EAF0;--gray2:#9AA0B2;--gray3:#555D72;--green:#2D7D46;--green-bg:#EBF7EF;--red:#C0392B;--red-bg:#FDECEA;--radius:10px;--shadow:0 2px 12px rgba(27,42,74,0.10);}
+  :root{
+    --navy:#1B2A4A;--navy2:#243660;--gold:#C9A84C;--gold2:#e8c56a;
+    --white:#FFFFFF;--off:#F7F8FA;--gray1:#E8EAF0;--gray2:#9AA0B2;--gray3:#555D72;
+    --green:#2D7D46;--green-bg:#EBF7EF;--red:#C0392B;--red-bg:#FDECEA;
+    --radius:10px;--shadow:0 2px 12px rgba(27,42,74,0.10);
+  }
   *{box-sizing:border-box;margin:0;padding:0;}
   body{font-family:'Inter',sans-serif;background:var(--off);color:var(--navy);min-height:100vh;}
   header{background:var(--navy);padding:16px 28px 0;position:sticky;top:0;z-index:100;box-shadow:0 2px 10px rgba(0,0,0,0.25);}
@@ -79,11 +84,15 @@
 <body>
 <header>
   <div class="header-top">
-    <div class="logo"><div class="logo-badge">NP</div><div class="logo-text"><h1>Nobel Prep</h1><p>AP Chemistry · Significant Figures</p></div></div>
+    <div class="logo">
+      <div class="logo-badge">NP</div>
+      <div class="logo-text"><h1>Nobel Prep</h1><p>AP Chemistry · Significant Figures</p></div>
+    </div>
     <div class="quiz-badge">QUIZ A</div>
   </div>
   <div class="progress-bar-wrap"><div class="progress-bar" id="progressBar"></div></div>
 </header>
+
 <main>
   <div class="name-card">
     <h2>Student Information</h2>
@@ -92,51 +101,193 @@
       <input type="text" id="studentPeriod" placeholder="Period" style="max-width:120px;"/>
     </div>
   </div>
+
   <div class="sf-guide">
-    <strong>📐 Significant Figures Rules (Quick Reference)</strong>
+    <strong>📐 Significant Figures — Quick Reference</strong>
     • Non-zero digits: always significant &nbsp;|&nbsp; Zeros between non-zeros: significant<br>
-    • Leading zeros: NOT significant &nbsp;|&nbsp; Trailing zeros with decimal: significant<br>
-    • Sci. notation: <code>3.40 × 10³</code> = 3 SF &nbsp;|&nbsp; Answers revealed after submission.
+    • Leading zeros: NOT significant &nbsp;|&nbsp; Trailing zeros with decimal point: significant<br>
+    • Multiplication/Division: use least number of SF &nbsp;|&nbsp; Addition/Subtraction: use least decimal places<br>
+    • Scientific notation input: <code>3.74e-3</code> = 3.74 × 10⁻³ &nbsp;|&nbsp; Answers revealed after submission.
   </div>
 
-  <div class="section-header">Section 1 — Counting Significant Figures <span class="badge">Q1–Q8</span></div>
+  <!-- SECTION 1: MCQ Q1~Q5 -->
+  <div class="section-header">Section 1 — Counting & Rules <span class="badge">Q1–Q5</span></div>
 
-  <div class="q-card" id="qcard-1"><div class="q-num">Question 1</div><div class="q-text">How many significant figures are in <code>0.00450</code>?</div><div class="options" id="opts-1"><button class="option-btn" onclick="selectMCQ(1,'A','3')"><span class="opt-letter">A</span>3</button><button class="option-btn" onclick="selectMCQ(1,'B','2')"><span class="opt-letter">B</span>2</button><button class="option-btn" onclick="selectMCQ(1,'C','5')"><span class="opt-letter">C</span>5</button><button class="option-btn" onclick="selectMCQ(1,'D','6')"><span class="opt-letter">D</span>6</button></div><div class="feedback" id="fb-1"></div></div>
+  <!-- Q1: 정답 B=3 -->
+  <div class="q-card" id="qcard-1">
+    <div class="q-num">Question 1</div>
+    <div class="q-text">How many significant figures are in <code>0.00450</code>?</div>
+    <div class="options" id="opts-1">
+      <button class="option-btn" onclick="selectMCQ(1,'A','2')"><span class="opt-letter">A</span>2</button>
+      <button class="option-btn" onclick="selectMCQ(1,'B','3')"><span class="opt-letter">B</span>3</button>
+      <button class="option-btn" onclick="selectMCQ(1,'C','5')"><span class="opt-letter">C</span>5</button>
+      <button class="option-btn" onclick="selectMCQ(1,'D','6')"><span class="opt-letter">D</span>6</button>
+    </div>
+    <div class="feedback" id="fb-1"></div>
+  </div>
 
-  <div class="q-card" id="qcard-2"><div class="q-num">Question 2</div><div class="q-text">How many significant figures are in <code>3,040</code>?</div><div class="options" id="opts-2"><button class="option-btn" onclick="selectMCQ(2,'A','3')"><span class="opt-letter">A</span>3</button><button class="option-btn" onclick="selectMCQ(2,'B','4')"><span class="opt-letter">B</span>4</button><button class="option-btn" onclick="selectMCQ(2,'C','2')"><span class="opt-letter">C</span>2</button><button class="option-btn" onclick="selectMCQ(2,'D','1')"><span class="opt-letter">D</span>1</button></div><div class="feedback" id="fb-2"></div></div>
+  <!-- Q2: 정답 D=5 -->
+  <div class="q-card" id="qcard-2">
+    <div class="q-num">Question 2</div>
+    <div class="q-text">How many significant figures are in <code>1.0080</code>?</div>
+    <div class="options" id="opts-2">
+      <button class="option-btn" onclick="selectMCQ(2,'A','2')"><span class="opt-letter">A</span>2</button>
+      <button class="option-btn" onclick="selectMCQ(2,'B','3')"><span class="opt-letter">B</span>3</button>
+      <button class="option-btn" onclick="selectMCQ(2,'C','4')"><span class="opt-letter">C</span>4</button>
+      <button class="option-btn" onclick="selectMCQ(2,'D','5')"><span class="opt-letter">D</span>5</button>
+    </div>
+    <div class="feedback" id="fb-2"></div>
+  </div>
 
-  <div class="q-card" id="qcard-3"><div class="q-num">Question 3</div><div class="q-text">How many significant figures are in <code>1.0080</code>?</div><div class="options" id="opts-3"><button class="option-btn" onclick="selectMCQ(3,'A','5')"><span class="opt-letter">A</span>5</button><button class="option-btn" onclick="selectMCQ(3,'B','4')"><span class="opt-letter">B</span>4</button><button class="option-btn" onclick="selectMCQ(3,'C','3')"><span class="opt-letter">C</span>3</button><button class="option-btn" onclick="selectMCQ(3,'D','2')"><span class="opt-letter">D</span>2</button></div><div class="feedback" id="fb-3"></div></div>
+  <!-- Q3: 정답 A=2 -->
+  <div class="q-card" id="qcard-3">
+    <div class="q-num">Question 3</div>
+    <div class="q-text">Calculate <code>2.5 × 3.42</code>. How many significant figures should the answer have?</div>
+    <div class="options" id="opts-3">
+      <button class="option-btn" onclick="selectMCQ(3,'A','2')"><span class="opt-letter">A</span>2</button>
+      <button class="option-btn" onclick="selectMCQ(3,'B','3')"><span class="opt-letter">B</span>3</button>
+      <button class="option-btn" onclick="selectMCQ(3,'C','4')"><span class="opt-letter">C</span>4</button>
+      <button class="option-btn" onclick="selectMCQ(3,'D','5')"><span class="opt-letter">D</span>5</button>
+    </div>
+    <div class="feedback" id="fb-3"></div>
+  </div>
 
-  <div class="q-card" id="qcard-4"><div class="q-num">Question 4</div><div class="q-text">How many significant figures are in <code>5.00 × 10⁻³</code>?</div><div class="options" id="opts-4"><button class="option-btn" onclick="selectMCQ(4,'A','3')"><span class="opt-letter">A</span>3</button><button class="option-btn" onclick="selectMCQ(4,'B','1')"><span class="opt-letter">B</span>1</button><button class="option-btn" onclick="selectMCQ(4,'C','4')"><span class="opt-letter">C</span>4</button><button class="option-btn" onclick="selectMCQ(4,'D','2')"><span class="opt-letter">D</span>2</button></div><div class="feedback" id="fb-4"></div></div>
+  <!-- Q4: 정답 C=3 -->
+  <div class="q-card" id="qcard-4">
+    <div class="q-num">Question 4</div>
+    <div class="q-text">How many significant figures are in <code>3,040</code>?</div>
+    <div class="options" id="opts-4">
+      <button class="option-btn" onclick="selectMCQ(4,'A','1')"><span class="opt-letter">A</span>1</button>
+      <button class="option-btn" onclick="selectMCQ(4,'B','2')"><span class="opt-letter">B</span>2</button>
+      <button class="option-btn" onclick="selectMCQ(4,'C','3')"><span class="opt-letter">C</span>3</button>
+      <button class="option-btn" onclick="selectMCQ(4,'D','4')"><span class="opt-letter">D</span>4</button>
+    </div>
+    <div class="feedback" id="fb-4"></div>
+  </div>
 
-  <div class="q-card" id="qcard-5"><div class="q-num">Question 5</div><div class="q-text">How many significant figures are in <code>0.1020</code>?</div><div class="options" id="opts-5"><button class="option-btn" onclick="selectMCQ(5,'A','4')"><span class="opt-letter">A</span>4</button><button class="option-btn" onclick="selectMCQ(5,'B','3')"><span class="opt-letter">B</span>3</button><button class="option-btn" onclick="selectMCQ(5,'C','5')"><span class="opt-letter">C</span>5</button><button class="option-btn" onclick="selectMCQ(5,'D','2')"><span class="opt-letter">D</span>2</button></div><div class="feedback" id="fb-5"></div></div>
+  <!-- Q5: 정답 B=0.5080 -->
+  <div class="q-card" id="qcard-5">
+    <div class="q-num">Question 5</div>
+    <div class="q-text">Which of the following has exactly <strong>4 significant figures</strong>?</div>
+    <div class="options" id="opts-5">
+      <button class="option-btn" onclick="selectMCQ(5,'A','50.80')"><span class="opt-letter">A</span>50.80</button>
+      <button class="option-btn" onclick="selectMCQ(5,'B','0.5080')"><span class="opt-letter">B</span>0.5080</button>
+      <button class="option-btn" onclick="selectMCQ(5,'C','5080')"><span class="opt-letter">C</span>5080</button>
+      <button class="option-btn" onclick="selectMCQ(5,'D','0.05080')"><span class="opt-letter">D</span>0.05080</button>
+    </div>
+    <div class="feedback" id="fb-5"></div>
+  </div>
 
-  <div class="q-card" id="qcard-6"><div class="q-num">Question 6</div><div class="q-text">Multiply: <code>2.5 × 3.42</code> — how many SF should the answer have?</div><div class="options" id="opts-6"><button class="option-btn" onclick="selectMCQ(6,'A','2')"><span class="opt-letter">A</span>2</button><button class="option-btn" onclick="selectMCQ(6,'B','3')"><span class="opt-letter">B</span>3</button><button class="option-btn" onclick="selectMCQ(6,'C','4')"><span class="opt-letter">C</span>4</button><button class="option-btn" onclick="selectMCQ(6,'D','1')"><span class="opt-letter">D</span>1</button></div><div class="feedback" id="fb-6"></div></div>
+  <!-- SECTION 2: SA Q6~Q15 -->
+  <div class="section-header" style="margin-top:28px;">Section 2 — Calculations <span class="badge">Q6–Q15</span></div>
 
-  <div class="q-card" id="qcard-7"><div class="q-num">Question 7</div><div class="q-text">Add: <code>12.52 + 349.0 + 8.24</code> — to which decimal place should the answer be rounded?</div><div class="options" id="opts-7"><button class="option-btn" onclick="selectMCQ(7,'A','tenths (0.1)')"><span class="opt-letter">A</span>Tenths place (0.1)</button><button class="option-btn" onclick="selectMCQ(7,'B','hundredths (0.01)')"><span class="opt-letter">B</span>Hundredths place (0.01)</button><button class="option-btn" onclick="selectMCQ(7,'C','ones (1)')"><span class="opt-letter">C</span>Ones place (1)</button><button class="option-btn" onclick="selectMCQ(7,'D','thousands (1000)')"><span class="opt-letter">D</span>Thousands place (1000)</button></div><div class="feedback" id="fb-7"></div></div>
+  <div class="q-card" id="qcard-6">
+    <div class="q-num">Question 6</div>
+    <div class="q-text">Calculate with correct SF: &nbsp;<code>4.5 × 8.1</code></div>
+    <div class="q-hint">⚙ Apply multiplication SF rule.</div>
+    <div class="sa-wrap">
+      <input class="sa-input" type="text" id="sa-6" placeholder="Type your answer"/>
+    </div>
+    <div class="feedback" id="fb-6"></div>
+  </div>
 
-  <div class="q-card" id="qcard-8"><div class="q-num">Question 8</div><div class="q-text">Which of the following has <strong>4 significant figures</strong>?</div><div class="options" id="opts-8"><button class="option-btn" onclick="selectMCQ(8,'A','0.05080')"><span class="opt-letter">A</span>0.05080</button><button class="option-btn" onclick="selectMCQ(8,'B','5080')"><span class="opt-letter">B</span>5080</button><button class="option-btn" onclick="selectMCQ(8,'C','0.5080')"><span class="opt-letter">C</span>0.5080</button><button class="option-btn" onclick="selectMCQ(8,'D','50.8')"><span class="opt-letter">D</span>50.8</button></div><div class="feedback" id="fb-8"></div></div>
+  <div class="q-card" id="qcard-7">
+    <div class="q-num">Question 7</div>
+    <div class="q-text">Calculate with correct SF: &nbsp;<code>13.68 ÷ 4.1</code></div>
+    <div class="q-hint">⚙ Apply division SF rule.</div>
+    <div class="sa-wrap">
+      <input class="sa-input" type="text" id="sa-7" placeholder="Type your answer"/>
+    </div>
+    <div class="feedback" id="fb-7"></div>
+  </div>
 
-  <div class="section-header" style="margin-top:28px;">Section 2 — Calculations with Correct SF <span class="badge">Q9–Q15</span></div>
+  <div class="q-card" id="qcard-8">
+    <div class="q-num">Question 8</div>
+    <div class="q-text">Calculate with correct SF: &nbsp;<code>25.1 + 2.03 + 1.1</code></div>
+    <div class="q-hint">⚙ Apply addition SF rule.</div>
+    <div class="sa-wrap">
+      <input class="sa-input" type="text" id="sa-8" placeholder="Type your answer"/>
+    </div>
+    <div class="feedback" id="fb-8"></div>
+  </div>
 
-  <div class="q-card" id="qcard-9"><div class="q-num">Question 9</div><div class="q-text">Calculate with correct SF:<br><code>4.5 × 8.1</code></div><div class="q-hint">⚙ Apply the correct SF rule for multiplication.</div><div class="sa-wrap"><input class="sa-input" type="text" id="sa-9" placeholder="Type your answer"/><div class="sa-hint-text">multiplication rule</div></div><div class="feedback" id="fb-9"></div></div>
+  <div class="q-card" id="qcard-9">
+    <div class="q-num">Question 9</div>
+    <div class="q-text">Calculate with correct SF: &nbsp;<code>1,245.0 − 987.35</code></div>
+    <div class="q-hint">⚙ Apply subtraction SF rule.</div>
+    <div class="sa-wrap">
+      <input class="sa-input" type="text" id="sa-9" placeholder="Type your answer"/>
+    </div>
+    <div class="feedback" id="fb-9"></div>
+  </div>
 
-  <div class="q-card" id="qcard-10"><div class="q-num">Question 10</div><div class="q-text">Calculate with correct SF:<br><code>13.68 ÷ 4.1</code></div><div class="q-hint">⚙ Apply the correct SF rule for division.</div><div class="sa-wrap"><input class="sa-input" type="text" id="sa-10" placeholder="Type your answer"/><div class="sa-hint-text">division rule</div></div><div class="feedback" id="fb-10"></div></div>
+  <div class="q-card" id="qcard-10">
+    <div class="q-num">Question 10</div>
+    <div class="q-text">Express <code>0.003740</code> in scientific notation with the correct number of SF.</div>
+    <div class="q-hint">⚙ Use E-notation (e.g. 3.74e-3). Maintain all SF.</div>
+    <div class="sa-wrap">
+      <input class="sa-input" type="text" id="sa-10" placeholder="Type your answer"/>
+      <div class="sa-hint-text">E-notation required</div>
+    </div>
+    <div class="feedback" id="fb-10"></div>
+  </div>
 
-  <div class="q-card" id="qcard-11"><div class="q-num">Question 11</div><div class="q-text">Calculate with correct SF:<br><code>25.1 + 2.03 + 1.1</code></div><div class="q-hint">⚙ Apply the correct SF rule for addition.</div><div class="sa-wrap"><input class="sa-input" type="text" id="sa-11" placeholder="Type your answer"/><div class="sa-hint-text">addition rule</div></div><div class="feedback" id="fb-11"></div></div>
+  <div class="q-card" id="qcard-11">
+    <div class="q-num">Question 11</div>
+    <div class="q-text">Calculate with correct SF: &nbsp;<code>(6.24 × 10³) × (4.00 × 10⁻²)</code></div>
+    <div class="q-hint">⚙ Use E-notation if needed.</div>
+    <div class="sa-wrap">
+      <input class="sa-input" type="text" id="sa-11" placeholder="Type your answer"/>
+      <div class="sa-hint-text">E-notation if needed</div>
+    </div>
+    <div class="feedback" id="fb-11"></div>
+  </div>
 
-  <div class="q-card" id="qcard-12"><div class="q-num">Question 12</div><div class="q-text">Calculate with correct SF:<br><code>1,245.0 − 987.35</code></div><div class="q-hint">⚙ Apply the correct SF rule for subtraction.</div><div class="sa-wrap"><input class="sa-input" type="text" id="sa-12" placeholder="Type your answer"/><div class="sa-hint-text">subtraction rule</div></div><div class="feedback" id="fb-12"></div></div>
+  <div class="q-card" id="qcard-12">
+    <div class="q-num">Question 12</div>
+    <div class="q-text">Calculate with correct SF (multi-step): &nbsp;<code>(8.315 + 0.5) × 2.00</code></div>
+    <div class="q-hint">⚙ Apply addition rule first, then multiplication rule.</div>
+    <div class="sa-wrap">
+      <input class="sa-input" type="text" id="sa-12" placeholder="Type your answer"/>
+    </div>
+    <div class="feedback" id="fb-12"></div>
+  </div>
 
-  <div class="q-card" id="qcard-13"><div class="q-num">Question 13</div><div class="q-text">Express <code>0.003740</code> in scientific notation with correct SF.</div><div class="q-hint">⚙ Use E-notation: e.g. 3.74e-3</div><div class="sa-wrap"><input class="sa-input" type="text" id="sa-13" placeholder="Type your answer"/><div class="sa-hint-text">E-notation required</div></div><div class="feedback" id="fb-13"></div></div>
+  <div class="q-card" id="qcard-13">
+    <div class="q-num">Question 13</div>
+    <div class="q-text">Calculate with correct SF: &nbsp;<code>9.84 ÷ 3.2</code></div>
+    <div class="q-hint">⚙ Apply division SF rule.</div>
+    <div class="sa-wrap">
+      <input class="sa-input" type="text" id="sa-13" placeholder="Type your answer"/>
+    </div>
+    <div class="feedback" id="fb-13"></div>
+  </div>
 
-  <div class="q-card" id="qcard-14"><div class="q-num">Question 14</div><div class="q-text">Calculate with correct SF:<br><code>(6.24 × 10³) × (4.00 × 10⁻²)</code></div><div class="q-hint">⚙ Use E-notation if needed.</div><div class="sa-wrap"><input class="sa-input" type="text" id="sa-14" placeholder="Type your answer"/><div class="sa-hint-text">scientific notation</div></div><div class="feedback" id="fb-14"></div></div>
+  <div class="q-card" id="qcard-14">
+    <div class="q-num">Question 14</div>
+    <div class="q-text">Calculate with correct SF: &nbsp;<code>47.80 − 3.256</code></div>
+    <div class="q-hint">⚙ Apply subtraction SF rule.</div>
+    <div class="sa-wrap">
+      <input class="sa-input" type="text" id="sa-14" placeholder="Type your answer"/>
+    </div>
+    <div class="feedback" id="fb-14"></div>
+  </div>
 
-  <div class="q-card" id="qcard-15"><div class="q-num">Question 15</div><div class="q-text">Calculate with correct SF:<br><code>(8.315 + 0.5) × 2.00</code></div><div class="q-hint">⚙ Multi-step: apply addition rule first, then multiplication rule.</div><div class="sa-wrap"><input class="sa-input" type="text" id="sa-15" placeholder="Type your answer"/><div class="sa-hint-text">multi-step calculation</div></div><div class="feedback" id="fb-15"></div></div>
+  <div class="q-card" id="qcard-15">
+    <div class="q-num">Question 15</div>
+    <div class="q-text">Calculate with correct SF: &nbsp;<code>6.8 × 3.15</code></div>
+    <div class="q-hint">⚙ Apply multiplication SF rule.</div>
+    <div class="sa-wrap">
+      <input class="sa-input" type="text" id="sa-15" placeholder="Type your answer"/>
+    </div>
+    <div class="feedback" id="fb-15"></div>
+  </div>
 
   <div class="submit-section">
     <button class="submit-btn" id="submitBtn" onclick="submitQuiz()">Submit &amp; See Results</button>
     <p style="font-size:12px;color:#9AA0B2;margin-top:12px;">Answers will be revealed after submission.</p>
   </div>
+
   <div class="result-card" id="resultCard">
     <div class="result-score" id="resultScore">—</div>
     <div class="result-label">out of 15 questions</div>
@@ -144,67 +295,192 @@
     <div class="result-breakdown" id="resultBreakdown"></div>
   </div>
 </main>
+
 <div class="progress-pill">Answered: <span id="pillCount">0</span> / 15</div>
 
 <script>
-const MCQ_HASHES={
-  1:'4e07408562bedb8b60ce05c1decfe3ad16b72230967de01f640b7e4729b49fce',
-  2:'4e07408562bedb8b60ce05c1decfe3ad16b72230967de01f640b7e4729b49fce',
-  3:'ef2d127de37b942baad06145e54b0c619a1f22327b2ebbcfbec78f5564afe39d',
-  4:'4e07408562bedb8b60ce05c1decfe3ad16b72230967de01f640b7e4729b49fce',
-  5:'4b227777d4dd1fc61c6f884f48641d02b4d121d3fd328cb08b5531fcacdabf8a',
-  6:'d4735e3a265e16eee03f59718b9b5d03019c07d8b6c51f90da3a666eec13ab35',
-  7:'ae310ede7073bb67626514b0dc29050829c5a6359579e5ca0b34e7117358b3ae',
-  8:'5834c06456add81ce7b2d21c242406254f10922fa129cf469b56f9ce36f2fd2f'
+// MCQ 정답 해시 (SHA-256) — 정답분포: B-D-A-C-B
+const MCQ_HASHES = {
+  1: '4e07408562bedb8b60ce05c1decfe3ad16b72230967de01f640b7e4729b49fce', // B=3
+  2: 'ef2d127de37b942baad06145e54b0c619a1f22327b2ebbcfbec78f5564afe39d', // D=5
+  3: 'd4735e3a265e16eee03f59718b9b5d03019c07d8b6c51f90da3a666eec13ab35', // A=2
+  4: '4e07408562bedb8b60ce05c1decfe3ad16b72230967de01f640b7e4729b49fce', // C=3
+  5: '5834c06456add81ce7b2d21c242406254f10922fa129cf469b56f9ce36f2fd2f', // B=0.5080
 };
-const SA_ANSWERS={
-  9: {value:36,   sf:2,type:'number',unit:''},
-  10:{value:3.3,  sf:2,type:'number',unit:''},
-  11:{value:28.2, sf:3,type:'number',unit:''},
-  12:{value:257.7,sf:4,type:'number',unit:''},
-  13:{value:3.74e-3,sf:3,type:'enot',correctStr:'3.74e-3'},
-  14:{value:250,  sf:3,type:'number',unit:''},
-  15:{value:17.6, sf:3,type:'number',unit:''}
+
+// SA 정답 (숫자형: value+SF, E-notation형: value+sf+correctStr)
+const SA_ANSWERS = {
+  6:  { value: 36,      sf: 2, type: 'number' },
+  7:  { value: 3.3,     sf: 2, type: 'number' },
+  8:  { value: 28.2,    sf: 3, type: 'number' },
+  9:  { value: 257.7,   sf: 4, type: 'number' },
+  10: { value: 3.74e-3, sf: 4, type: 'enot', correctStr: '3.740e-3' },
+  11: { value: 250,     sf: 3, type: 'enot', correctStr: '2.50e2' },
+  12: { value: 18,      sf: 2, type: 'number' },
+  13: { value: 3.1,     sf: 2, type: 'number' },
+  14: { value: 44.54,   sf: 4, type: 'number' },
+  15: { value: 21,      sf: 2, type: 'number' },
 };
-const selections={};
-async function hashStr(s){const norm=s.trim().toLowerCase().replace(/\s+/g,'');const buf=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(norm));return Array.from(new Uint8Array(buf)).map(b=>b.toString(16).padStart(2,'0')).join('');}
-function parseEN(s){s=s.trim().toLowerCase().replace(/\s+/g,'');const v=parseFloat(s);return isNaN(v)?null:v;}
-function countSF(s){s=s.trim().toLowerCase().replace(/\s+/g,'');let coef=s.split('e')[0].replace(/^-/,'');const m=coef.replace('.','').match(/^0*([1-9][0-9]*0*)$/);if(!m)return null;let d=m[1];if(!coef.includes('.'))d=d.replace(/0+$/,'');return d.length;}
-function checkNum(raw,key){const uv=parseEN(raw);if(uv===null)return{ok:false,reason:'Cannot parse answer.'};const relErr=Math.abs(uv-key.value)/(Math.abs(key.value)||1);if(relErr>0.006)return{ok:false,reason:'Incorrect value.'};const uSF=countSF(raw.trim().toLowerCase().split('e')[0]);if(uSF===null)return{ok:false,reason:'Cannot determine SF count.'};if(uSF!==key.sf)return{ok:false,reason:`Value is correct — but SF is wrong. Need ${key.sf} SF (you entered ${uSF} SF).`};return{ok:true};}
-function checkENot(raw,key){const uv=parseEN(raw);if(uv===null)return{ok:false,reason:`Use E-notation (e.g. ${key.correctStr})`};const relErr=Math.abs(uv-key.value)/Math.abs(key.value);if(relErr>0.006)return{ok:false,reason:'Incorrect value.'};if(!raw.toLowerCase().includes('e'))return{ok:false,reason:'Must use E-notation format.'};const uSF=countSF(raw.trim().toLowerCase().split('e')[0]);if(uSF===null||uSF!==key.sf)return{ok:false,reason:`Value is correct — but SF is wrong. Need ${key.sf} SF in coefficient.`};return{ok:true};}
-function selectMCQ(qNum,letter,value){if(document.getElementById('resultCard').style.display==='block')return;document.querySelectorAll(`#opts-${qNum} .option-btn`).forEach(b=>b.classList.remove('selected'));event.currentTarget.classList.add('selected');selections[qNum]=value;const card=document.getElementById(`qcard-${qNum}`);card.classList.remove('unanswered-warn');card.classList.add('selected-only');updateProgress();}
-function updateProgress(){let c=0;for(let i=1;i<=8;i++)if(selections[i])c++;for(let i=9;i<=15;i++){const el=document.getElementById(`sa-${i}`);if(el&&el.value.trim())c++;}document.getElementById('pillCount').textContent=c;document.getElementById('progressBar').style.width=(c/15*100)+'%';}
-document.addEventListener('DOMContentLoaded',async()=>{
-  // 각 버튼에 미리 해시 저장
-  const allBtns=document.querySelectorAll('.option-btn');
-  for(const btn of allBtns){
-    const match=btn.getAttribute('onclick').match(/'([^']+)'\)$/);
-    if(match){const h=await hashStr(match[1]);btn.setAttribute('data-hash',h);}
-  }for(let i=9;i<=15;i++){const el=document.getElementById(`sa-${i}`);if(el)el.addEventListener('input',updateProgress);}});
-async function submitQuiz(){
-  let missing=[];
-  for(let i=1;i<=8;i++)if(!selections[i])missing.push(i);
-  for(let i=9;i<=15;i++){const el=document.getElementById(`sa-${i}`);if(!el||!el.value.trim())missing.push(i);}
-  if(missing.length>0){missing.forEach(n=>{const c=document.getElementById(`qcard-${n}`);c.classList.remove('unanswered-warn');void c.offsetWidth;c.classList.add('unanswered-warn');});document.getElementById(`qcard-${missing[0]}`).scrollIntoView({behavior:'smooth',block:'center'});return;}
-  document.querySelectorAll('.option-btn').forEach(b=>b.disabled=true);
-  document.querySelectorAll('.sa-input').forEach(i=>i.disabled=true);
-  document.getElementById('submitBtn').disabled=true;
-  let total=0;const det=[];
-  for(let i=1;i<=8;i++){const uv=selections[i];const uh=await hashStr(uv);const isOk=uh===MCQ_HASHES[i];if(isOk)total++;det.push(`Q${i}:${isOk?'O':'X'}`);document.querySelectorAll(`#opts-${i} .option-btn`).forEach(btn=>{const v=btn.getAttribute('onclick').match(/'([^']+)'\)$/)[1];btn.classList.remove('selected','selected-only');if(v===uv&&isOk)btn.classList.add('correct');else if(v===uv&&!isOk)btn.classList.add('wrong');});document.querySelectorAll(`#opts-${i} .option-btn`).forEach(btn=>{if(btn.getAttribute('data-hash')===MCQ_HASHES[i])btn.classList.add('reveal-correct');});const fb=document.getElementById(`fb-${i}`);fb.className='feedback '+(isOk?'correct':'wrong');fb.innerHTML=isOk?`<span class="feedback-icon">✓</span><span class="feedback-text">Correct!</span>`:`<span class="feedback-icon">✗</span><span class="feedback-text">Incorrect. The correct answer is highlighted above.</span>`;const card=document.getElementById(`qcard-${i}`);card.classList.remove('selected-only','unanswered-warn');card.classList.add(isOk?'answered-correct':'answered-wrong');}
-  for(let i=9;i<=15;i++){const raw=document.getElementById(`sa-${i}`).value.trim();const key=SA_ANSWERS[i];let result=key.type==='enot'?checkENot(raw,key):checkNum(raw,key);if(result.ok)total++;det.push(`Q${i}:${result.ok?'O':'X'}`);document.getElementById(`sa-${i}`).classList.add(result.ok?'correct':'wrong');const fb=document.getElementById(`fb-${i}`);fb.className='feedback '+(result.ok?'correct':'wrong');fb.innerHTML=result.ok?`<span class="feedback-icon">✓</span><span class="feedback-text">Correct!</span>`:`<span class="feedback-icon">✗</span><span class="feedback-text">${result.reason}</span>`;const card=document.getElementById(`qcard-${i}`);card.classList.remove('selected-only','unanswered-warn');card.classList.add(result.ok?'answered-correct':'answered-wrong');}
-  const name=document.getElementById('studentName').value.trim()||'Anonymous';
-  const period=document.getElementById('studentPeriod').value.trim()||'—';
-  const pct=Math.round(total/15*100),pass=total>=12;
-  const mcqS=det.slice(0,8).filter(s=>s.includes(':O')).length;
-  const saS=det.slice(8).filter(s=>s.includes(':O')).length;
-  document.getElementById('resultScore').textContent=`${total} / 15`;
-  const badge=document.getElementById('resultBadge');badge.textContent=pass?'✓ Pass':'✗ Needs Review';badge.className='result-badge '+(pass?'pass':'fail');
-  document.getElementById('resultBreakdown').innerHTML=`${name} &nbsp;·&nbsp; Period ${period} &nbsp;·&nbsp; ${pct}% &nbsp;|&nbsp; Counting SF: ${mcqS}/8 &nbsp;·&nbsp; Calculations: ${saS}/7`;
-  const rc=document.getElementById('resultCard');rc.style.display='block';rc.scrollIntoView({behavior:'smooth'});
-  sendToSheets({name,period,total,pct,mcqScore:mcqS,saScore:saS,pass,details:det.join(',')});
+
+const selections = {};
+
+async function hashStr(s) {
+  const norm = s.trim().toLowerCase().replace(/\s+/g, '');
+  const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(norm));
+  return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2,'0')).join('');
 }
-const SHEETS_URL='https://script.google.com/macros/s/AKfycbwIR-tZZDqI5u7HMlILgjamMG67pWV4p23aDuKlbbEBtqggR_qkX77kGxhHCfzcJCbN/exec';
-function sendToSheets(d){fetch(SHEETS_URL,{method:'POST',mode:'no-cors',headers:{'Content-Type':'application/json'},body:JSON.stringify({quiz:'SF A',name:d.name,period:d.period,score:d.total,total:15,percent:d.pct,pass:d.pass?'Pass':'Fail',mcq:d.mcqScore,sa:d.saScore,timestamp:new Date().toISOString(),details:d.details})}).catch(()=>{});}
+
+function parseEN(s) { s=s.trim().toLowerCase().replace(/\s+/g,''); const v=parseFloat(s); return isNaN(v)?null:v; }
+
+function countSF(s) {
+  s = s.trim().toLowerCase().replace(/\s+/g,'');
+  let coef = s.split('e')[0].replace(/^-/,'');
+  const m = coef.replace('.','').match(/^0*([1-9][0-9]*0*)$/);
+  if (!m) return null;
+  let d = m[1];
+  if (!coef.includes('.')) d = d.replace(/0+$/,'');
+  return d.length;
+}
+
+function checkNum(raw, key) {
+  const uv = parseEN(raw);
+  if (uv === null) return { ok: false, reason: 'Cannot parse answer. Check your format.' };
+  const relErr = Math.abs(uv - key.value) / (Math.abs(key.value) || 1);
+  if (relErr > 0.006) return { ok: false, reason: 'Incorrect value.' };
+  const uSF = countSF(raw.trim().toLowerCase().split('e')[0]);
+  if (uSF === null) return { ok: false, reason: 'Cannot determine SF count.' };
+  if (uSF !== key.sf) return { ok: false, reason: `Value correct ✓ — but SF wrong. Need ${key.sf} SF (you entered ${uSF} SF).` };
+  return { ok: true };
+}
+
+function checkENot(raw, key) {
+  const uv = parseEN(raw);
+  if (uv === null) return { ok: false, reason: `Use E-notation (e.g. ${key.correctStr})` };
+  const relErr = Math.abs(uv - key.value) / Math.abs(key.value);
+  if (relErr > 0.006) return { ok: false, reason: 'Incorrect value.' };
+  if (!raw.toLowerCase().includes('e')) return { ok: false, reason: 'Must use E-notation format.' };
+  const uSF = countSF(raw.trim().toLowerCase().split('e')[0]);
+  if (uSF === null || uSF !== key.sf) return { ok: false, reason: `Value correct ✓ — but SF wrong. Need ${key.sf} SF in coefficient.` };
+  return { ok: true };
+}
+
+function selectMCQ(qNum, letter, value) {
+  if (document.getElementById('resultCard').style.display === 'block') return;
+  document.querySelectorAll(`#opts-${qNum} .option-btn`).forEach(b => b.classList.remove('selected'));
+  event.currentTarget.classList.add('selected');
+  selections[qNum] = value;
+  const card = document.getElementById(`qcard-${qNum}`);
+  card.classList.remove('unanswered-warn');
+  card.classList.add('selected-only');
+  updateProgress();
+}
+
+function updateProgress() {
+  let c = 0;
+  for (let i = 1; i <= 5; i++) if (selections[i]) c++;
+  for (let i = 6; i <= 15; i++) { const el = document.getElementById(`sa-${i}`); if (el && el.value.trim()) c++; }
+  document.getElementById('pillCount').textContent = c;
+  document.getElementById('progressBar').style.width = (c / 15 * 100) + '%';
+}
+
+document.addEventListener('DOMContentLoaded', async () => {
+  // data-hash 미리 계산 저장
+  const allBtns = document.querySelectorAll('.option-btn');
+  for (const btn of allBtns) {
+    const match = btn.getAttribute('onclick').match(/'([^']+)'\)$/);
+    if (match) { const h = await hashStr(match[1]); btn.setAttribute('data-hash', h); }
+  }
+  for (let i = 6; i <= 15; i++) {
+    const el = document.getElementById(`sa-${i}`);
+    if (el) el.addEventListener('input', updateProgress);
+  }
+});
+
+async function submitQuiz() {
+  let missing = [];
+  for (let i = 1; i <= 5; i++) if (!selections[i]) missing.push(i);
+  for (let i = 6; i <= 15; i++) { const el = document.getElementById(`sa-${i}`); if (!el || !el.value.trim()) missing.push(i); }
+  if (missing.length > 0) {
+    missing.forEach(n => { const c = document.getElementById(`qcard-${n}`); c.classList.remove('unanswered-warn'); void c.offsetWidth; c.classList.add('unanswered-warn'); });
+    document.getElementById(`qcard-${missing[0]}`).scrollIntoView({ behavior: 'smooth', block: 'center' });
+    return;
+  }
+  document.querySelectorAll('.option-btn').forEach(b => b.disabled = true);
+  document.querySelectorAll('.sa-input').forEach(i => i.disabled = true);
+  document.getElementById('submitBtn').disabled = true;
+
+  let total = 0; const det = [];
+
+  // MCQ 채점
+  for (let i = 1; i <= 5; i++) {
+    const uv = selections[i];
+    const uh = await hashStr(uv);
+    const isOk = uh === MCQ_HASHES[i];
+    if (isOk) total++;
+    det.push(`Q${i}:${isOk ? 'O' : 'X'}`);
+    document.querySelectorAll(`#opts-${i} .option-btn`).forEach(btn => {
+      btn.classList.remove('selected', 'selected-only');
+      if (btn.getAttribute('data-hash') === MCQ_HASHES[i]) btn.classList.add('reveal-correct');
+      const v = btn.getAttribute('onclick').match(/'([^']+)'\)$/)[1];
+      if (v === uv && isOk)  btn.classList.add('correct');
+      if (v === uv && !isOk) btn.classList.add('wrong');
+    });
+    const fb = document.getElementById(`fb-${i}`);
+    fb.className = 'feedback ' + (isOk ? 'correct' : 'wrong');
+    fb.innerHTML = isOk
+      ? `<span class="feedback-icon">✓</span><span class="feedback-text">Correct!</span>`
+      : `<span class="feedback-icon">✗</span><span class="feedback-text">Incorrect. The correct answer is highlighted above.</span>`;
+    const card = document.getElementById(`qcard-${i}`);
+    card.classList.remove('selected-only', 'unanswered-warn');
+    card.classList.add(isOk ? 'answered-correct' : 'answered-wrong');
+  }
+
+  // SA 채점
+  for (let i = 6; i <= 15; i++) {
+    const raw = document.getElementById(`sa-${i}`).value.trim();
+    const key = SA_ANSWERS[i];
+    const result = key.type === 'enot' ? checkENot(raw, key) : checkNum(raw, key);
+    if (result.ok) total++;
+    det.push(`Q${i}:${result.ok ? 'O' : 'X'}`);
+    document.getElementById(`sa-${i}`).classList.add(result.ok ? 'correct' : 'wrong');
+    const fb = document.getElementById(`fb-${i}`);
+    fb.className = 'feedback ' + (result.ok ? 'correct' : 'wrong');
+    fb.innerHTML = result.ok
+      ? `<span class="feedback-icon">✓</span><span class="feedback-text">Correct!</span>`
+      : `<span class="feedback-icon">✗</span><span class="feedback-text">${result.reason}</span>`;
+    const card = document.getElementById(`qcard-${i}`);
+    card.classList.remove('selected-only', 'unanswered-warn');
+    card.classList.add(result.ok ? 'answered-correct' : 'answered-wrong');
+  }
+
+  const name   = document.getElementById('studentName').value.trim() || 'Anonymous';
+  const period = document.getElementById('studentPeriod').value.trim() || '—';
+  const pct    = Math.round(total / 15 * 100);
+  const pass   = total >= 12;
+  const mcqS   = det.slice(0, 5).filter(s => s.includes(':O')).length;
+  const saS    = det.slice(5).filter(s => s.includes(':O')).length;
+
+  document.getElementById('resultScore').textContent = `${total} / 15`;
+  const badge = document.getElementById('resultBadge');
+  badge.textContent = pass ? '✓ Pass' : '✗ Needs Review';
+  badge.className = 'result-badge ' + (pass ? 'pass' : 'fail');
+  document.getElementById('resultBreakdown').innerHTML =
+    `${name} &nbsp;·&nbsp; Period ${period} &nbsp;·&nbsp; ${pct}% &nbsp;|&nbsp; MCQ: ${mcqS}/5 &nbsp;·&nbsp; Calculations: ${saS}/10`;
+
+  const rc = document.getElementById('resultCard');
+  rc.style.display = 'block';
+  rc.scrollIntoView({ behavior: 'smooth' });
+  sendToSheets({ name, period, total, pct, mcqScore: mcqS, saScore: saS, pass, details: det.join(',') });
+}
+
+const SHEETS_URL = 'https://script.google.com/macros/s/AKfycbwIR-tZZDqI5u7HMlILgjamMG67pWV4p23aDuKlbbEBtqggR_qkX77kGxhHCfzcJCbN/exec';
+function sendToSheets(d) {
+  fetch(SHEETS_URL, { method: 'POST', mode: 'no-cors', headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ quiz: 'SF A', name: d.name, period: d.period, score: d.total, total: 15,
+      percent: d.pct, pass: d.pass ? 'Pass' : 'Fail', mcq: d.mcqScore, sa: d.saScore,
+      timestamp: new Date().toISOString(), details: d.details })
+  }).catch(() => {});
+}
 </script>
 </body>
 </html>
