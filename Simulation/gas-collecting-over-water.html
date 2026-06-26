@@ -1,0 +1,586 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>G-6B: Gas Collection over Water</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --navy:#1a2744; --gold:#c9a84c; --gold-light:#e8c96a;
+    --white:#fff; --light-bg:#f4f6fa; --mid-gray:#e2e6ef;
+    --text:#1a2744; --text-light:#5a6a8a;
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{font-family:'Inter',sans-serif;background:var(--light-bg);color:var(--text);min-height:100vh;display:flex;flex-direction:column;}
+  header{background:var(--navy);padding:14px 32px;display:flex;align-items:center;gap:16px;box-shadow:0 2px 8px rgba(0,0,0,.18);}
+  .tag{background:var(--gold);color:var(--navy);font-weight:700;font-size:12px;padding:3px 10px;border-radius:4px;letter-spacing:.04em;}
+  header h1{color:#fff;font-size:18px;font-weight:600;}
+  .eq-bar{background:#eef2fa;border-bottom:1px solid var(--mid-gray);padding:10px 32px;display:flex;align-items:center;gap:10px;font-size:14px;flex-wrap:wrap;}
+  .eq-label{color:var(--text-light);font-size:13px;font-weight:500;}
+  .eq-formula{font-family:'JetBrains Mono',monospace;font-size:14px;color:var(--navy);font-weight:500;}
+  .main{flex:1;display:flex;flex-direction:column;padding:16px 20px;gap:14px;}
+  .canvas-wrap{background:white;border-radius:12px;border:1px solid var(--mid-gray);overflow:hidden;box-shadow:0 2px 12px rgba(26,39,68,.07);}
+  canvas{display:block;width:100%;}
+  .controls{background:white;border-radius:12px;border:1px solid var(--mid-gray);padding:14px 20px;display:flex;align-items:center;gap:20px;flex-wrap:wrap;}
+  .ctrl-group{display:flex;align-items:center;gap:8px;}
+  .ctrl-label{font-size:13px;font-weight:600;color:var(--text-light);white-space:nowrap;}
+  input[type=range]{-webkit-appearance:none;width:120px;height:5px;background:var(--mid-gray);border-radius:3px;outline:none;}
+  input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;height:16px;background:var(--gold);border-radius:50%;cursor:pointer;box-shadow:0 1px 4px rgba(0,0,0,.2);}
+  .val-badge{font-family:'JetBrains Mono',monospace;font-size:12px;background:var(--navy);color:var(--gold);padding:2px 8px;border-radius:4px;min-width:56px;text-align:center;}
+  .btn{padding:8px 18px;border-radius:7px;border:none;font-family:'Inter',sans-serif;font-size:13px;font-weight:600;cursor:pointer;transition:all .15s;}
+  .btn-primary{background:var(--navy);color:white;} .btn-primary:hover{background:#263660;}
+  .btn-gold{background:var(--gold);color:var(--navy);} .btn-gold:hover{background:var(--gold-light);}
+  .info-row{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;}
+  .ic{background:white;border-radius:10px;border:1px solid var(--mid-gray);padding:12px 14px;}
+  .ic-label{font-size:11px;font-weight:600;color:var(--text-light);text-transform:uppercase;letter-spacing:.06em;}
+  .ic-val{font-family:'JetBrains Mono',monospace;font-size:17px;font-weight:600;color:var(--navy);margin-top:3px;}
+  .ic-unit{font-size:11px;color:var(--text-light);font-weight:400;}
+  .ic.hi{border-color:var(--gold);background:#fdf9ef;} .ic.hi .ic-val{color:#8a6010;}
+  .step-row{display:flex;gap:8px;flex-wrap:wrap;}
+  .sp{display:flex;align-items:center;gap:7px;background:white;border:1.5px solid var(--mid-gray);border-radius:20px;padding:5px 12px 5px 7px;font-size:12px;font-weight:500;color:var(--text-light);transition:all .3s;}
+  .sp.active{border-color:var(--gold);background:#fdf9ef;color:var(--navy);font-weight:600;}
+  .sd{width:8px;height:8px;border-radius:50%;background:var(--mid-gray);transition:all .3s;}
+  .sp.active .sd{background:var(--gold);}
+</style>
+</head>
+<body>
+<header>
+  <span class="tag">G-6B</span>
+  <h1>Gas Collection over Water</h1>
+</header>
+<div class="eq-bar">
+  <span class="eq-label">Reaction:</span>
+  <span class="eq-formula">2KClO₃(s) → 2KCl(s) + 3O₂(g)</span>
+  <span class="eq-label" style="margin-left:20px">Dalton's Law:</span>
+  <span class="eq-formula">P<sub>total</sub> = P<sub>O₂</sub> + P<sub>H₂O</sub></span>
+</div>
+<div class="main">
+  <div class="canvas-wrap"><canvas id="cvs"></canvas></div>
+
+  <div class="step-row">
+    <div class="sp active" id="sp0"><div class="sd"></div>① Setup</div>
+    <div class="sp" id="sp1"><div class="sd"></div>② Heating</div>
+    <div class="sp" id="sp2"><div class="sd"></div>③ Gas Bubbling</div>
+    <div class="sp" id="sp3"><div class="sd"></div>④ Water Displaced</div>
+    <div class="sp" id="sp4"><div class="sd"></div>⑤ Complete</div>
+  </div>
+
+  <div class="controls">
+    <div class="ctrl-group">
+      <span class="ctrl-label">Temperature</span>
+      <input type="range" id="sT" min="20" max="120" value="20">
+      <span class="val-badge" id="vT">20 °C</span>
+    </div>
+    <div class="ctrl-group">
+      <span class="ctrl-label">Atm. Pressure</span>
+      <input type="range" id="sP" min="740" max="780" value="760">
+      <span class="val-badge" id="vP">760 mmHg</span>
+    </div>
+    <button class="btn btn-primary" id="btnPlay">▶ Start</button>
+    <button class="btn btn-gold" id="btnReset">↺ Reset</button>
+  </div>
+
+  <div class="info-row">
+    <div class="ic">
+      <div class="ic-label">Temperature</div>
+      <div class="ic-val" id="ivT">20<span class="ic-unit"> °C</span></div>
+    </div>
+    <div class="ic">
+      <div class="ic-label">P<sub>H₂O</sub> vapor</div>
+      <div class="ic-val" id="ivPw">17.5<span class="ic-unit"> mmHg</span></div>
+    </div>
+    <div class="ic hi">
+      <div class="ic-label">P<sub>O₂</sub> collected</div>
+      <div class="ic-val" id="ivPo">742.5<span class="ic-unit"> mmHg</span></div>
+    </div>
+    <div class="ic">
+      <div class="ic-label">Water Displaced</div>
+      <div class="ic-val" id="ivW">0<span class="ic-unit"> %</span></div>
+    </div>
+  </div>
+</div>
+
+<script>
+const cvs = document.getElementById('cvs');
+const ctx = cvs.getContext('2d');
+
+// ── Logical canvas size ──
+const LW = 920, LH = 480;
+
+// ── Layout geometry (all in logical px) ──
+// Trough: the big water container that anchors everything
+const TR = { x:260, y:290, w:630, h:150 };
+// Water surface in trough (consistent reference level)
+const WATER_Y = TR.y + 20;   // top of water in trough
+
+// Flask (round-bottom, left side, heated)
+const FL = { x:60, y:110, w:100, h:120, neckW:30, neckH:45 };
+const FL_CX = FL.x + FL.w/2;
+const STOPPER_Y = FL.y - 4; // top of stopper/neck
+
+// Collection cylinder: inverted, open bottom sits IN trough water
+// The cylinder's open bottom rim is AT water surface level
+// so cylinder water starts at WATER_Y inside, matching trough
+const CY = { x:710, y:90, w:120, h:220, wall:5 };
+// CY bottom open rim y-coordinate
+const CY_BOTTOM = CY.y + CY.h;
+// The water inside cylinder (initially) matches trough water level
+// innerH = CY.h - CY.wall (no bottom wall, open)
+const CY_INNER_TOP  = CY.y + CY.wall;   // closed top (inverted)
+const CY_INNER_BOT  = CY_BOTTOM;        // open bottom at trough water
+
+// Tube: flask stopper → right → down into trough → curves up INTO cylinder
+// Tube enters the open bottom of the cylinder and tip is visible inside
+const TUBE_W = 7;
+
+// ── State ──
+let prog = 0, running = false, fid = null;
+let flamePulse = 0, wave = 0;
+let bubbles = [];
+let T = 20, Patm = 760;
+
+function vp(t) {
+  if(t<=10) return 9.2; if(t<=15) return 12.8; if(t<=20) return 17.5;
+  if(t<=25) return 23.8; if(t<=30) return 31.8; if(t<=40) return 55.3;
+  if(t<=50) return 92.5; if(t<=60) return 149.4; if(t<=70) return 233.7;
+  if(t<=80) return 355.1; if(t<=90) return 525.8; if(t<=100) return 760;
+  return 760+(t-100)*27;
+}
+
+// ── Tube path definition ──
+// Flask stopper exit (top of flask neck)
+// → goes right along trough exterior (below trough bottom)
+// → U-bend under cylinder
+// → rises UP into cylinder through open bottom
+// → tip visible inside cylinder water
+function getTubePath() {
+  const ex  = FL_CX;           // exit x (flask stopper center)
+  const ey  = STOPPER_Y - 2;  // exit y (top of stopper)
+
+  const runY = TR.y + TR.h + 14;          // horizontal run BELOW trough bottom
+  const cylCX = CY.x + CY.w / 2;         // center x of cylinder
+  const tipY  = CY_BOTTOM - 14;          // tube tip inside cylinder (above open rim)
+
+  return { ex, ey, runY, cylCX, tipY };
+}
+
+// ── Water levels ──
+// Cylinder inner water: starts full (at WATER_Y same as trough), empties upward as gas fills
+// When prog=0: waterTop inside cylinder = WATER_Y (matches trough)
+// When prog=1: waterTop inside cylinder = CY_INNER_TOP (all displaced)
+function cylWaterTop() {
+  // lerp from WATER_Y down to CY_INNER_TOP as prog goes 0→1
+  // Note: as gas fills from top, water surface moves DOWN (toward open bottom)
+  // waterTop is TOP of water inside cylinder
+  // prog=0: water fills entire cylinder → waterTop = CY_INNER_TOP
+  // prog=1: no water → waterTop = CY_INNER_BOT
+  return CY_INNER_TOP + (CY_INNER_BOT - CY_INNER_TOP) * prog;
+}
+
+// ── Cards update ──
+function updateCards() {
+  const Pw = vp(T), Po2 = Math.max(0, Patm - Pw);
+  document.getElementById('ivT').innerHTML   = T + '<span class="ic-unit"> °C</span>';
+  document.getElementById('ivPw').innerHTML  = Pw.toFixed(1) + '<span class="ic-unit"> mmHg</span>';
+  document.getElementById('ivPo').innerHTML  = Po2.toFixed(1) + '<span class="ic-unit"> mmHg</span>';
+  document.getElementById('ivW').innerHTML   = Math.round(prog*100) + '<span class="ic-unit"> %</span>';
+}
+
+// ── Sliders ──
+document.getElementById('sT').addEventListener('input', e => { T=+e.target.value; document.getElementById('vT').textContent=T+' °C'; updateCards(); });
+document.getElementById('sP').addEventListener('input', e => { Patm=+e.target.value; document.getElementById('vP').textContent=Patm+' mmHg'; updateCards(); });
+
+// ── Steps ──
+function setStep(s) {
+  for(let i=0;i<=4;i++) document.getElementById('sp'+i).classList.toggle('active',i<=s);
+}
+
+// ── Controls ──
+document.getElementById('btnPlay').addEventListener('click', () => {
+  if(!running){ running=true; document.getElementById('btnPlay').textContent='⏸ Pause'; loop(); }
+  else { running=false; document.getElementById('btnPlay').textContent='▶ Resume'; cancelAnimationFrame(fid); }
+});
+document.getElementById('btnReset').addEventListener('click', () => {
+  running=false; cancelAnimationFrame(fid);
+  prog=0; bubbles=[]; flamePulse=0; wave=0;
+  document.getElementById('btnPlay').textContent='▶ Start';
+  setStep(0); updateCards(); draw();
+});
+
+// ── Bubbles ──
+function spawnBubble() {
+  bubbles.push({ t:0, r:2.5+Math.random()*3, wobble:Math.random()*Math.PI*2 });
+}
+
+// ── Loop ──
+function loop() {
+  if(!running) return;
+  flamePulse += 0.09; wave += 0.05;
+  const rate = T < 50 ? 0.0006 : T < 80 ? 0.0018 : 0.0035;
+  if(prog < 1) { prog = Math.min(1, prog+rate); updateCards(); }
+  if(T >= 50 && prog < 1 && Math.random() < 0.14*(T/100)) spawnBubble();
+  bubbles.forEach(b => b.t += 0.016);
+  bubbles = bubbles.filter(b => b.t < 1);
+  if(prog < 0.05) setStep(0);
+  else if(prog < 0.2) setStep(1);
+  else if(prog < 0.5) setStep(2);
+  else if(prog < 0.95) setStep(3);
+  else { setStep(4); if(prog>=1){ running=false; document.getElementById('btnPlay').textContent='▶ Start'; } }
+  draw();
+  if(running) fid = requestAnimationFrame(loop);
+}
+
+// ══════════════════════════════
+//  DRAW
+// ══════════════════════════════
+function draw() {
+  ctx.clearRect(0,0,LW,LH);
+  drawBg();
+  drawStand();
+  drawFlame();
+  drawFlask();
+  drawTrough();
+  drawTube();       // draw tube BEFORE cylinder so tube shows behind walls
+  drawCylinder();
+  drawBubbles();
+  drawLabels();
+}
+
+function drawBg() {
+  const g = ctx.createLinearGradient(0,0,0,LH);
+  g.addColorStop(0,'#f8fafd'); g.addColorStop(1,'#eef2f9');
+  ctx.fillStyle=g; ctx.fillRect(0,0,LW,LH);
+}
+
+// ── Lab stand & burner ──
+function drawStand() {
+  // Base
+  ctx.fillStyle='#8899bb';
+  ctx.beginPath(); ctx.roundRect(30,406,140,13,4); ctx.fill();
+  // Vertical rod
+  ctx.fillStyle='#99aacc'; ctx.fillRect(55,165,8,244);
+  // Clamp ring
+  ctx.fillStyle='#7788aa'; ctx.beginPath(); ctx.roundRect(46,205,52,11,3); ctx.fill();
+  // Burner stand
+  ctx.strokeStyle='#8899bb'; ctx.lineWidth=3;
+  ctx.beginPath(); ctx.moveTo(55,405); ctx.lineTo(74,352); ctx.moveTo(138,405); ctx.lineTo(119,352); ctx.stroke();
+  // Burner top ring
+  ctx.fillStyle='#778899'; ctx.beginPath(); ctx.roundRect(66,342,70,14,3); ctx.fill();
+  // Barrel
+  ctx.fillStyle='#8899bb'; ctx.beginPath(); ctx.roundRect(82,306,36,38,3); ctx.fill();
+}
+
+// ── Flame ──
+function drawFlame() {
+  const bx=100, by=306;
+  const alpha = T>=50 ? 1 : Math.max(0,(T-20)/30);
+  if(alpha<=0) return;
+  ctx.save(); ctx.globalAlpha=alpha;
+  const fH=30+Math.sin(flamePulse)*5, fW=14+Math.sin(flamePulse*1.4)*3;
+  // outer
+  const og=ctx.createRadialGradient(bx,by-fH*.5,0,bx,by,fW);
+  og.addColorStop(0,'#fff176'); og.addColorStop(.4,'#ffa726'); og.addColorStop(.8,'#ff6f00'); og.addColorStop(1,'rgba(255,80,0,0)');
+  ctx.fillStyle=og;
+  ctx.beginPath(); ctx.ellipse(bx,by-fH*.35,fW*.7,fH*.65,0,0,Math.PI*2); ctx.fill();
+  // inner blue
+  const ig=ctx.createRadialGradient(bx,by-5,0,bx,by,8);
+  ig.addColorStop(0,'#e3f2fd'); ig.addColorStop(.5,'#29b6f6'); ig.addColorStop(1,'rgba(41,182,246,0)');
+  ctx.fillStyle=ig; ctx.beginPath(); ctx.ellipse(bx,by-4,6,10,0,0,Math.PI*2); ctx.fill();
+  ctx.restore();
+}
+
+// ── Flask ──
+function drawFlask() {
+  const {x,y,w,h,neckW,neckH} = FL;
+  const cx = FL_CX;
+  const bodyR_x=w*.5, bodyR_y=h*.48, bodyCY=y+h*.55;
+
+  ctx.save();
+  if(T>=60) { ctx.shadowColor='#ff8800'; ctx.shadowBlur=18*Math.min(1,(T-60)/60); }
+
+  // Body fill
+  const bg=ctx.createRadialGradient(cx-w*.15,bodyCY,w*.04,cx,bodyCY,w*.6);
+  bg.addColorStop(0,'rgba(220,235,255,.92)'); bg.addColorStop(.5,'rgba(180,210,240,.55)'); bg.addColorStop(1,'rgba(100,160,210,.3)');
+  ctx.fillStyle=bg; ctx.beginPath(); ctx.ellipse(cx,bodyCY,bodyR_x,bodyR_y,0,0,Math.PI*2); ctx.fill();
+
+  // Neck glass
+  ctx.fillStyle='rgba(180,215,245,.45)'; ctx.fillRect(cx-neckW/2,y,neckW,neckH+6);
+
+  ctx.restore();
+
+  // Solid powder (KClO3+MnO2)
+  ctx.save();
+  ctx.beginPath(); ctx.ellipse(cx,bodyCY,bodyR_x,bodyR_y,0,0,Math.PI*2); ctx.clip();
+  const sg=ctx.createLinearGradient(0,y+h-32,0,y+h+5);
+  sg.addColorStop(0,'rgba(215,195,150,.85)'); sg.addColorStop(1,'rgba(175,155,115,.95)');
+  ctx.fillStyle=sg; ctx.fillRect(x,y+h-30,w,35);
+  if(T>=60 && prog>0.08) {
+    ctx.globalAlpha=.28+Math.sin(wave*2)*.14;
+    const rg=ctx.createRadialGradient(cx,y+h-14,2,cx,y+h-10,36);
+    rg.addColorStop(0,'#fff9c4'); rg.addColorStop(1,'rgba(255,200,0,0)');
+    ctx.fillStyle=rg; ctx.fillRect(x,y+h-42,w,50);
+  }
+  ctx.restore();
+
+  // Outlines
+  ctx.strokeStyle='rgba(80,130,180,.7)'; ctx.lineWidth=2;
+  ctx.beginPath(); ctx.ellipse(cx,bodyCY,bodyR_x,bodyR_y,0,0,Math.PI*2); ctx.stroke();
+  ctx.lineWidth=1.5; ctx.strokeRect(cx-neckW/2,y,neckW,neckH+6);
+
+  // Rubber stopper (red)
+  ctx.fillStyle='#bb2222';
+  ctx.beginPath(); ctx.roundRect(cx-neckW/2-3,STOPPER_Y-5,neckW+6,9,2); ctx.fill();
+  // Tube hole through stopper
+  ctx.fillStyle='#444';
+  ctx.fillRect(cx-TUBE_W/2,STOPPER_Y-6,TUBE_W,12);
+}
+
+// ── Trough ──
+function drawTrough() {
+  const {x,y,w,h}=TR;
+  // shadow
+  ctx.save(); ctx.shadowColor='rgba(0,0,0,.12)'; ctx.shadowBlur=10; ctx.shadowOffsetY=4;
+  ctx.fillStyle='rgba(200,225,245,.1)'; ctx.beginPath(); ctx.roundRect(x,y,w,h,7); ctx.fill();
+  ctx.restore();
+
+  // Water fill inside trough
+  ctx.save();
+  ctx.beginPath(); ctx.roundRect(x+4,WATER_Y,w-8,h-(WATER_Y-y)-6,4); ctx.clip();
+  const wg=ctx.createLinearGradient(0,WATER_Y,0,y+h-6);
+  wg.addColorStop(0,'rgba(90,175,230,.72)'); wg.addColorStop(1,'rgba(50,130,200,.88)');
+  ctx.fillStyle=wg; ctx.fillRect(x+4,WATER_Y,w-8,h);
+  // ripples
+  ctx.strokeStyle='rgba(255,255,255,.32)'; ctx.lineWidth=1.5;
+  for(let i=0;i<4;i++){
+    const rx=x+50+i*100+Math.sin(wave+i*.9)*7;
+    ctx.beginPath(); ctx.ellipse(rx,WATER_Y+6,18+i*4,3,0,0,Math.PI); ctx.stroke();
+  }
+  ctx.restore();
+
+  // Glass walls
+  ctx.strokeStyle='rgba(90,140,200,.65)'; ctx.lineWidth=2.5;
+  ctx.beginPath(); ctx.roundRect(x,y,w,h,7); ctx.stroke();
+}
+
+// ── Tube: flask stopper → down → along trough bottom → U-bend → up into cylinder ──
+function drawTube() {
+  const {ex, ey, runY, cylCX, tipY} = getTubePath();
+
+  // flask exit goes slightly right then down to runY
+  const downX = ex + 35;   // a little right before going down
+  const bendR = 18;        // U-bend radius at bottom
+
+  function strokeTubePath(offset) {
+    ctx.beginPath();
+    ctx.moveTo(ex + offset, ey);
+    // short horizontal exit from stopper
+    ctx.lineTo(ex + 20 + offset, ey);
+    // curve down-right to descend below trough
+    ctx.bezierCurveTo(
+      downX + offset, ey,
+      downX + offset, runY - bendR,
+      downX + offset, runY
+    );
+    // horizontal run along trough bottom to below cylinder
+    ctx.lineTo(cylCX + offset, runY);
+    // U-bend curve up
+    ctx.bezierCurveTo(
+      cylCX + offset, runY + bendR,
+      cylCX + offset, runY + bendR,
+      cylCX + offset, runY
+    );
+    // straight up through trough bottom into cylinder tip
+    ctx.lineTo(cylCX + offset, tipY);
+  }
+
+  // Main tube
+  ctx.strokeStyle = 'rgba(130,165,200,.90)';
+  ctx.lineWidth = TUBE_W; ctx.lineCap = 'round'; ctx.lineJoin = 'round';
+  strokeTubePath(0);
+  ctx.stroke();
+
+  // Inner highlight
+  ctx.strokeStyle = 'rgba(210,232,252,.5)';
+  ctx.lineWidth = 2.5;
+  strokeTubePath(-1.5);
+  ctx.stroke();
+
+  // Tube open tip dot inside cylinder
+  ctx.fillStyle = 'rgba(100,155,205,.75)';
+  ctx.beginPath();
+  ctx.arc(cylCX, tipY, TUBE_W / 2 + 1.5, 0, Math.PI * 2);
+  ctx.fill();
+}
+
+// ── Cylinder (inverted, open bottom) ──
+function drawCylinder() {
+  const {x,y,w,wall}=CY;
+  const innerX=x+wall, innerW=w-wall*2;
+  const wTop=cylWaterTop();
+  const gasH=wTop-CY_INNER_TOP;
+
+  // ── Interior: gas zone (top) ──
+  if(prog>0 && gasH>0){
+    ctx.save();
+    ctx.beginPath(); ctx.rect(innerX,CY_INNER_TOP,innerW,gasH); ctx.clip();
+    const gg=ctx.createLinearGradient(0,CY_INNER_TOP,0,wTop);
+    gg.addColorStop(0,'rgba(238,248,255,.97)'); gg.addColorStop(.7,'rgba(215,238,255,.75)'); gg.addColorStop(1,'rgba(195,225,255,.5)');
+    ctx.fillStyle=gg; ctx.fillRect(innerX,CY_INNER_TOP,innerW,gasH);
+    // molecule dots
+    ctx.globalAlpha=Math.min(1,prog*2);
+    const nm=Math.floor(prog*20);
+    for(let i=0;i<nm;i++){
+      const mx=innerX+8+((i*41+13)%(innerW-16));
+      const my=CY_INNER_TOP+8+((i*27+5)%Math.max(1,gasH-16));
+      ctx.fillStyle='rgba(90,155,220,.65)';
+      ctx.beginPath(); ctx.arc(mx,my+Math.sin(wave+i*.8)*2,2.5,0,Math.PI*2); ctx.fill();
+    }
+    ctx.globalAlpha=1;
+    ctx.restore();
+  }
+
+  // ── Interior: water zone (bottom) ──
+  if(prog<1){
+    const waterH=CY_INNER_BOT-wTop;
+    ctx.save();
+    ctx.beginPath(); ctx.rect(innerX,wTop,innerW,waterH); ctx.clip();
+    const cwg=ctx.createLinearGradient(0,wTop,0,CY_INNER_BOT);
+    cwg.addColorStop(0,'rgba(90,175,230,.78)'); cwg.addColorStop(1,'rgba(50,130,200,.92)');
+    ctx.fillStyle=cwg; ctx.fillRect(innerX,wTop,innerW,waterH);
+    // water surface line inside cylinder
+    ctx.strokeStyle='rgba(255,255,255,.55)'; ctx.lineWidth=1.5;
+    ctx.beginPath(); ctx.moveTo(innerX,wTop); ctx.lineTo(innerX+innerW,wTop); ctx.stroke();
+    ctx.restore();
+  }
+
+  // ── Glass walls ──
+  // Left wall
+  ctx.fillStyle='rgba(175,210,240,.38)'; ctx.fillRect(x,y,wall,CY.h);
+  // Right wall
+  ctx.fillRect(x+w-wall,y,wall,CY.h);
+  // Top cap (closed — inverted cylinder)
+  ctx.fillRect(x,y,w,wall);
+  // Outline
+  ctx.strokeStyle='rgba(90,140,200,.7)'; ctx.lineWidth=2;
+  // Draw 3-sided rect (no bottom — open)
+  ctx.beginPath();
+  ctx.moveTo(x,CY_BOTTOM);
+  ctx.lineTo(x,y); ctx.lineTo(x+w,y); ctx.lineTo(x+w,CY_BOTTOM);
+  ctx.stroke();
+
+  // ── Gas % label ──
+  if(prog>0.05){
+    ctx.fillStyle='rgba(26,39,68,.7)';
+    ctx.font='600 12px Inter'; ctx.textAlign='center';
+    const labelY=Math.max(CY_INNER_TOP+18, wTop-8);
+    ctx.fillText(Math.round(prog*100)+'% O₂', x+w/2, labelY);
+  }
+}
+
+// ── Bubbles follow tube path ──
+// Segments: flask exit → down-right → run along bottom → up into cylinder → rise in water
+function getBubbleXY(b) {
+  const {ex, ey, runY, cylCX, tipY} = getTubePath();
+  const downX = ex + 35;
+  const wTop  = cylWaterTop();
+  const innerX = CY.x + CY.wall, innerW = CY.w - CY.wall * 2;
+
+  // t: 0→0.25 = flask exit horizontal
+  //    0.25→0.50 = descend to runY
+  //    0.50→0.70 = horizontal run to cylCX
+  //    0.70→0.85 = ascend tube into cylinder
+  //    0.85→1.00 = bubble rises freely in cylinder water
+  const t = b.t;
+
+  if (t < 0.25) {
+    const s = t / 0.25;
+    return { x: ex + (downX - ex) * s, y: ey, inWater: false };
+  } else if (t < 0.50) {
+    const s = (t - 0.25) / 0.25;
+    return { x: downX, y: ey + (runY - ey) * s, inWater: false };
+  } else if (t < 0.70) {
+    const s = (t - 0.50) / 0.20;
+    return { x: downX + (cylCX - downX) * s, y: runY, inWater: false };
+  } else if (t < 0.85) {
+    const s = (t - 0.70) / 0.15;
+    return { x: cylCX, y: runY + (tipY - runY) * s, inWater: false };
+  } else {
+    const s = (t - 0.85) / 0.15;
+    const startY = tipY, endY = wTop + 4;
+    const bx = innerX + innerW / 2 + Math.sin(b.wobble + b.t * 14) * 9;
+    return { x: bx, y: startY + (endY - startY) * s, inWater: true };
+  }
+}
+
+function drawBubbles() {
+  bubbles.forEach(b => {
+    const p=getBubbleXY(b);
+    ctx.save();
+    if(p.inWater) {
+      ctx.fillStyle='rgba(255,255,255,.88)';
+      ctx.strokeStyle='rgba(140,195,240,.9)'; ctx.lineWidth=1;
+      ctx.beginPath(); ctx.arc(p.x,p.y,b.r,0,Math.PI*2); ctx.fill(); ctx.stroke();
+      ctx.fillStyle='rgba(255,255,255,.9)';
+      ctx.beginPath(); ctx.arc(p.x-b.r*.3,p.y-b.r*.35,b.r*.28,0,Math.PI*2); ctx.fill();
+    } else {
+      ctx.globalAlpha=.45;
+      ctx.fillStyle='rgba(210,230,255,.7)';
+      ctx.beginPath(); ctx.arc(p.x,p.y,b.r*.75,0,Math.PI*2); ctx.fill();
+    }
+    ctx.restore();
+  });
+}
+
+// ── Labels ──
+function drawLabels() {
+  ctx.textAlign='center';
+
+  // Flask
+  ctx.fillStyle='rgba(26,39,68,.82)'; ctx.font='600 12px Inter';
+  ctx.fillText('KClO₃ + MnO₂', FL_CX, FL.y+FL.h+FL.neckH+32);
+  ctx.fillStyle='#5a6a8a'; ctx.font='500 11px Inter';
+  ctx.fillText('(heated)', FL_CX, FL.y+FL.h+FL.neckH+47);
+
+  // Tube label
+  const {runY, cylCX} = getTubePath();
+  ctx.fillStyle='rgba(26,39,68,.65)'; ctx.font='500 11px Inter';
+  ctx.fillText('O₂ + H₂O vapor', (FL_CX + cylCX) / 2, runY + 26);
+
+  // Trough label
+  ctx.fillStyle='rgba(26,39,68,.75)'; ctx.font='600 12px Inter';
+  ctx.fillText('Water trough', TR.x+TR.w/2, TR.y+TR.h+18);
+
+  // Cylinder label + P_O2
+  ctx.fillText('Collection Cylinder', CY.x+CY.w/2, CY.y-28);
+  ctx.fillStyle='#8a6010'; ctx.font='500 11px Inter';
+  const Po2=Math.max(0,Patm-vp(T)).toFixed(0);
+  ctx.fillText('P_O₂ = '+Po2+' mmHg', CY.x+CY.w/2, CY.y-14);
+
+  // Water level equality annotation
+  if(prog<0.05){
+    // dashed line showing same water level
+    ctx.save();
+    ctx.setLineDash([5,4]); ctx.strokeStyle='rgba(201,168,76,.55)'; ctx.lineWidth=1.5;
+    ctx.beginPath(); ctx.moveTo(TR.x+8,WATER_Y); ctx.lineTo(CY.x+CY.w,WATER_Y); ctx.stroke();
+    ctx.restore();
+    ctx.fillStyle='rgba(138,96,16,.65)'; ctx.font='500 10px Inter'; ctx.textAlign='left';
+    ctx.fillText('same water level', TR.x+12, WATER_Y-5);
+  }
+}
+
+// ── Resize ──
+function resize(){
+  const W=cvs.parentElement.clientWidth;
+  const H=Math.round(W*LH/LW);
+  const dpr=window.devicePixelRatio||1;
+  cvs.width=W*dpr; cvs.height=H*dpr;
+  cvs.style.width=W+'px'; cvs.style.height=H+'px';
+  ctx.setTransform(W*dpr/LW,0,0,H*dpr/LH,0,0);
+  draw();
+}
+new ResizeObserver(resize).observe(cvs.parentElement);
+updateCards();
+</script>
+</body>
+</html>

@@ -1,0 +1,773 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>L-9 · Electrolyte Strength Simulator | Nobel Prep AP Chemistry</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --navy:#1a2744;
+    --navy-soft:#2e3c5c;
+    --gold:#c9a84c;
+    --gold-soft:#e8d9ad;
+    --bg:#f7f7f5;
+    --card:#ffffff;
+    --line:#e3e1da;
+    --grey-text:#5b6478;
+    --cation:#8b96a8;
+    --cation-dark:#6b7689;
+    --anion:#3f9e8a;
+    --anion-dark:#2c7d6c;
+    --molecule:#9aa6bb;
+    --molecule-dark:#7886a0;
+    --organic:#c2a878;
+    --organic-dark:#a1875c;
+    --correct:#3f9e6c;
+    --wrong:#c0524a;
+    --bulb-off:#cfcabd;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{background:var(--bg);color:var(--navy);font-family:'Inter',system-ui,sans-serif;-webkit-font-smoothing:antialiased;}
+  .wrap{max-width:1080px;margin:0 auto;padding:0 0 60px;}
+
+  header.top{background:var(--navy);color:#fff;padding:26px 32px 22px;}
+  header.top .inner{max-width:1080px;margin:0 auto;display:flex;align-items:flex-end;justify-content:space-between;flex-wrap:wrap;gap:10px;}
+  .eyebrow{font-family:'JetBrains Mono',monospace;color:var(--gold);font-size:12.5px;letter-spacing:.14em;text-transform:uppercase;margin:0 0 6px;}
+  h1{margin:0;font-size:27px;font-weight:800;letter-spacing:-0.01em;}
+  .subtitle{margin:6px 0 0;font-size:14.5px;color:#c7cee0;font-weight:400;}
+  .series-tag{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--navy);background:var(--gold-soft);border:1px solid var(--gold);padding:5px 11px;border-radius:20px;white-space:nowrap;}
+
+  nav.tabs{display:flex;gap:6px;max-width:1080px;margin:22px auto 0;padding:0 32px;}
+  .tab-btn{font-family:'Inter',sans-serif;font-weight:600;font-size:14.5px;color:var(--grey-text);background:transparent;border:none;border-bottom:3px solid transparent;padding:11px 18px;cursor:pointer;transition:color .15s ease, border-color .15s ease;}
+  .tab-btn:hover{color:var(--navy);}
+  .tab-btn.active{color:var(--navy);border-bottom-color:var(--gold);}
+
+  main{padding:0 32px;}
+  .panel{display:none;}
+  .panel.active{display:block;}
+
+  .card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:22px 24px;margin-top:18px;box-shadow:0 1px 2px rgba(26,39,68,0.04);}
+  .card h2{margin:0 0 4px;font-size:16px;}
+  .card .card-sub{margin:0 0 16px;font-size:13px;color:var(--grey-text);}
+
+  .seg-group{display:inline-flex;border:1px solid var(--line);border-radius:8px;overflow:hidden;}
+  .seg-btn{font-family:'Inter',sans-serif;font-weight:600;font-size:13px;color:var(--navy-soft);background:#fff;border:none;border-right:1px solid var(--line);padding:9px 16px;cursor:pointer;transition:background .15s ease, color .15s ease;}
+  .seg-btn:last-child{border-right:none;}
+  .seg-btn:hover:not(.active){background:#f3f2ee;}
+  .seg-btn.active{background:var(--navy);color:#fff;}
+  .seg-btn.strong-active.active{background:var(--anion-dark);}
+  .seg-btn.weak-active.active{background:var(--gold);color:var(--navy);}
+  .seg-btn.non-active.active{background:var(--organic-dark);}
+
+  .field{margin-bottom:14px;}
+  .field:last-child{margin-bottom:0;}
+  .field-label{font-size:11.5px;color:var(--grey-text);font-family:'JetBrains Mono',monospace;text-transform:uppercase;letter-spacing:.06em;margin-bottom:7px;display:block;}
+
+  .slider-row{display:flex;align-items:center;gap:12px;}
+  input[type=range]{flex:1;-webkit-appearance:none;height:5px;border-radius:3px;background:var(--line);outline:none;}
+  input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;height:16px;border-radius:50%;background:var(--gold);border:2px solid var(--navy);cursor:pointer;}
+  input[type=range]::-moz-range-thumb{width:14px;height:14px;border-radius:50%;background:var(--gold);border:2px solid var(--navy);cursor:pointer;}
+  .slider-val{font-family:'JetBrains Mono',monospace;font-size:13px;color:var(--navy);width:48px;text-align:right;}
+
+  .canvas-card{padding:0;overflow:hidden;}
+  .canvas-shell{position:relative;width:100%;height:420px;background:radial-gradient(circle at 30% 15%, #fbfbf9 0%, #f3f2ee 70%);}
+  canvas{display:block;width:100%;height:100%;}
+  .readout{position:absolute;left:14px;top:14px;font-size:12.5px;color:var(--navy-soft);background:rgba(255,255,255,0.92);border:1px solid var(--line);padding:7px 12px;border-radius:8px;font-family:'JetBrains Mono',monospace;line-height:1.6;}
+  .formula-tag{position:absolute;right:14px;top:14px;font-size:13px;font-weight:700;background:rgba(255,255,255,0.95);border:1px solid var(--line);padding:7px 13px;border-radius:8px;color:var(--navy);}
+
+  .controls{display:flex;align-items:center;gap:12px;padding:16px 22px;border-top:1px solid var(--line);flex-wrap:wrap;}
+  .legend{display:flex;gap:16px;flex-wrap:wrap;font-size:12px;color:var(--navy-soft);padding:0 22px 16px;}
+  .legend .row{display:flex;align-items:center;gap:6px;}
+  .swatch{width:11px;height:11px;border-radius:50%;flex:none;display:inline-block;border:1px solid rgba(0,0,0,0.15);}
+  .swatch.pill{border-radius:6px;width:16px;height:9px;}
+
+  .btn{font-family:'Inter',sans-serif;font-weight:600;font-size:13.5px;border:1px solid var(--navy);background:var(--navy);color:#fff;padding:9px 16px;border-radius:8px;cursor:pointer;display:inline-flex;align-items:center;gap:7px;transition:opacity .15s ease;}
+  .btn:hover{opacity:.85;}
+  .btn.ghost{background:transparent;color:var(--navy);border-color:var(--line);}
+  .btn.ghost:hover{border-color:var(--navy);}
+
+  /* ---------- Challenge (shared pattern) ---------- */
+  .quiz-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;}
+  .quiz-progress{font-family:'JetBrains Mono',monospace;font-size:12.5px;color:var(--grey-text);}
+  .score-chip{font-family:'JetBrains Mono',monospace;font-size:12.5px;background:var(--gold-soft);border:1px solid var(--gold);color:var(--navy);padding:4px 10px;border-radius:20px;}
+  .q-text{font-size:16px;font-weight:600;margin:14px 0 16px;line-height:1.5;}
+  .q-sub{font-size:13.5px;color:var(--navy-soft);background:#f7f7f5;border:1px solid var(--line);border-radius:10px;padding:12px 14px;margin:-6px 0 16px;line-height:1.65;}
+  .options{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+  .options.opt3{grid-template-columns:1fr 1fr 1fr;}
+  @media (max-width:640px){.options, .options.opt3{grid-template-columns:1fr;}}
+  .opt-btn{text-align:left;font-family:'Inter',sans-serif;font-size:14px;font-weight:500;color:var(--navy);background:#fff;border:1.5px solid var(--line);border-radius:10px;padding:13px 15px;cursor:pointer;transition:border-color .15s ease, background .15s ease;}
+  .opt-btn:hover{border-color:var(--gold);}
+  .opt-btn.correct{border-color:var(--correct);background:#eef8f1;color:var(--correct);}
+  .opt-btn.wrong{border-color:var(--wrong);background:#fbeeec;color:var(--wrong);}
+  .opt-btn:disabled{cursor:default;}
+  .feedback{margin-top:16px;padding:13px 16px;border-radius:10px;font-size:13.5px;line-height:1.65;display:none;}
+  .feedback.show{display:block;}
+  .feedback.ok{background:#eef8f1;border:1px solid var(--correct);color:#235c3f;}
+  .feedback.no{background:#fbeeec;border:1px solid var(--wrong);color:#7a2e28;}
+  .quiz-footer{display:flex;justify-content:flex-end;margin-top:18px;}
+  .summary{text-align:center;padding:36px 20px;}
+  .summary .big{font-family:'JetBrains Mono',monospace;font-size:42px;font-weight:700;color:var(--navy);}
+  .summary p{color:var(--grey-text);font-size:14px;margin-top:4px;}
+</style>
+</head>
+<body>
+
+<header class="top">
+  <div class="inner">
+    <div>
+      <p class="eyebrow">Nobel Prep · AP Chemistry · Chapter 10</p>
+      <h1>Electrolyte Strength Simulator</h1>
+      <p class="subtitle">Strong, weak, or nonelectrolyte — how much of the solute actually becomes ions?</p>
+    </div>
+    <span class="series-tag">L-9</span>
+  </div>
+</header>
+
+<nav class="tabs">
+  <button class="tab-btn active" data-tab="explore">Explore</button>
+  <button class="tab-btn" data-tab="challenge">Challenge</button>
+</nav>
+
+<main class="wrap">
+
+  <!-- ============ EXPLORE PANEL ============ -->
+  <section class="panel active" id="panel-explore">
+
+    <div class="card">
+      <strong>Electrolytes</strong> are substances that produce ions in water. How well a solution conducts
+      electricity depends on how many ions are actually floating free in it: a
+      <strong>strong electrolyte</strong> dissociates completely, a <strong>weak electrolyte</strong>
+      dissociates only partially (and exists in dynamic equilibrium, &#8652;, between ionized and
+      un-ionized forms), and a <strong>nonelectrolyte</strong> dissolves as whole, neutral molecules that
+      never ionize at all. Watch the bulb to see the difference.
+    </div>
+
+    <div class="card">
+      <h2>Pick a solute</h2>
+      <p class="card-sub">Choose a category, then a specific compound.</p>
+      <div class="field">
+        <span class="field-label">Category</span>
+        <div class="seg-group" id="categoryGroup">
+          <button class="seg-btn strong-active active" data-value="strong">Strong Electrolyte</button>
+          <button class="seg-btn weak-active" data-value="weak">Weak Electrolyte</button>
+          <button class="seg-btn non-active" data-value="non">Nonelectrolyte</button>
+        </div>
+      </div>
+      <div class="field">
+        <span class="field-label">Compound</span>
+        <div class="seg-group" id="compoundGroup"></div>
+      </div>
+      <div class="field" id="dissociationField" style="display:none;">
+        <span class="field-label">Dissociation degree (illustrative, not a real K&#8336; value)</span>
+        <div class="slider-row">
+          <input type="range" id="dissocSlider" min="5" max="70" value="12">
+          <span class="slider-val" id="dissocVal">12%</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="card canvas-card">
+      <div class="canvas-shell">
+        <canvas id="beakerCanvas"></canvas>
+        <div class="readout" id="readout">0 / 10 ionized<br>Conductivity: 0%</div>
+        <div class="formula-tag" id="formulaTag">NaCl</div>
+      </div>
+      <div class="legend">
+        <div class="row"><span class="swatch" style="background:var(--cation)"></span> Cation</div>
+        <div class="row"><span class="swatch" style="background:var(--anion)"></span> Anion</div>
+        <div class="row"><span class="swatch pill" style="background:var(--molecule)"></span> Un-ionized molecule</div>
+        <div class="row"><span class="swatch" style="background:var(--organic);border-radius:4px;width:14px;height:14px;"></span> Neutral organic molecule</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ CHALLENGE PANEL ============ -->
+  <section class="panel" id="panel-challenge">
+    <div class="card">
+      <div class="quiz-top">
+        <span class="quiz-progress" id="quizProgress">Question 1 / 5</span>
+        <span class="score-chip" id="scoreChip">Score: 0 / 0</span>
+      </div>
+      <div id="quizBody">
+        <p class="q-text" id="qText"></p>
+        <div class="q-sub" id="qSub" style="display:none;"></div>
+        <div class="options" id="qOptions"></div>
+        <div class="feedback" id="qFeedback"></div>
+        <div class="quiz-footer"><button class="btn" id="nextBtn" style="display:none;">Next →</button></div>
+      </div>
+      <div id="quizSummary" class="summary" style="display:none;">
+        <div class="big" id="summaryScore">0 / 5</div>
+        <p>Final score</p>
+        <button class="btn ghost" id="retryBtn" style="margin-top:14px;">↻ Try again</button>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<script>
+/* =========================================================================
+   shared helpers
+   ========================================================================= */
+let cssCache = {};
+function getCss(varName){
+  if(cssCache[varName]) return cssCache[varName];
+  const v = getComputedStyle(document.documentElement).getPropertyValue(varName).trim();
+  cssCache[varName] = v;
+  return v;
+}
+function clamp(v,a,b){ return Math.max(a, Math.min(b,v)); }
+function lerp(a,b,t){ return a + (b-a)*t; }
+
+function drawIonParticle(ctx, x, y, r, kind, label){
+  ctx.save();
+  const grad = ctx.createRadialGradient(x-r*0.35,y-r*0.35,r*0.15,x,y,r);
+  if(kind==='cation'){ grad.addColorStop(0,'#c4cad4'); grad.addColorStop(1,getCss('--cation-dark')); }
+  else { grad.addColorStop(0,'#7fd1bd'); grad.addColorStop(1,getCss('--anion-dark')); }
+  ctx.beginPath(); ctx.fillStyle = grad; ctx.arc(x,y,r,0,Math.PI*2); ctx.fill();
+  ctx.fillStyle='rgba(26,39,68,0.85)';
+  ctx.font = `700 ${Math.round(r*0.95)}px 'Inter', sans-serif`;
+  ctx.textAlign='center'; ctx.textBaseline='middle';
+  ctx.fillText(label, x, y+0.5);
+  ctx.restore();
+}
+
+function drawMoleculePair(ctx, x, y, ang, r, color, colorDark){
+  // two small fused lobes representing an un-ionized weak-electrolyte molecule
+  ctx.save();
+  const dx = Math.cos(ang)*r*0.62, dy = Math.sin(ang)*r*0.62;
+  ctx.strokeStyle = 'rgba(26,39,68,0.18)'; ctx.lineWidth=1.4;
+  ctx.beginPath(); ctx.moveTo(x-dx,y-dy); ctx.lineTo(x+dx,y+dy); ctx.stroke();
+  [-1,1].forEach(s=>{
+    const cx = x+dx*s, cy = y+dy*s;
+    const grad = ctx.createRadialGradient(cx-r*0.3,cy-r*0.3,r*0.1,cx,cy,r*0.62);
+    grad.addColorStop(0,'#dfe3ea'); grad.addColorStop(1,colorDark);
+    ctx.beginPath(); ctx.fillStyle=grad; ctx.arc(cx,cy,r*0.62,0,Math.PI*2); ctx.fill();
+  });
+  ctx.restore();
+}
+
+function drawOrganicMolecule(ctx, x, y, r, color, colorDark){
+  // rounded hexagon, representing a larger neutral organic molecule (e.g. glucose, ethanol)
+  ctx.save();
+  const grad = ctx.createRadialGradient(x-r*0.3,y-r*0.3,r*0.15,x,y,r);
+  grad.addColorStop(0,'#ead9bb'); grad.addColorStop(1,colorDark);
+  ctx.beginPath();
+  for(let i=0;i<6;i++){
+    const a = Math.PI/3*i - Math.PI/6;
+    const px = x+Math.cos(a)*r, py = y+Math.sin(a)*r;
+    if(i===0) ctx.moveTo(px,py); else ctx.lineTo(px,py);
+  }
+  ctx.closePath();
+  ctx.fillStyle = grad; ctx.fill();
+  ctx.strokeStyle = colorDark; ctx.lineWidth=1; ctx.stroke();
+  ctx.restore();
+}
+
+/* =========================================================================
+   COMPOUND DATA
+   ========================================================================= */
+const COMPOUNDS = {
+  strong: [
+    { id:'nacl', formula:'NaCl', cationLabel:'+', anionLabel:'\u2212' },
+    { id:'hcl',  formula:'HCl',  cationLabel:'+', anionLabel:'\u2212' },
+    { id:'naoh', formula:'NaOH', cationLabel:'+', anionLabel:'\u2212' }
+  ],
+  weak: [
+    { id:'ch3cooh', formula:'CH\u2083COOH', cationLabel:'+', anionLabel:'\u2212', defaultDissoc:12 },
+    { id:'nh3',      formula:'NH\u2083',      cationLabel:'+', anionLabel:'\u2212', defaultDissoc:6 }
+  ],
+  non: [
+    { id:'glucose', formula:'C\u2086H\u2081\u2082O\u2086' },
+    { id:'ethanol', formula:'C\u2082H\u2085OH' }
+  ]
+};
+
+let state = { category:'strong', compoundIndex:0, dissociation:0.12 };
+
+function currentCompound(){ return COMPOUNDS[state.category][state.compoundIndex]; }
+
+/* =========================================================================
+   CATEGORY / COMPOUND CONTROLS
+   ========================================================================= */
+function renderCompoundButtons(){
+  const wrap = document.getElementById('compoundGroup');
+  wrap.innerHTML = '';
+  COMPOUNDS[state.category].forEach((c, idx)=>{
+    const b = document.createElement('button');
+    b.className = 'seg-btn' + (idx===state.compoundIndex ? ' active' : '');
+    b.textContent = c.formula;
+    b.addEventListener('click', ()=>{
+      state.compoundIndex = idx;
+      if(state.category === 'weak'){
+        state.dissociation = (c.defaultDissoc||12)/100;
+        document.getElementById('dissocSlider').value = c.defaultDissoc||12;
+        document.getElementById('dissocVal').textContent = (c.defaultDissoc||12)+'%';
+      }
+      renderCompoundButtons();
+      onSelectionChanged();
+    });
+    wrap.appendChild(b);
+  });
+  document.getElementById('formulaTag').textContent = currentCompound().formula;
+}
+
+document.querySelectorAll('#categoryGroup .seg-btn').forEach(btn=>{
+  btn.addEventListener('click', ()=>{
+    document.querySelectorAll('#categoryGroup .seg-btn').forEach(b=>b.classList.remove('active'));
+    btn.classList.add('active');
+    state.category = btn.dataset.value;
+    state.compoundIndex = 0;
+    document.getElementById('dissociationField').style.display = (state.category==='weak') ? 'block' : 'none';
+    if(state.category === 'weak'){
+      const c = COMPOUNDS.weak[0];
+      state.dissociation = (c.defaultDissoc||12)/100;
+      document.getElementById('dissocSlider').value = c.defaultDissoc||12;
+      document.getElementById('dissocVal').textContent = (c.defaultDissoc||12)+'%';
+    }
+    renderCompoundButtons();
+    onSelectionChanged();
+  });
+});
+
+document.getElementById('dissocSlider').addEventListener('input', (e)=>{
+  state.dissociation = parseInt(e.target.value,10)/100;
+  document.getElementById('dissocVal').textContent = e.target.value+'%';
+});
+
+function onSelectionChanged(){
+  document.getElementById('formulaTag').textContent = currentCompound().formula;
+  buildUnits();
+}
+
+/* =========================================================================
+   BEAKER PARTICLE SIMULATION
+   ========================================================================= */
+const UNIT_COUNT = 10;
+let units = [];
+let beakerCanvas, beakerCtx, beakerDpr = 1;
+let beakerBounds = {x0:0,x1:0,y0:0,y1:0};
+
+function computeBeakerGeometry(w,h){
+  const topY = h*0.30, botY = h*0.86;
+  const topHalf = w*0.30, botHalf = w*0.20;
+  const cx = w*0.5;
+  return {
+    cx, topY, botY, topHalf, botHalf,
+    liquidTop: h*0.40
+  };
+}
+
+function buildUnits(){
+  if(!beakerCanvas) return;
+  const w = beakerCanvas.clientWidth, h = beakerCanvas.clientHeight;
+  if(w <= 0 || h <= 0) return;
+  const geo = computeBeakerGeometry(w,h);
+  const padX = 26, padTop = geo.liquidTop+18, padBot = geo.botY-16;
+  units = [];
+  for(let i=0;i<UNIT_COUNT;i++){
+    const t = (geo.liquidTop - 0) / 1; // unused, placeholder
+    const yFrac = Math.random();
+    const halfAtY = lerp(geo.topHalf, geo.botHalf, (Math.max(padTop,geo.liquidTop) - geo.topY)/(geo.botY-geo.topY));
+    const bx = geo.cx + (Math.random()*2-1) * (halfAtY*0.78);
+    const by = padTop + Math.random()*(padBot-padTop);
+    const isStrong = state.category === 'strong';
+    const isNon = state.category === 'non';
+    let initState;
+    if(isStrong) initState = 'split';
+    else if(isNon) initState = 'combined';
+    else initState = (Math.random() < state.dissociation) ? 'split' : 'combined';
+    units.push({
+      id:i, baseX:bx, baseY:by,
+      phase: Math.random()*Math.PI*2,
+      ampX: 9+Math.random()*12, ampY: 7+Math.random()*9,
+      speed: 0.00035+Math.random()*0.00035,
+      state: initState,
+      splitAngle: Math.random()*Math.PI*2,
+      nextFlip: performance.now() + 500+Math.random()*1400
+    });
+  }
+}
+
+function resizeBeakerCanvas(){
+  beakerDpr = window.devicePixelRatio || 1;
+  const rect = beakerCanvas.getBoundingClientRect();
+  if(rect.width <= 0 || rect.height <= 0) return; // tab hidden — skip until it's visible again
+  beakerCanvas.width = Math.round(rect.width*beakerDpr);
+  beakerCanvas.height = Math.round(rect.height*beakerDpr);
+  beakerCtx.setTransform(beakerDpr,0,0,beakerDpr,0,0);
+  buildUnits();
+  drawBeaker();
+}
+
+function drawBeakerVessel(ctx, geo, w, h){
+  // liquid
+  const liqTopHalf = lerp(geo.topHalf, geo.botHalf, (geo.liquidTop-geo.topY)/(geo.botY-geo.topY));
+  ctx.save();
+  ctx.beginPath();
+  ctx.moveTo(geo.cx-liqTopHalf, geo.liquidTop);
+  ctx.lineTo(geo.cx+liqTopHalf, geo.liquidTop);
+  ctx.lineTo(geo.cx+geo.botHalf, geo.botY);
+  ctx.lineTo(geo.cx-geo.botHalf, geo.botY);
+  ctx.closePath();
+  ctx.fillStyle = 'rgba(150,195,225,0.28)';
+  ctx.fill();
+  ctx.restore();
+
+  // beaker outline
+  ctx.save();
+  ctx.strokeStyle = getCss('--navy-soft');
+  ctx.lineWidth = 2.2;
+  ctx.lineJoin = 'round';
+  ctx.beginPath();
+  ctx.moveTo(geo.cx-geo.topHalf, geo.topY-14);
+  ctx.lineTo(geo.cx-geo.topHalf, geo.topY);
+  ctx.lineTo(geo.cx-geo.botHalf, geo.botY);
+  ctx.lineTo(geo.cx+geo.botHalf, geo.botY);
+  ctx.lineTo(geo.cx+geo.topHalf, geo.topY);
+  ctx.lineTo(geo.cx+geo.topHalf, geo.topY-14);
+  ctx.stroke();
+  ctx.restore();
+}
+
+function drawElectrodesAndBulb(ctx, geo, w, h, brightness){
+  const exL = geo.cx - geo.topHalf*0.42, exR = geo.cx + geo.topHalf*0.42;
+  const topY = geo.topY - 14;
+  const dipY = geo.botY - 22;
+  const bulbY = topY - 64;
+  const bulbR = 19;
+
+  // wires
+  ctx.save();
+  ctx.strokeStyle = getCss('--navy-soft');
+  ctx.lineWidth = 2;
+  ctx.beginPath();
+  ctx.moveTo(exL, topY); ctx.lineTo(exL, bulbY+bulbR*0.4); ctx.lineTo(geo.cx-bulbR*0.75, bulbY);
+  ctx.moveTo(exR, topY); ctx.lineTo(exR, bulbY+bulbR*0.4); ctx.lineTo(geo.cx+bulbR*0.75, bulbY);
+  ctx.stroke();
+  ctx.restore();
+
+  // electrodes
+  ctx.save();
+  ctx.fillStyle = '#5b6478';
+  ctx.fillRect(exL-3.5, topY, 7, dipY-topY);
+  ctx.fillRect(exR-3.5, topY, 7, dipY-topY);
+  ctx.restore();
+
+  // bulb glow
+  if(brightness > 0.02){
+    ctx.save();
+    const glowR = bulbR*2.4;
+    const glow = ctx.createRadialGradient(geo.cx,bulbY,bulbR*0.4, geo.cx,bulbY,glowR);
+    glow.addColorStop(0, `rgba(255,221,120,${0.55*brightness})`);
+    glow.addColorStop(1, 'rgba(255,221,120,0)');
+    ctx.fillStyle = glow;
+    ctx.beginPath(); ctx.arc(geo.cx,bulbY,glowR,0,Math.PI*2); ctx.fill();
+    ctx.restore();
+  }
+
+  // bulb glass
+  ctx.save();
+  const baseColor = getCss('--bulb-off');
+  const litR = Math.round(255), litG = Math.round(221), litB = Math.round(120);
+  const offRgb = [207,202,189];
+  const r = Math.round(lerp(offRgb[0], litR, brightness));
+  const g = Math.round(lerp(offRgb[1], litG, brightness));
+  const bch = Math.round(lerp(offRgb[2], litB, brightness));
+  ctx.beginPath();
+  ctx.arc(geo.cx, bulbY, bulbR, 0, Math.PI*2);
+  ctx.fillStyle = `rgb(${r},${g},${bch})`;
+  ctx.fill();
+  ctx.strokeStyle = getCss('--navy-soft');
+  ctx.lineWidth = 1.6;
+  ctx.stroke();
+  // filament
+  ctx.strokeStyle = brightness>0.3 ? 'rgba(150,90,10,0.55)' : 'rgba(120,120,120,0.4)';
+  ctx.lineWidth = 1.3;
+  ctx.beginPath();
+  ctx.moveTo(geo.cx-7, bulbY+5);
+  ctx.lineTo(geo.cx-3, bulbY-5);
+  ctx.lineTo(geo.cx+1, bulbY+5);
+  ctx.lineTo(geo.cx+5, bulbY-5);
+  ctx.lineTo(geo.cx+8, bulbY+2);
+  ctx.stroke();
+  // base
+  ctx.fillStyle = '#8a93a3';
+  ctx.fillRect(geo.cx-6, bulbY+bulbR-3, 12, 7);
+  ctx.restore();
+}
+
+function updateUnits(now, geo, w, h){
+  const isWeak = state.category === 'weak';
+  let splitIonCount = 0;
+  units.forEach(u=>{
+    const dx = Math.sin(now*u.speed+u.phase)*u.ampX;
+    const dy = Math.cos(now*u.speed*1.3+u.phase)*u.ampY;
+    u.cx = clamp(u.baseX+dx, geo.cx-geo.botHalf+16, geo.cx+geo.botHalf+ (geo.topHalf-geo.botHalf) -16);
+    u.cy = clamp(u.baseY+dy, geo.liquidTop+16, geo.botY-14);
+
+    if(isWeak && now > u.nextFlip){
+      const r = Math.random();
+      if(u.state === 'combined' && r < state.dissociation){
+        u.state = 'split'; u.splitAngle = Math.random()*Math.PI*2;
+      } else if(u.state === 'split' && r < (1-state.dissociation)){
+        u.state = 'combined';
+      }
+      u.nextFlip = now + 500 + Math.random()*1300;
+    }
+    if(u.state === 'split') splitIonCount += 2;
+  });
+  return splitIonCount;
+}
+
+function drawBeaker(){
+  if(!beakerCanvas) return;
+  const w = beakerCanvas.clientWidth, h = beakerCanvas.clientHeight;
+  if(w <= 0 || h <= 0) return; // tab hidden — nothing to draw
+  const ctx = beakerCtx;
+  ctx.clearRect(0,0,w,h);
+  const geo = computeBeakerGeometry(w,h);
+  const now = performance.now();
+
+  drawBeakerVessel(ctx, geo, w, h);
+
+  const splitIonCount = updateUnits(now, geo, w, h);
+  const maxIons = UNIT_COUNT*2;
+  const brightness = state.category==='non' ? 0 : clamp(splitIonCount/maxIons, 0, 1);
+
+  // clip particles to liquid region
+  ctx.save();
+  const liqTopHalf = lerp(geo.topHalf, geo.botHalf, (geo.liquidTop-geo.topY)/(geo.botY-geo.topY));
+  ctx.beginPath();
+  ctx.moveTo(geo.cx-liqTopHalf, geo.liquidTop);
+  ctx.lineTo(geo.cx+liqTopHalf, geo.liquidTop);
+  ctx.lineTo(geo.cx+geo.botHalf, geo.botY);
+  ctx.lineTo(geo.cx-geo.botHalf, geo.botY);
+  ctx.closePath();
+  ctx.clip();
+
+  const ionR = 10, molR = 11, orgR = 13;
+  units.forEach(u=>{
+    if(state.category === 'non'){
+      drawOrganicMolecule(ctx, u.cx, u.cy, orgR, getCss('--organic'), getCss('--organic-dark'));
+    } else if(u.state === 'split'){
+      const sep = ionR*1.5;
+      const ax = u.cx+Math.cos(u.splitAngle)*sep, ay = u.cy+Math.sin(u.splitAngle)*sep;
+      const bx = u.cx-Math.cos(u.splitAngle)*sep, by = u.cy-Math.sin(u.splitAngle)*sep;
+      drawIonParticle(ctx, ax, ay, ionR, 'cation', '+');
+      drawIonParticle(ctx, bx, by, ionR, 'anion', '\u2212');
+    } else {
+      drawMoleculePair(ctx, u.cx, u.cy, u.splitAngle, molR, getCss('--molecule'), getCss('--molecule-dark'));
+    }
+  });
+  ctx.restore();
+
+  drawElectrodesAndBulb(ctx, geo, w, h, brightness);
+
+  const readout = document.getElementById('readout');
+  if(state.category==='non'){
+    readout.innerHTML = `0 / ${UNIT_COUNT} ionized<br>Conductivity: 0%`;
+  } else {
+    const ionizedUnits = Math.round(splitIonCount/2);
+    readout.innerHTML = `${ionizedUnits} / ${UNIT_COUNT} ionized<br>Conductivity: ${Math.round(brightness*100)}%`;
+  }
+}
+
+let beakerRaf = null;
+function beakerLoop(){
+  drawBeaker();
+  beakerRaf = requestAnimationFrame(beakerLoop);
+}
+
+function initBeaker(){
+  beakerCanvas = document.getElementById('beakerCanvas');
+  beakerCtx = beakerCanvas.getContext('2d');
+  renderCompoundButtons();
+  new ResizeObserver(resizeBeakerCanvas).observe(beakerCanvas);
+  resizeBeakerCanvas();
+  beakerRaf = requestAnimationFrame(beakerLoop);
+}
+
+/* =========================================================================
+   TABS
+   ========================================================================= */
+document.querySelectorAll('.tab-btn').forEach(btn=>{
+  btn.addEventListener('click', ()=>{
+    document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+    document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
+    btn.classList.add('active');
+    document.getElementById('panel-'+btn.dataset.tab).classList.add('active');
+  });
+});
+
+/* =========================================================================
+   CHALLENGE TAB
+   ========================================================================= */
+const QUIZ_COMPOUNDS = [
+  { formula:'NaCl', type:'strong' },
+  { formula:'HCl', type:'strong' },
+  { formula:'NaOH', type:'strong' },
+  { formula:'KBr', type:'strong' },
+  { formula:'CH\u2083COOH (acetic acid)', type:'weak' },
+  { formula:'NH\u2083 (ammonia)', type:'weak' },
+  { formula:'HF (hydrofluoric acid)', type:'weak' },
+  { formula:'C\u2086H\u2081\u2082O\u2086 (glucose)', type:'non' },
+  { formula:'C\u2082H\u2085OH (ethanol)', type:'non' },
+  { formula:'C\u2081\u2082H\u2082\u2082O\u2081\u2081 (sucrose)', type:'non' }
+];
+const TYPE_LABEL = { strong:'Strong electrolyte', weak:'Weak electrolyte', non:'Nonelectrolyte' };
+const TYPE_RANK = { strong:3, weak:2, non:1 };
+
+function buildQuizBank(){
+  const bank = [];
+
+  bank.push({
+    type:'static',
+    q:'What distinguishes a strong electrolyte from a weak electrolyte?',
+    options:[
+      'A strong electrolyte dissociates completely into ions; a weak electrolyte only dissociates partially',
+      'A strong electrolyte is always a solid; a weak electrolyte is always a gas',
+      'A strong electrolyte has no charge; a weak electrolyte is charged',
+      'There is no real difference \u2014 the terms are interchangeable'
+    ],
+    correct:0,
+    explain:'Strong electrolytes ionize essentially 100% in water. Weak electrolytes only partially ionize, leaving most of the solute as neutral molecules.'
+  });
+
+  bank.push({
+    type:'static',
+    q:'A solution that does not light a conductivity bulb at all most likely contains a\u2026',
+    options:['Strong electrolyte','Weak electrolyte','Nonelectrolyte','Strong acid'],
+    correct:2,
+    explain:'Nonelectrolytes (like glucose or ethanol) dissolve as whole neutral molecules \u2014 no ions form, so there\u2019s nothing to carry current.'
+  });
+
+  bank.push({
+    type:'static',
+    q:'In the equation CH\u2083COOH \u21CC CH\u2083COO\u207b + H\u207a, what does the \u21CC symbol tell you?',
+    options:[
+      'The reaction only goes forward, never backward',
+      'Ionized and un-ionized forms exist together in a dynamic equilibrium',
+      'The compound is a strong electrolyte',
+      'The reaction has stopped completely'
+    ],
+    correct:1,
+    explain:'The double harpoon shows that molecules are constantly ionizing and re-forming at the same time \u2014 a dynamic equilibrium, characteristic of weak electrolytes.'
+  });
+
+  bank.push({ type:'classify' });
+  bank.push({ type:'classify' });
+  bank.push({ type:'compare' });
+  bank.push({ type:'compare' });
+
+  for(let i=bank.length-1;i>0;i--){
+    const j = Math.floor(Math.random()*(i+1));
+    [bank[i],bank[j]] = [bank[j],bank[i]];
+  }
+  return bank.slice(0,5);
+}
+
+let quizBank = [], quizIndex = 0, quizScore = 0, quizAnswered = false;
+
+function loadQuestion(){
+  const fb = document.getElementById('qFeedback');
+  fb.classList.remove('show','ok','no');
+  document.getElementById('nextBtn').style.display = 'none';
+  quizAnswered = false;
+
+  const item = quizBank[quizIndex];
+  document.getElementById('quizProgress').textContent = `Question ${quizIndex+1} / ${quizBank.length}`;
+  document.getElementById('scoreChip').textContent = `Score: ${quizScore} / ${quizIndex}`;
+
+  const optWrap = document.getElementById('qOptions');
+  optWrap.innerHTML = '';
+  optWrap.classList.remove('opt3');
+  const qSub = document.getElementById('qSub');
+  qSub.style.display = 'none';
+
+  if(item.type === 'static'){
+    document.getElementById('qText').textContent = item.q;
+    item.options.forEach((opt, idx)=>{
+      const b = document.createElement('button');
+      b.className = 'opt-btn'; b.textContent = opt;
+      b.addEventListener('click', ()=> handleAnswer(idx === item.correct, b, item.explain));
+      optWrap.appendChild(b);
+    });
+  } else if(item.type === 'classify'){
+    const c = QUIZ_COMPOUNDS[Math.floor(Math.random()*QUIZ_COMPOUNDS.length)];
+    document.getElementById('qText').textContent = `How would you classify ${c.formula} in water?`;
+    optWrap.classList.add('opt3');
+    ['strong','weak','non'].forEach(t=>{
+      const b = document.createElement('button');
+      b.className = 'opt-btn'; b.textContent = TYPE_LABEL[t];
+      const explain = `${c.formula} is a ${TYPE_LABEL[t===c.type? t : c.type].toLowerCase()}.`;
+      b.addEventListener('click', ()=> handleAnswer(t === c.type, b, explain));
+      optWrap.appendChild(b);
+    });
+  } else if(item.type === 'compare'){
+    let a = QUIZ_COMPOUNDS[Math.floor(Math.random()*QUIZ_COMPOUNDS.length)];
+    let bC = QUIZ_COMPOUNDS[Math.floor(Math.random()*QUIZ_COMPOUNDS.length)];
+    let tries=0;
+    while(bC.formula===a.formula && tries<10){ bC = QUIZ_COMPOUNDS[Math.floor(Math.random()*QUIZ_COMPOUNDS.length)]; tries++; }
+
+    document.getElementById('qText').textContent = 'Assuming equal concentrations, which solution lights the conductivity bulb brighter?';
+    qSub.style.display = 'block';
+    qSub.innerHTML = `<b>Solution A:</b> ${a.formula} &nbsp;&middot;&nbsp; <b>Solution B:</b> ${bC.formula}`;
+
+    const rA = TYPE_RANK[a.type], rB = TYPE_RANK[bC.type];
+    let correctChoice = rA===rB ? 'same' : (rA>rB ? 'A' : 'B');
+    const explain = `${a.formula} is a ${TYPE_LABEL[a.type].toLowerCase()} and ${bC.formula} is a ${TYPE_LABEL[bC.type].toLowerCase()}. `
+      + (correctChoice==='same' ? 'Same category \u2192 roughly the same ion concentration \u2192 similar brightness.'
+         : `More ions in solution means more current, so the ${TYPE_LABEL[correctChoice==='A'?a.type:bC.type].toLowerCase()} wins.`);
+
+    [['Solution A','A'],['Solution B','B'],['About the same','same']].forEach(([label,val])=>{
+      const b = document.createElement('button');
+      b.className='opt-btn'; b.textContent=label;
+      b.addEventListener('click', ()=> handleAnswer(val===correctChoice, b, explain));
+      optWrap.appendChild(b);
+    });
+    optWrap.classList.add('opt3');
+  }
+}
+
+function handleAnswer(isCorrect, clickedBtn, explainText){
+  if(quizAnswered) return;
+  quizAnswered = true;
+  if(isCorrect) quizScore++;
+  document.querySelectorAll('#qOptions .opt-btn').forEach(b=> b.disabled = true);
+  clickedBtn.classList.add(isCorrect ? 'correct' : 'wrong');
+  const fb = document.getElementById('qFeedback');
+  fb.classList.add('show', isCorrect ? 'ok' : 'no');
+  fb.textContent = (isCorrect ? '✓ Correct. ' : '✗ Not quite. ') + explainText;
+  document.getElementById('scoreChip').textContent = `Score: ${quizScore} / ${quizIndex+1}`;
+  document.getElementById('nextBtn').style.display = 'inline-flex';
+}
+
+function nextQuestion(){
+  quizIndex++;
+  if(quizIndex >= quizBank.length) showSummary(); else loadQuestion();
+}
+function showSummary(){
+  document.getElementById('quizBody').style.display = 'none';
+  document.getElementById('quizSummary').style.display = 'block';
+  document.getElementById('summaryScore').textContent = `${quizScore} / ${quizBank.length}`;
+}
+function startQuiz(){
+  quizBank = buildQuizBank();
+  quizIndex = 0; quizScore = 0;
+  document.getElementById('quizBody').style.display = 'block';
+  document.getElementById('quizSummary').style.display = 'none';
+  loadQuestion();
+}
+document.getElementById('nextBtn').addEventListener('click', nextQuestion);
+document.getElementById('retryBtn').addEventListener('click', startQuiz);
+
+/* ---------------- init ---------------- */
+initBeaker();
+startQuiz();
+</script>
+</body>
+</html>
