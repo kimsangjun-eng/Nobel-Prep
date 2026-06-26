@@ -1,0 +1,524 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Nobel Prep — IB HL Chem Structure 1 Quiz A</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
+  :root{--navy:#1B2A4A;--navy2:#243660;--gold:#C9A84C;--white:#FFFFFF;--off:#F7F8FA;--gray1:#E8EAF0;--gray2:#9AA0B2;--gray3:#555D72;--green:#2D7D46;--green-bg:#EBF7EF;--red:#C0392B;--red-bg:#FDECEA;--teal:#1A7A8A;--teal-bg:#E6F4F6;--radius:10px;--shadow:0 2px 12px rgba(27,42,74,0.10);}
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{font-family:'Inter',sans-serif;background:var(--off);color:var(--navy);min-height:100vh;}
+  header{background:var(--navy);padding:16px 28px 0;position:sticky;top:0;z-index:100;box-shadow:0 2px 10px rgba(0,0,0,0.25);}
+  .header-top{display:flex;align-items:center;justify-content:space-between;padding-bottom:14px;}
+  .logo{display:flex;align-items:center;gap:12px;}
+  .logo-badge{width:38px;height:38px;background:var(--gold);border-radius:8px;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:15px;color:var(--navy);}
+  .logo-text h1{font-size:16px;font-weight:700;color:var(--white);}
+  .logo-text p{font-size:11px;color:var(--gold);margin-top:1px;}
+  .quiz-badge{background:var(--teal);color:var(--white);font-size:11px;font-weight:700;padding:4px 12px;border-radius:20px;letter-spacing:0.5px;}
+  .progress-bar-wrap{width:100%;height:3px;background:rgba(255,255,255,0.15);}
+  .progress-bar{height:100%;background:var(--teal);width:0%;transition:width 0.4s ease;}
+  main{max-width:780px;margin:0 auto;padding:28px 16px 80px;}
+  .name-card{background:var(--white);border-radius:var(--radius);box-shadow:var(--shadow);padding:24px 28px;margin-bottom:24px;border-left:4px solid var(--teal);}
+  .name-card h2{font-size:14px;font-weight:600;color:var(--navy2);margin-bottom:12px;}
+  .name-row{display:flex;gap:12px;flex-wrap:wrap;}
+  .name-row input{flex:1;min-width:180px;padding:10px 14px;border:1.5px solid var(--gray1);border-radius:8px;font-family:'Inter',sans-serif;font-size:14px;color:var(--navy);outline:none;transition:border-color 0.2s;}
+  .name-row input:focus{border-color:var(--teal);}
+  .section-header{background:var(--navy2);color:var(--white);padding:10px 18px;border-radius:8px 8px 0 0;font-size:12px;font-weight:600;letter-spacing:0.8px;text-transform:uppercase;display:flex;align-items:center;gap:8px;margin-top:24px;}
+  .section-header .badge{background:var(--teal);color:var(--white);padding:2px 8px;border-radius:10px;font-size:10px;}
+  .q-card{background:var(--white);border:1px solid var(--gray1);border-top:none;padding:20px 22px;}
+  .q-card:last-of-type{border-radius:0 0 var(--radius) var(--radius);}
+  .q-card.answered-correct{border-left:4px solid var(--green);}
+  .q-card.answered-wrong{border-left:4px solid var(--red);}
+  .q-card.selected-only{border-left:4px solid var(--teal);}
+  .q-card.unanswered-warn{border-left:4px solid #F39C12;animation:shake 0.3s;}
+  @keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-4px)}75%{transform:translateX(4px)}}
+  .q-num{font-size:10px;font-weight:700;color:var(--teal);letter-spacing:1px;text-transform:uppercase;margin-bottom:6px;}
+  .q-text{font-size:14px;font-weight:500;line-height:1.65;color:var(--navy);margin-bottom:14px;}
+  .stmt-list{list-style:none;margin:8px 0 14px;padding:0;display:flex;flex-direction:column;gap:6px;}
+  .stmt-list li{font-size:13.5px;color:var(--navy);line-height:1.6;padding:7px 11px;background:var(--off);border-radius:6px;border-left:2px solid var(--gray1);}
+  .stmt-list li b{color:var(--navy2);margin-right:6px;}
+  .options{display:flex;flex-direction:column;gap:8px;}
+  .option-btn{display:flex;align-items:center;gap:10px;padding:10px 14px;border-radius:8px;border:1.5px solid var(--gray1);background:var(--off);cursor:pointer;font-family:'Inter',sans-serif;font-size:13.5px;color:var(--navy);text-align:left;transition:all 0.15s;width:100%;}
+  .option-btn:hover:not(:disabled){border-color:var(--teal);background:var(--teal-bg);}
+  .option-btn.selected{border-color:var(--navy);background:#EEF1F8;font-weight:500;}
+  .option-btn.correct{border-color:var(--green);background:var(--green-bg);color:var(--green);font-weight:600;}
+  .option-btn.wrong{border-color:var(--red);background:var(--red-bg);color:var(--red);}
+  .option-btn.reveal-correct{border-color:var(--green);background:var(--green-bg);color:var(--green);font-weight:600;}
+  .opt-letter{width:24px;height:24px;border-radius:50%;background:var(--gray1);color:var(--gray3);font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+  .option-btn.correct .opt-letter,.option-btn.reveal-correct .opt-letter{background:var(--green);color:var(--white);}
+  .option-btn.wrong .opt-letter{background:var(--red);color:var(--white);}
+  .sa-wrap{display:flex;flex-direction:column;gap:8px;}
+  .sa-input{width:100%;padding:10px 14px;border-radius:8px;border:1.5px solid var(--gray1);font-family:'Inter',sans-serif;font-size:14px;color:var(--navy);outline:none;transition:border-color 0.2s;background:var(--off);}
+  .sa-input:focus{border-color:var(--teal);background:var(--white);}
+  .sa-input.correct{border-color:var(--green);background:var(--green-bg);}
+  .sa-input.wrong{border-color:var(--red);background:var(--red-bg);}
+  .feedback{margin-top:10px;padding:10px 14px;border-radius:8px;font-size:13px;font-weight:500;display:none;}
+  .feedback.correct{background:var(--green-bg);color:var(--green);display:flex;align-items:flex-start;gap:8px;}
+  .feedback.wrong{background:var(--red-bg);color:var(--red);display:flex;align-items:flex-start;gap:8px;}
+  .feedback-icon{font-size:16px;flex-shrink:0;}
+  .feedback-text{line-height:1.5;}
+  .progress-pill{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:var(--navy);color:var(--white);padding:10px 24px;border-radius:30px;font-size:13px;font-weight:600;box-shadow:0 4px 20px rgba(0,0,0,0.2);display:flex;gap:16px;align-items:center;z-index:200;}
+  .progress-pill span{color:var(--teal);}
+  .submit-section{margin-top:32px;text-align:center;}
+  .submit-btn{padding:14px 48px;background:var(--teal);color:var(--white);border:none;border-radius:10px;font-size:15px;font-weight:700;font-family:'Inter',sans-serif;cursor:pointer;box-shadow:0 4px 16px rgba(26,122,138,0.35);transition:all 0.2s;}
+  .submit-btn:hover{background:#155f6e;transform:translateY(-1px);}
+  .submit-btn:disabled{background:var(--gray2);color:var(--white);transform:none;box-shadow:none;cursor:default;}
+  .result-card{display:none;background:var(--white);border-radius:var(--radius);box-shadow:0 8px 32px rgba(27,42,74,0.15);padding:36px 32px;text-align:center;margin-top:32px;border-top:5px solid var(--teal);}
+  .result-score{font-size:56px;font-weight:700;color:var(--navy);line-height:1;}
+  .result-label{font-size:14px;color:var(--gray2);margin-top:6px;margin-bottom:24px;}
+  .result-badge{display:inline-block;padding:8px 24px;border-radius:30px;font-size:15px;font-weight:700;margin-bottom:20px;}
+  .result-badge.pass{background:var(--green-bg);color:var(--green);}
+  .result-badge.fail{background:var(--red-bg);color:var(--red);}
+  .result-breakdown{font-size:13px;color:var(--gray3);}
+</style>
+</head>
+<body>
+<header>
+  <div class="header-top">
+    <div class="logo">
+      <div class="logo-badge">NP</div>
+      <div class="logo-text">
+        <h1>Nobel Prep</h1>
+        <p>IB HL Chemistry · Structure 1.1 &amp; 1.2</p>
+      </div>
+    </div>
+    <div class="quiz-badge">QUIZ A</div>
+  </div>
+  <div class="progress-bar-wrap"><div class="progress-bar" id="progressBar"></div></div>
+</header>
+
+<main>
+  <div class="name-card">
+    <h2>Student Information</h2>
+    <div class="name-row">
+      <input type="text" id="studentName" placeholder="Full Name"/>
+      <input type="text" id="studentPeriod" placeholder="Period" style="max-width:120px;"/>
+    </div>
+  </div>
+
+  <!-- ── SECTION 1: MCQ ─────────────────────────────────── -->
+  <div class="section-header">
+    Section 1 — Multiple Choice
+    <span class="badge">Q1–Q8</span>
+  </div>
+
+  <!-- Q1: 정답 A — element/compound/mixture 분류 -->
+  <div class="q-card" id="qcard-1">
+    <div class="q-num">Question 1</div>
+    <div class="q-text">Which of the following lists contains <strong>only</strong> pure substances?</div>
+    <div class="options" id="opts-1">
+      <button class="option-btn" onclick="selectMCQ(1,'A','A')"><span class="opt-letter">A</span> Copper, water, sodium chloride</button>
+      <button class="option-btn" onclick="selectMCQ(1,'B','B')"><span class="opt-letter">B</span> Air, ethanol, iron</button>
+      <button class="option-btn" onclick="selectMCQ(1,'C','C')"><span class="opt-letter">C</span> Sea water, oxygen, glucose</button>
+      <button class="option-btn" onclick="selectMCQ(1,'D','D')"><span class="opt-letter">D</span> Steel, ammonia, carbon dioxide</button>
+    </div>
+    <div class="feedback" id="fb-1"></div>
+  </div>
+
+  <!-- Q2: 정답 B — heterogeneous mixture -->
+  <div class="q-card" id="qcard-2">
+    <div class="q-num">Question 2</div>
+    <div class="q-text">Which of the following is a <strong>heterogeneous</strong> mixture?</div>
+    <div class="options" id="opts-2">
+      <button class="option-btn" onclick="selectMCQ(2,'A','A')"><span class="opt-letter">A</span> Salt dissolved in water</button>
+      <button class="option-btn" onclick="selectMCQ(2,'B','B')"><span class="opt-letter">B</span> Sand and water</button>
+      <button class="option-btn" onclick="selectMCQ(2,'C','C')"><span class="opt-letter">C</span> Air (dry)</button>
+      <button class="option-btn" onclick="selectMCQ(2,'D','D')"><span class="opt-letter">D</span> Ethanol and water</button>
+    </div>
+    <div class="feedback" id="fb-2"></div>
+  </div>
+
+  <!-- Q3: 정답 C — sublimation -->
+  <div class="q-card" id="qcard-3">
+    <div class="q-num">Question 3</div>
+    <div class="q-text">Which equation correctly represents <strong>sublimation</strong>?</div>
+    <div class="options" id="opts-3">
+      <button class="option-btn" onclick="selectMCQ(3,'A','A')"><span class="opt-letter">A</span> H₂O(l) → H₂O(g)</button>
+      <button class="option-btn" onclick="selectMCQ(3,'B','B')"><span class="opt-letter">B</span> H₂O(g) → H₂O(l)</button>
+      <button class="option-btn" onclick="selectMCQ(3,'C','C')"><span class="opt-letter">C</span> I₂(s) → I₂(g)</button>
+      <button class="option-btn" onclick="selectMCQ(3,'D','D')"><span class="opt-letter">D</span> I₂(g) → 2I(g)</button>
+    </div>
+    <div class="feedback" id="fb-3"></div>
+  </div>
+
+  <!-- Q4: 정답 D — phase change, KE vs PE -->
+  <div class="q-card" id="qcard-4">
+    <div class="q-num">Question 4</div>
+    <div class="q-text">At the boiling point, a liquid is converted to a gas at constant temperature. Which statement correctly explains this?</div>
+    <div class="options" id="opts-4">
+      <button class="option-btn" onclick="selectMCQ(4,'A','A')"><span class="opt-letter">A</span> Kinetic energy of particles increases while potential energy stays constant.</button>
+      <button class="option-btn" onclick="selectMCQ(4,'B','B')"><span class="opt-letter">B</span> Both kinetic energy and potential energy of particles increase equally.</button>
+      <button class="option-btn" onclick="selectMCQ(4,'C','C')"><span class="opt-letter">C</span> Kinetic energy decreases as particles use energy to overcome intermolecular forces.</button>
+      <button class="option-btn" onclick="selectMCQ(4,'D','D')"><span class="opt-letter">D</span> Potential energy of particles increases as intermolecular forces are overcome; kinetic energy remains constant.</button>
+    </div>
+    <div class="feedback" id="fb-4"></div>
+  </div>
+
+  <!-- Q5: 정답 B — gas temperature reduced -->
+  <div class="q-card" id="qcard-5">
+    <div class="q-num">Question 5</div>
+    <div class="q-text">The temperature of a gas in a sealed rigid container is reduced. Which statement is correct?</div>
+    <div class="options" id="opts-5">
+      <button class="option-btn" onclick="selectMCQ(5,'A','A')"><span class="opt-letter">A</span> The molecules collide with the walls more frequently.</button>
+      <button class="option-btn" onclick="selectMCQ(5,'B','B')"><span class="opt-letter">B</span> The molecules collide with the walls less frequently.</button>
+      <button class="option-btn" onclick="selectMCQ(5,'C','C')"><span class="opt-letter">C</span> The average speed of molecules remains unchanged.</button>
+      <button class="option-btn" onclick="selectMCQ(5,'D','D')"><span class="opt-letter">D</span> The pressure of the gas increases.</button>
+    </div>
+    <div class="feedback" id="fb-5"></div>
+  </div>
+
+  <!-- Q6: 정답 A — isotopes same/different properties -->
+  <div class="q-card" id="qcard-6">
+    <div class="q-num">Question 6</div>
+    <div class="q-text">Which statements about the isotopes ³⁵₁₇Cl and ³⁷₁₇Cl are correct?
+      <ul class="stmt-list">
+        <li><b>I.</b> They have the same number of protons.</li>
+        <li><b>II.</b> They have the same chemical properties.</li>
+        <li><b>III.</b> They have the same physical properties.</li>
+      </ul>
+    </div>
+    <div class="options" id="opts-6">
+      <button class="option-btn" onclick="selectMCQ(6,'A','A')"><span class="opt-letter">A</span> I and II only</button>
+      <button class="option-btn" onclick="selectMCQ(6,'B','B')"><span class="opt-letter">B</span> I and III only</button>
+      <button class="option-btn" onclick="selectMCQ(6,'C','C')"><span class="opt-letter">C</span> II and III only</button>
+      <button class="option-btn" onclick="selectMCQ(6,'D','D')"><span class="opt-letter">D</span> I, II and III</button>
+    </div>
+    <div class="feedback" id="fb-6"></div>
+  </div>
+
+  <!-- Q7: 정답 C — protons/neutrons/electrons in ion -->
+  <div class="q-card" id="qcard-7">
+    <div class="q-num">Question 7</div>
+    <div class="q-text">How many electrons does the ion ³¹₁₅P³⁻ contain?</div>
+    <div class="options" id="opts-7">
+      <button class="option-btn" onclick="selectMCQ(7,'A','A')"><span class="opt-letter">A</span> 12</button>
+      <button class="option-btn" onclick="selectMCQ(7,'B','B')"><span class="opt-letter">B</span> 15</button>
+      <button class="option-btn" onclick="selectMCQ(7,'C','C')"><span class="opt-letter">C</span> 18</button>
+      <button class="option-btn" onclick="selectMCQ(7,'D','D')"><span class="opt-letter">D</span> 31</button>
+    </div>
+    <div class="feedback" id="fb-7"></div>
+  </div>
+
+  <!-- Q8: 정답 D — relative atomic mass weighted mean -->
+  <div class="q-card" id="qcard-8">
+    <div class="q-num">Question 8</div>
+    <div class="q-text">Which of the following lists substances that are all made up of <strong>molecules</strong>?</div>
+    <div class="options" id="opts-8">
+      <button class="option-btn" onclick="selectMCQ(8,'A','A')"><span class="opt-letter">A</span> C, O₂, CO₂</button>
+      <button class="option-btn" onclick="selectMCQ(8,'B','B')"><span class="opt-letter">B</span> Na, Cl₂, NaCl</button>
+      <button class="option-btn" onclick="selectMCQ(8,'C','C')"><span class="opt-letter">C</span> H₂, He, Li</button>
+      <button class="option-btn" onclick="selectMCQ(8,'D','D')"><span class="opt-letter">D</span> P₄, S₈, O₃</button>
+    </div>
+    <div class="feedback" id="fb-8"></div>
+  </div>
+
+  <!-- ── SECTION 2: SHORT ANSWER ────────────────────────── -->
+  <div class="section-header">
+    Section 2 — Short Answer
+    <span class="badge">Q9–Q20</span>
+  </div>
+
+  <!-- Q9 -->
+  <div class="q-card" id="qcard-9">
+    <div class="q-num">Question 9</div>
+    <div class="q-text">Iron (Fe) consists of only one type of atom and cannot be broken down into simpler substances by chemical means. Classify iron as an element, compound, or mixture.</div>
+    <div class="sa-wrap"><input class="sa-input" type="text" id="sa-9" placeholder="Type your answer"/></div>
+    <div class="feedback" id="fb-9"></div>
+  </div>
+
+  <!-- Q10 -->
+  <div class="q-card" id="qcard-10">
+    <div class="q-num">Question 10</div>
+    <div class="q-text">Water (H₂O) contains hydrogen and oxygen chemically bonded in a fixed 2:1 ratio. Classify water as an element, compound, or mixture.</div>
+    <div class="sa-wrap"><input class="sa-input" type="text" id="sa-10" placeholder="Type your answer"/></div>
+    <div class="feedback" id="fb-10"></div>
+  </div>
+
+  <!-- Q11 -->
+  <div class="q-card" id="qcard-11">
+    <div class="q-num">Question 11</div>
+    <div class="q-text">Air consists of nitrogen, oxygen, argon, and other gases that are <em>not</em> chemically combined and can be separated by physical means. Classify air as an element, compound, or mixture.</div>
+    <div class="sa-wrap"><input class="sa-input" type="text" id="sa-11" placeholder="Type your answer"/></div>
+    <div class="feedback" id="fb-11"></div>
+  </div>
+
+  <!-- Q12 -->
+  <div class="q-card" id="qcard-12">
+    <div class="q-num">Question 12</div>
+    <div class="q-text">A solution of sodium chloride in water has the same composition throughout. Is this mixture homogeneous or heterogeneous?</div>
+    <div class="sa-wrap"><input class="sa-input" type="text" id="sa-12" placeholder="Type your answer"/></div>
+    <div class="feedback" id="fb-12"></div>
+  </div>
+
+  <!-- Q13 -->
+  <div class="q-card" id="qcard-13">
+    <div class="q-num">Question 13</div>
+    <div class="q-text">During very cold weather, snow can gradually disappear without first becoming liquid. Name this process.</div>
+    <div class="sa-wrap"><input class="sa-input" type="text" id="sa-13" placeholder="Type your answer"/></div>
+    <div class="feedback" id="fb-13"></div>
+  </div>
+
+  <!-- Q14 -->
+  <div class="q-card" id="qcard-14">
+    <div class="q-num">Question 14</div>
+    <div class="q-text">According to the kinetic molecular theory, temperature is a measure of the average __________ of the particles in a substance. (Two words)</div>
+    <div class="sa-wrap"><input class="sa-input" type="text" id="sa-14" placeholder="Type your answer"/></div>
+    <div class="feedback" id="fb-14"></div>
+  </div>
+
+  <!-- Q15 -->
+  <div class="q-card" id="qcard-15">
+    <div class="q-num">Question 15</div>
+    <div class="q-text">As the temperature of a gas increases at constant volume, the average speed of the gas particles __________. (One word)</div>
+    <div class="sa-wrap"><input class="sa-input" type="text" id="sa-15" placeholder="Type your answer"/></div>
+    <div class="feedback" id="fb-15"></div>
+  </div>
+
+  <!-- Q16 -->
+  <div class="q-card" id="qcard-16">
+    <div class="q-num">Question 16</div>
+    <div class="q-text">State the name of the sub-atomic particle that determines the atomic number of an element.</div>
+    <div class="sa-wrap"><input class="sa-input" type="text" id="sa-16" placeholder="Type your answer"/></div>
+    <div class="feedback" id="fb-16"></div>
+  </div>
+
+  <!-- Q17 -->
+  <div class="q-card" id="qcard-17">
+    <div class="q-num">Question 17</div>
+    <div class="q-text">An atom of sulfur has the symbol ³²₁₆S. State the number of neutrons in this atom.</div>
+    <div class="sa-wrap"><input class="sa-input" type="text" id="sa-17" placeholder="Type a number"/></div>
+    <div class="feedback" id="fb-17"></div>
+  </div>
+
+  <!-- Q18 -->
+  <div class="q-card" id="qcard-18">
+    <div class="q-num">Question 18</div>
+    <div class="q-text">Atoms of the same element that have the same number of protons but different numbers of neutrons are called __________.</div>
+    <div class="sa-wrap"><input class="sa-input" type="text" id="sa-18" placeholder="Type your answer"/></div>
+    <div class="feedback" id="fb-18"></div>
+  </div>
+
+  <!-- Q19 -->
+  <div class="q-card" id="qcard-19">
+    <div class="q-num">Question 19</div>
+    <div class="q-text">Calculate the relative atomic mass of carbon given the following data. Give your answer to 2 decimal places.<br><br>
+    ¹²C: abundance = 98.93% &nbsp;|&nbsp; ¹³C: abundance = 1.07%</div>
+    <div class="sa-wrap"><input class="sa-input" type="text" id="sa-19" placeholder="Type your answer"/></div>
+    <div class="feedback" id="fb-19"></div>
+  </div>
+
+  <!-- Q20 -->
+  <div class="q-card" id="qcard-20">
+    <div class="q-num">Question 20</div>
+    <div class="q-text">Name the instrument used in chemistry to measure the relative atomic masses of isotopes and determine their relative abundances. (Two words)</div>
+    <div class="sa-wrap"><input class="sa-input" type="text" id="sa-20" placeholder="Type your answer"/></div>
+    <div class="feedback" id="fb-20"></div>
+  </div>
+
+  <div class="submit-section">
+    <button class="submit-btn" id="submitBtn" onclick="submitQuiz()">Submit &amp; See Results</button>
+    <p style="font-size:12px;color:#9AA0B2;margin-top:12px;">Answers will be revealed after submission.</p>
+  </div>
+
+  <div class="result-card" id="resultCard">
+    <div class="result-score" id="resultScore">—</div>
+    <div class="result-label">out of 20 questions</div>
+    <div class="result-badge" id="resultBadge"></div>
+    <div class="result-breakdown" id="resultBreakdown"></div>
+  </div>
+</main>
+
+<div class="progress-pill">Answered: <span id="pillCount">0</span> / 20</div>
+
+<script>
+// ── SHA-256 해시 (AP Chem 퀴즈와 동일한 방식) ──────────────
+const MCQ_HASHES = {
+  1: 'ca978112ca1bbdcafac231b39a23dc4da786eff8147c4e72b9807785afee48bb', // A
+  2: '3e23e8160039594a33894f6564e1b1348bbd7a0088d42c4acb73eeaed59c009d', // B
+  3: '2e7d2c03a9507ae265ecf5b5356885a53393a2029d241394997265a1a25aefc6', // C
+  4: '18ac3e7343f016890c510e93f935261169d9e3f565436429830faf0934f4f8e4', // D
+  5: '3e23e8160039594a33894f6564e1b1348bbd7a0088d42c4acb73eeaed59c009d', // B
+  6: 'ca978112ca1bbdcafac231b39a23dc4da786eff8147c4e72b9807785afee48bb', // A
+  7: '2e7d2c03a9507ae265ecf5b5356885a53393a2029d241394997265a1a25aefc6', // C
+  8: '18ac3e7343f016890c510e93f935261169d9e3f565436429830faf0934f4f8e4', // D
+};
+const SA_HASHES = {
+  9:  '445929267209c034d1e324834c17e0c8305df3dcb21d1710a639ac6ca08c648b', // element
+  10: 'ee0df97cece494b174c6844cfd00255723152d5555215073611b8ad673c4e749', // compound
+  11: '58c92ee653b56b65bb14cc6e6c246fb4496f62d89a725a72c0b5d6fd9f2c3893', // mixture
+  12: '9527c1c86df82e51bc870d9886e2f99d3028e68e4b12d018c4793b7217d50130', // homogeneous
+  13: '8ec12d9c1994ab54941a3fb2e3862bf39295b124ab62b1e27bf1ba62eb517450', // sublimation
+  14: '6fbb3c863f859bc84312360da2a98d13d4d0d891be0bde892223000cbb70d04c', // kinetic energy
+  15: '0387dd2081a1cde3b02dc49d5dd17fac11e9a4d19533342189f020b9fdc4070c', // increases
+  16: '469dfc0b18c73eb263c4a1476545e7b064a7f862ef53827c22026c97268b2ebf', // proton
+  17: 'b17ef6d19c7a5b1ee83b907c595526dcb1eb06db8227d650d5dda0a9f4ce8cd9', // 16 (32-16=16 neutrons)
+  18: '2a7bb844d51b2d66a3ae7aed6848c1361d72d035fb79d115d0cb42e57793cd07', // isotopes
+  19: '1b63bd866b643fbcc11ad772d3a92324a61768a6f3c9e5cb0d6af4edd4792240', // 12.01
+  20: '5cdcacd98274347cd32b5cf2c0356c4449825d35bbbb4ac454e452d07a782296', // mass spectrometer
+};
+
+// Q17 정답 수정: S-32의 중성자 수 = 32-16 = 16
+SA_HASHES[17] = (async()=>{
+  const norm='16';
+  const buf=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(norm));
+  return Array.from(new Uint8Array(buf)).map(b=>b.toString(16).padStart(2,'0')).join('');
+})();
+
+const selections = {};
+
+async function hashStr(s) {
+  const norm = s.trim().toLowerCase().replace(/\s+/g,'');
+  const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(norm));
+  return Array.from(new Uint8Array(buf)).map(b=>b.toString(16).padStart(2,'0')).join('');
+}
+
+function selectMCQ(qNum, letter, value) {
+  if (document.getElementById('resultCard').style.display === 'block') return;
+  document.querySelectorAll(`#opts-${qNum} .option-btn`).forEach(b => b.classList.remove('selected'));
+  event.currentTarget.classList.add('selected');
+  selections[qNum] = value;
+  const card = document.getElementById(`qcard-${qNum}`);
+  card.classList.remove('unanswered-warn');
+  card.classList.add('selected-only');
+  updateProgress();
+}
+
+function updateProgress() {
+  let c = 0;
+  for (let i = 1; i <= 8; i++) if (selections[i]) c++;
+  for (let i = 9; i <= 20; i++) {
+    const el = document.getElementById(`sa-${i}`);
+    if (el && el.value.trim()) c++;
+  }
+  document.getElementById('pillCount').textContent = c;
+  document.getElementById('progressBar').style.width = (c / 20 * 100) + '%';
+}
+
+document.addEventListener('DOMContentLoaded', async () => {
+  const allBtns = document.querySelectorAll('.option-btn');
+  for (const btn of allBtns) {
+    const match = btn.getAttribute('onclick').match(/'([^']+)'\)$/);
+    if (match) {
+      const h = await hashStr(match[1]);
+      btn.setAttribute('data-hash', h);
+    }
+  }
+  for (let i = 9; i <= 20; i++) {
+    const el = document.getElementById(`sa-${i}`);
+    if (el) el.addEventListener('input', updateProgress);
+  }
+  // Q17 해시 미리 계산
+  SA_HASHES[17] = await hashStr('16');
+});
+
+async function submitQuiz() {
+  let missing = [];
+  for (let i = 1; i <= 8; i++) if (!selections[i]) missing.push(i);
+  for (let i = 9; i <= 20; i++) {
+    const el = document.getElementById(`sa-${i}`);
+    if (!el || !el.value.trim()) missing.push(i);
+  }
+  if (missing.length > 0) {
+    missing.forEach(n => {
+      const c = document.getElementById(`qcard-${n}`);
+      c.classList.remove('unanswered-warn');
+      void c.offsetWidth;
+      c.classList.add('unanswered-warn');
+    });
+    document.getElementById(`qcard-${missing[0]}`).scrollIntoView({behavior:'smooth', block:'center'});
+    return;
+  }
+
+  document.querySelectorAll('.option-btn').forEach(b => b.disabled = true);
+  document.querySelectorAll('.sa-input').forEach(i => i.disabled = true);
+  document.getElementById('submitBtn').disabled = true;
+
+  let total = 0;
+  const det = [];
+
+  // MCQ 채점
+  for (let i = 1; i <= 8; i++) {
+    const uv = selections[i];
+    const uh = await hashStr(uv);
+    const isOk = uh === MCQ_HASHES[i];
+    if (isOk) total++;
+    det.push(`Q${i}:${isOk?'O':'X'}`);
+    document.querySelectorAll(`#opts-${i} .option-btn`).forEach(btn => {
+      btn.classList.remove('selected','selected-only');
+      if (btn.getAttribute('data-hash') === MCQ_HASHES[i]) btn.classList.add('reveal-correct');
+      const v = btn.getAttribute('onclick').match(/'([^']+)'\)$/)[1];
+      if (v === uv && isOk) btn.classList.add('correct');
+      if (v === uv && !isOk) btn.classList.add('wrong');
+    });
+    const fb = document.getElementById(`fb-${i}`);
+    fb.className = 'feedback ' + (isOk ? 'correct' : 'wrong');
+    fb.innerHTML = isOk
+      ? `<span class="feedback-icon">✓</span><span class="feedback-text">Correct!</span>`
+      : `<span class="feedback-icon">✗</span><span class="feedback-text">Incorrect. The correct answer is highlighted above.</span>`;
+    const card = document.getElementById(`qcard-${i}`);
+    card.classList.remove('selected-only','unanswered-warn');
+    card.classList.add(isOk ? 'answered-correct' : 'answered-wrong');
+  }
+
+  // SA 채점
+  for (let i = 9; i <= 20; i++) {
+    const raw = document.getElementById(`sa-${i}`).value.trim();
+    const uh = await hashStr(raw);
+    const isOk = uh === SA_HASHES[i];
+    if (isOk) total++;
+    det.push(`Q${i}:${isOk?'O':'X'}`);
+    document.getElementById(`sa-${i}`).classList.add(isOk ? 'correct' : 'wrong');
+    const fb = document.getElementById(`fb-${i}`);
+    fb.className = 'feedback ' + (isOk ? 'correct' : 'wrong');
+    fb.innerHTML = isOk
+      ? `<span class="feedback-icon">✓</span><span class="feedback-text">Correct!</span>`
+      : `<span class="feedback-icon">✗</span><span class="feedback-text">Incorrect. Check your answer and spelling.</span>`;
+    const card = document.getElementById(`qcard-${i}`);
+    card.classList.remove('selected-only','unanswered-warn');
+    card.classList.add(isOk ? 'answered-correct' : 'answered-wrong');
+  }
+
+  const name = document.getElementById('studentName').value.trim() || 'Anonymous';
+  const period = document.getElementById('studentPeriod').value.trim() || '—';
+  const pct = Math.round(total / 20 * 100);
+  const pass = pct >= 70;
+  const mcqS = det.slice(0,8).filter(s=>s.includes(':O')).length;
+  const saS  = det.slice(8).filter(s=>s.includes(':O')).length;
+
+  document.getElementById('resultScore').textContent = `${total} / 20`;
+  const badge = document.getElementById('resultBadge');
+  badge.textContent = pass ? '✓ Pass' : '✗ Needs Review';
+  badge.className = 'result-badge ' + (pass ? 'pass' : 'fail');
+  document.getElementById('resultBreakdown').innerHTML =
+    `${name} &nbsp;·&nbsp; Period ${period} &nbsp;·&nbsp; ${pct}%
+     &nbsp;|&nbsp; MCQ: ${mcqS}/8 &nbsp;·&nbsp; Short Answer: ${saS}/12`;
+
+  const rc = document.getElementById('resultCard');
+  rc.style.display = 'block';
+  rc.scrollIntoView({behavior:'smooth'});
+
+  sendToSheets({name, period, total, pct, mcqScore:mcqS, saScore:saS, pass, details:det.join(',')});
+}
+
+// ── Google Sheets 연동 ──────────────────────────────────────
+const SHEETS_URL = 'https://script.google.com/macros/s/AKfycbzC6VbZGji6iK9toMUqxErFixXow5_LVoEQkedwb0gNXwRRAJrbOQeb_oItGGGHb7JS/exec';
+function sendToSheets(d) {
+  if (SHEETS_URL === 'YOUR_APPS_SCRIPT_WEB_APP_URL_HERE') return;
+  fetch(SHEETS_URL, {
+    method:'POST', mode:'no-cors',
+    headers:{'Content-Type':'application/json'},
+    body: JSON.stringify({
+      quiz: 'IB HL Chem — Structure 1.1 & 1.2 — Quiz A',
+      name: d.name, period: d.period,
+      score: d.total, total: 20, percent: d.pct,
+      pass: d.pass ? 'Pass' : 'Fail',
+      mcq: d.mcqScore, sa: d.saScore,
+      timestamp: new Date().toISOString(),
+      details: d.details
+    })
+  }).catch(()=>{});
+}
+</script>
+</body>
+</html>
