@@ -1,0 +1,992 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>A-0 | Cathode Ray Tube Experiment</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --navy: #1a2744;
+    --navy-mid: #243358;
+    --gold: #c9a84c;
+    --gold-light: #e8c97a;
+    --bg: #f4f5f8;
+    --card: #ffffff;
+    --text: #1a2744;
+    --text-muted: #5a6a8a;
+    --border: #e0e4ef;
+    --beam-color: #4a9eff;
+    --beam-glow: rgba(74,158,255,0.35);
+    --electron-color: #60d0ff;
+    --plate-pos: #e05555;
+    --plate-neg: #5580e0;
+    --accent-green: #2dba76;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'Inter', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+  }
+
+  /* ── Header ── */
+  .header {
+    background: var(--navy);
+    padding: 18px 32px;
+    display: flex; align-items: center; gap: 16px;
+    position: sticky; top: 0; z-index: 100;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.25);
+  }
+  .header-badge {
+    background: var(--gold);
+    color: var(--navy);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px; font-weight: 500;
+    padding: 4px 10px; border-radius: 4px;
+    letter-spacing: 0.05em;
+  }
+  .header-title {
+    color: #ffffff;
+    font-size: 17px; font-weight: 600;
+    flex: 1;
+  }
+  .header-subtitle {
+    color: var(--gold);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+  }
+
+  /* ── Tab bar ── */
+  .tab-bar {
+    background: var(--card);
+    border-bottom: 2px solid var(--border);
+    display: flex; gap: 0;
+    padding: 0 32px;
+  }
+  .tab-btn {
+    padding: 14px 20px;
+    font-size: 13px; font-weight: 500;
+    color: var(--text-muted);
+    background: none; border: none;
+    border-bottom: 3px solid transparent;
+    margin-bottom: -2px;
+    cursor: pointer; transition: all 0.2s;
+    white-space: nowrap;
+  }
+  .tab-btn:hover { color: var(--navy); }
+  .tab-btn.active {
+    color: var(--navy);
+    border-bottom-color: var(--gold);
+    font-weight: 600;
+  }
+
+  /* ── Main layout ── */
+  .main { max-width: 960px; margin: 0 auto; padding: 28px 24px; }
+  .tab-panel { display: none; }
+  .tab-panel.active { display: block; }
+
+  /* ── Section title ── */
+  .section-title {
+    font-size: 13px; font-weight: 600;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    margin-bottom: 16px;
+  }
+
+  /* ── Historical photo card ── */
+  .history-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 18px;
+    margin-bottom: 24px;
+  }
+  @media (max-width: 640px) { .history-row { grid-template-columns: 1fr; } }
+
+  .photo-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 1px 6px rgba(26,39,68,0.07);
+  }
+  .photo-card img {
+    width: 100%; height: 180px;
+    object-fit: cover;
+    display: block;
+    background: #dde2ef;
+  }
+  .photo-caption {
+    padding: 10px 14px;
+    font-size: 11.5px;
+    color: var(--text-muted);
+    line-height: 1.5;
+    border-top: 1px solid var(--border);
+  }
+  .photo-caption strong { color: var(--navy); }
+
+  /* ── Sim card ── */
+  .sim-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    box-shadow: 0 1px 8px rgba(26,39,68,0.07);
+    overflow: hidden;
+    margin-bottom: 20px;
+  }
+  .sim-header {
+    background: #f8f9fc;
+    border-bottom: 1px solid var(--border);
+    padding: 14px 20px;
+    display: flex; align-items: center; justify-content: space-between;
+  }
+  .sim-header h3 { font-size: 14px; font-weight: 600; color: var(--navy); }
+  .sim-header p { font-size: 12px; color: var(--text-muted); margin-top: 2px; }
+
+  /* ── Mode selector ── */
+  .mode-row {
+    padding: 14px 20px;
+    display: flex; gap: 8px; flex-wrap: wrap;
+    border-bottom: 1px solid var(--border);
+  }
+  .mode-btn {
+    padding: 7px 16px;
+    font-size: 12.5px; font-weight: 500;
+    border: 1.5px solid var(--border);
+    border-radius: 7px;
+    background: var(--card);
+    color: var(--text-muted);
+    cursor: pointer; transition: all 0.2s;
+  }
+  .mode-btn:hover { border-color: var(--navy); color: var(--navy); }
+  .mode-btn.active {
+    background: var(--navy);
+    color: #fff;
+    border-color: var(--navy);
+  }
+
+  /* ── Canvas ── */
+  .canvas-wrap {
+    padding: 16px 20px;
+    background: #f0f3fa;
+    position: relative;
+  }
+  #crt-canvas {
+    width: 100%; display: block;
+    border-radius: 8px;
+    border: 1px solid var(--border);
+  }
+
+  /* ── Sliders ── */
+  .slider-row {
+    padding: 14px 20px;
+    display: flex; gap: 24px; flex-wrap: wrap;
+    align-items: center;
+    border-top: 1px solid var(--border);
+    background: #fafbfe;
+  }
+  .slider-group {
+    display: flex; align-items: center; gap: 10px;
+    flex: 1; min-width: 200px;
+  }
+  .slider-group label {
+    font-size: 12px; font-weight: 500;
+    color: var(--text-muted);
+    white-space: nowrap;
+    min-width: 130px;
+  }
+  .slider-group input[type=range] {
+    flex: 1;
+    -webkit-appearance: none;
+    height: 4px;
+    border-radius: 2px;
+    background: var(--border);
+    outline: none;
+  }
+  .slider-group input[type=range]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 16px; height: 16px;
+    border-radius: 50%;
+    background: var(--navy);
+    cursor: pointer;
+    box-shadow: 0 1px 4px rgba(26,39,68,0.3);
+  }
+  .slider-val {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px; font-weight: 500;
+    color: var(--gold);
+    min-width: 28px; text-align: right;
+  }
+
+  /* ── Experiment cards ── */
+  .exp-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 14px;
+    margin-bottom: 20px;
+  }
+  @media (max-width: 640px) { .exp-grid { grid-template-columns: 1fr; } }
+
+  .exp-card {
+    background: var(--card);
+    border: 1.5px solid var(--border);
+    border-radius: 12px;
+    padding: 16px;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .exp-card:hover { border-color: var(--navy); box-shadow: 0 2px 12px rgba(26,39,68,0.1); }
+  .exp-card.active {
+    border-color: var(--gold);
+    box-shadow: 0 2px 14px rgba(201,168,76,0.2);
+  }
+  .exp-num {
+    font-size: 10px; font-weight: 700;
+    color: var(--text-muted);
+    text-transform: uppercase; letter-spacing: 0.1em;
+    margin-bottom: 6px;
+  }
+  .exp-card h4 { font-size: 13px; font-weight: 600; color: var(--navy); margin-bottom: 6px; }
+  .exp-card p { font-size: 12px; color: var(--text-muted); line-height: 1.5; }
+  .exp-card p strong { color: var(--navy); }
+
+  /* ── Key discovery ── */
+  .discovery-box {
+    background: #eef4ff;
+    border: 1.5px solid #c0d4ff;
+    border-radius: 12px;
+    padding: 18px 20px;
+    margin-bottom: 20px;
+  }
+  .discovery-box .disc-label {
+    font-size: 11px; font-weight: 700;
+    text-transform: uppercase; letter-spacing: 0.1em;
+    color: #3366cc;
+    margin-bottom: 8px;
+  }
+  .discovery-box p {
+    font-size: 13px; line-height: 1.65;
+    color: #1a2744;
+  }
+  .discovery-box p strong { color: #3366cc; }
+
+  /* ── Key Discoveries tab ── */
+  .timeline { margin-bottom: 24px; }
+  .timeline-item {
+    display: flex; gap: 18px;
+    margin-bottom: 20px;
+    align-items: flex-start;
+  }
+  .timeline-dot {
+    width: 38px; height: 38px;
+    border-radius: 50%;
+    background: var(--navy);
+    color: var(--gold);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px; font-weight: 700;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+    margin-top: 2px;
+  }
+  .timeline-content h4 {
+    font-size: 14px; font-weight: 600;
+    color: var(--navy); margin-bottom: 4px;
+  }
+  .timeline-content p {
+    font-size: 13px; color: var(--text-muted); line-height: 1.6;
+  }
+  .timeline-content p strong { color: var(--navy); }
+
+  .em-card {
+    background: var(--navy);
+    border-radius: 14px;
+    padding: 20px 24px;
+    color: #fff;
+    margin-bottom: 20px;
+  }
+  .em-card h3 {
+    font-size: 14px; font-weight: 600;
+    color: var(--gold); margin-bottom: 14px;
+  }
+  .em-formula {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 20px; font-weight: 500;
+    color: #fff;
+    text-align: center;
+    padding: 14px 0;
+    border-top: 1px solid rgba(255,255,255,0.12);
+    border-bottom: 1px solid rgba(255,255,255,0.12);
+    margin: 12px 0;
+    letter-spacing: 0.05em;
+  }
+  .em-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 14px;
+    margin-top: 14px;
+  }
+  @media (max-width: 500px) { .em-grid { grid-template-columns: 1fr 1fr; } }
+  .em-item { text-align: center; }
+  .em-item .em-val {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 15px; font-weight: 500;
+    color: var(--gold-light);
+    display: block;
+  }
+  .em-item .em-label {
+    font-size: 11px; color: rgba(255,255,255,0.55);
+    margin-top: 2px;
+  }
+
+  .significance-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+    margin-bottom: 20px;
+  }
+  @media (max-width: 600px) { .significance-grid { grid-template-columns: 1fr; } }
+  .sig-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 16px;
+  }
+  .sig-card .sig-icon {
+    font-size: 22px; margin-bottom: 8px;
+  }
+  .sig-card h4 { font-size: 13px; font-weight: 600; color: var(--navy); margin-bottom: 6px; }
+  .sig-card p { font-size: 12px; color: var(--text-muted); line-height: 1.5; }
+
+  /* ── Status label on canvas ── */
+  .canvas-status {
+    text-align: center;
+    font-size: 12px; color: var(--text-muted);
+    font-style: italic;
+    padding: 6px 0 2px;
+  }
+</style>
+</head>
+<body>
+
+<!-- Header -->
+<div class="header">
+  <span class="header-badge">A-0</span>
+  <div>
+    <div class="header-title">Cathode Ray Tube Experiment</div>
+    <div class="header-subtitle">J.J. Thomson · 1897 · Nobel Prep AP Chemistry</div>
+  </div>
+</div>
+
+<!-- Tab bar -->
+<div class="tab-bar">
+  <button class="tab-btn active" onclick="switchTab('explore', this)">🔬 Explore</button>
+  <button class="tab-btn" onclick="switchTab('discoveries', this)">⚡ Key Discoveries</button>
+</div>
+
+<div class="main">
+
+  <!-- ═══════════ EXPLORE TAB ═══════════ -->
+  <div class="tab-panel active" id="tab-explore">
+
+    <!-- Historical illustrations -->
+    <div class="section-title">Historical Apparatus</div>
+    <div class="history-row">
+
+      <!-- Card 1: Thomson portrait illustration -->
+      <div class="photo-card">
+        <div style="width:100%; height:180px; background:linear-gradient(135deg,#1a2744 0%,#2a3a64 100%); display:flex; align-items:center; justify-content:center; position:relative; overflow:hidden;">
+          <!-- Decorative background lines -->
+          <svg width="100%" height="100%" style="position:absolute;top:0;left:0;opacity:0.08" viewBox="0 0 400 180" preserveAspectRatio="none">
+            <line x1="0" y1="30" x2="400" y2="30" stroke="#c9a84c" stroke-width="0.5"/>
+            <line x1="0" y1="90" x2="400" y2="90" stroke="#c9a84c" stroke-width="0.5"/>
+            <line x1="0" y1="150" x2="400" y2="150" stroke="#c9a84c" stroke-width="0.5"/>
+            <line x1="60" y1="0" x2="60" y2="180" stroke="#c9a84c" stroke-width="0.5"/>
+            <line x1="200" y1="0" x2="200" y2="180" stroke="#c9a84c" stroke-width="0.5"/>
+            <line x1="340" y1="0" x2="340" y2="180" stroke="#c9a84c" stroke-width="0.5"/>
+          </svg>
+          <!-- Thomson silhouette + CRT illustration -->
+          <svg width="320" height="155" viewBox="0 0 320 155">
+            <!-- CRT tube (long glass tube) -->
+            <rect x="60" y="68" width="200" height="22" rx="11" fill="none" stroke="#c9a84c" stroke-width="1.5" opacity="0.6"/>
+            <!-- Cathode end (bulb) -->
+            <ellipse cx="55" cy="79" rx="18" ry="28" fill="none" stroke="#c9a84c" stroke-width="1.5" opacity="0.5"/>
+            <!-- Screen end -->
+            <ellipse cx="268" cy="79" rx="22" ry="30" fill="none" stroke="#c9a84c" stroke-width="1.5" opacity="0.5"/>
+            <!-- Beam inside tube -->
+            <line x1="73" y1="79" x2="246" y2="79" stroke="#4a9eff" stroke-width="2" opacity="0.7"/>
+            <!-- Glow spot on screen -->
+            <circle cx="252" cy="79" r="7" fill="#60d0ff" opacity="0.4"/>
+            <!-- Plates -->
+            <rect x="140" y="52" width="50" height="6" rx="2" fill="#e8c97a" opacity="0.7"/>
+            <rect x="140" y="100" width="50" height="6" rx="2" fill="#e8c97a" opacity="0.7"/>
+            <!-- Cathode label -->
+            <text x="56" y="120" text-anchor="middle" font-family="Inter,sans-serif" font-size="9" fill="#c9a84c" opacity="0.8">Cathode</text>
+            <!-- Screen label -->
+            <text x="260" y="120" text-anchor="middle" font-family="Inter,sans-serif" font-size="9" fill="#c9a84c" opacity="0.8">Screen</text>
+            <!-- J.J. Thomson text badge -->
+            <rect x="95" y="12" width="130" height="28" rx="6" fill="rgba(201,168,76,0.15)" stroke="#c9a84c" stroke-width="1"/>
+            <text x="160" y="30" text-anchor="middle" font-family="Inter,sans-serif" font-size="12" font-weight="600" fill="#c9a84c">J.J. Thomson</text>
+            <!-- Nobel Prize badge -->
+            <rect x="112" y="130" width="96" height="18" rx="4" fill="rgba(201,168,76,0.1)" stroke="#c9a84c" stroke-width="0.8" opacity="0.7"/>
+            <text x="160" y="143" text-anchor="middle" font-family="Inter,sans-serif" font-size="9" fill="#c9a84c" opacity="0.85">Nobel Prize 1906</text>
+          </svg>
+        </div>
+        <div class="photo-caption">
+          <strong>J.J. Thomson (1856–1940)</strong> — Cavendish Professor of Experimental Physics at Cambridge. In 1897 he proved cathode rays were streams of tiny charged particles — the first subatomic particle ever discovered.
+        </div>
+      </div>
+
+      <!-- Card 2: CRT apparatus diagram SVG -->
+      <div class="photo-card">
+        <div style="width:100%; height:180px; background:#f0f4ff; display:flex; align-items:center; justify-content:center; padding:10px;">
+          <svg width="100%" height="155" viewBox="0 0 440 155" font-family="Inter,sans-serif">
+            <!-- Glass tube outline -->
+            <rect x="20" y="52" width="400" height="54" rx="4" fill="none" stroke="#8090b0" stroke-width="1.5"/>
+            <!-- Cathode block -->
+            <rect x="28" y="63" width="10" height="32" rx="1" fill="#1a2744"/>
+            <!-- Anode with slit -->
+            <rect x="68" y="52" width="6" height="18" rx="1" fill="#4a5a8a"/>
+            <rect x="68" y="88" width="6" height="18" rx="1" fill="#4a5a8a"/>
+            <!-- Positive plate (top, red) -->
+            <rect x="170" y="42" width="80" height="10" rx="2" fill="#e05555"/>
+            <text x="210" y="38" text-anchor="middle" font-size="9" fill="#e05555">+ plate</text>
+            <!-- Negative plate (bottom, blue) -->
+            <rect x="170" y="106" width="80" height="10" rx="2" fill="#5580e0"/>
+            <text x="210" y="128" text-anchor="middle" font-size="9" fill="#5580e0">− plate</text>
+            <!-- Beam line -->
+            <line x1="38" y1="79" x2="310" y2="64" stroke="#4a9eff" stroke-width="2.5" opacity="0.85"/>
+            <!-- Beam pre-plate (straight) -->
+            <line x1="38" y1="79" x2="170" y2="79" stroke="#4a9eff" stroke-width="2.5" opacity="0.85"/>
+            <!-- Beam in plate (curving up) -->
+            <path d="M170,79 Q210,72 250,64" fill="none" stroke="#4a9eff" stroke-width="2.5" opacity="0.85"/>
+            <!-- Beam post-plate -->
+            <line x1="250" y1="64" x2="408" y2="52" stroke="#4a9eff" stroke-width="2.5" opacity="0.85"/>
+            <!-- Deflection arrow -->
+            <line x1="300" y1="79" x2="300" y2="59" stroke="#c9a84c" stroke-width="1.5" stroke-dasharray="3,2"/>
+            <polygon points="300,55 296,63 304,63" fill="#c9a84c"/>
+            <text x="308" y="67" font-size="9" fill="#c9a84c">deflection</text>
+            <!-- Screen -->
+            <line x1="412" y1="50" x2="412" y2="108" stroke="#8090b0" stroke-width="3"/>
+            <!-- Glow on screen -->
+            <circle cx="411" cy="53" r="8" fill="#60d0ff" opacity="0.5"/>
+            <!-- Labels -->
+            <text x="33" y="120" text-anchor="middle" font-size="9" fill="#5a6a8a">Cathode</text>
+            <text x="71" y="120" text-anchor="middle" font-size="9" fill="#5a6a8a">Anode</text>
+            <text x="412" y="120" text-anchor="middle" font-size="9" fill="#5a6a8a">Screen</text>
+            <!-- Title -->
+            <text x="220" y="145" text-anchor="middle" font-size="10" font-weight="600" fill="#1a2744">Thomson's CRT — Electric Field Deflection</text>
+          </svg>
+        </div>
+        <div class="photo-caption">
+          <strong>Apparatus Diagram</strong> — The CRT contains a cathode (−) and anode (+) at one end, deflecting plates in the middle, and a phosphorescent screen at the far end to detect the beam position.
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Interactive Simulation -->
+    <div class="section-title">Interactive Simulation</div>
+    <div class="sim-card">
+      <div class="sim-header">
+        <div>
+          <h3>Cathode Ray Deflection</h3>
+          <p>Observe how cathode rays behave under electric and magnetic fields</p>
+        </div>
+      </div>
+
+      <!-- Mode buttons -->
+      <div class="mode-row">
+        <button class="mode-btn active" onclick="setMode('none', this)">No Field</button>
+        <button class="mode-btn" onclick="setMode('electric', this)">Electric Field</button>
+        <button class="mode-btn" onclick="setMode('magnetic', this)">Magnetic Field</button>
+        <button class="mode-btn" onclick="setMode('both', this)">Both Fields (Balanced)</button>
+      </div>
+
+      <!-- Canvas -->
+      <div class="canvas-wrap">
+        <div class="canvas-status" id="sim-status">No field — beam travels straight</div>
+        <canvas id="crt-canvas" height="220"></canvas>
+      </div>
+
+      <!-- Sliders -->
+      <div class="slider-row">
+        <div class="slider-group">
+          <label>Electric Field (V)</label>
+          <input type="range" id="sl-e" min="1" max="10" value="5" step="0.5" oninput="updateSliders()">
+          <span class="slider-val" id="val-e">5</span>
+        </div>
+        <div class="slider-group">
+          <label>Magnetic Field (B)</label>
+          <input type="range" id="sl-b" min="1" max="10" value="5" step="0.5" oninput="updateSliders()">
+          <span class="slider-val" id="val-b">5</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Experiment cards -->
+    <div class="section-title">Thomson's Three Experiments</div>
+    <div class="exp-grid">
+      <div class="exp-card active" id="exp-card-0" onclick="setMode('none', document.querySelectorAll('.mode-btn')[0]); highlightExp(0);">
+        <div class="exp-num">Experiment 1</div>
+        <h4>No Field Applied</h4>
+        <p>Cathode rays travel in a perfectly straight line from cathode to anode, hitting the <strong>center of the screen</strong>.</p>
+      </div>
+      <div class="exp-card" id="exp-card-1" onclick="setMode('electric', document.querySelectorAll('.mode-btn')[1]); highlightExp(1);">
+        <div class="exp-num">Experiment 2</div>
+        <h4>Electric Field Applied</h4>
+        <p>Rays bend toward the positive plate — proving they carry <strong>negative charge</strong>. This ruled out light (which has no charge).</p>
+      </div>
+      <div class="exp-card" id="exp-card-2" onclick="setMode('both', document.querySelectorAll('.mode-btn')[3]); highlightExp(2);">
+        <div class="exp-num">Experiment 3</div>
+        <h4>Fields Balanced</h4>
+        <p>By balancing E and B fields so the beam travels straight, Thomson calculated the <strong>charge-to-mass ratio (e/m)</strong> of the electron.</p>
+      </div>
+    </div>
+
+    <!-- Key discovery box -->
+    <div class="discovery-box">
+      <div class="disc-label">Key Discovery</div>
+      <p>
+        Thomson proved that cathode rays are streams of <strong>negatively charged particles</strong> (electrons) — the same regardless of the cathode material or gas used. The electron's mass was ~1/1837 that of a hydrogen atom. This was the <strong>first subatomic particle ever discovered</strong>, disproving the idea that the atom was indivisible.
+      </p>
+    </div>
+
+  </div><!-- /tab-explore -->
+
+  <!-- ═══════════ KEY DISCOVERIES TAB ═══════════ -->
+  <div class="tab-panel" id="tab-discoveries">
+
+    <!-- e/m ratio card -->
+    <div class="em-card">
+      <h3>⚡ Charge-to-Mass Ratio (e/m)</h3>
+      <p style="font-size:12px; color:rgba(255,255,255,0.6); margin-bottom:4px;">
+        Thomson's most important measurement — derived by balancing electric and magnetic deflection forces.
+      </p>
+      <div class="em-formula">e/m = E² / (2VB²)</div>
+      <div class="em-grid">
+        <div class="em-item">
+          <span class="em-val">1.76 × 10¹¹</span>
+          <div class="em-label">e/m (C/kg)</div>
+        </div>
+        <div class="em-item">
+          <span class="em-val">9.109 × 10⁻³¹</span>
+          <div class="em-label">Electron mass (kg)</div>
+        </div>
+        <div class="em-item">
+          <span class="em-val">1/1837</span>
+          <div class="em-label">Ratio to H atom mass</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Timeline -->
+    <div class="section-title">Experimental Timeline</div>
+    <div class="timeline">
+      <div class="timeline-item">
+        <div class="timeline-dot">1</div>
+        <div class="timeline-content">
+          <h4>Magnetic Deflection → Charges the Beam</h4>
+          <p>Thomson bent the cathode rays using a magnet. He connected the bent rays to an electrometer, detecting <strong>negative charge</strong> — proving the rays are electrically charged particles, not waves or light.</p>
+        </div>
+      </div>
+      <div class="timeline-item">
+        <div class="timeline-dot">2</div>
+        <div class="timeline-content">
+          <h4>Electric Deflection → Negative Charge Confirmed</h4>
+          <p>Between two charged plates, rays bent <strong>toward the positive plate</strong> and away from the negative plate. This definitively proved negative charge. (Hertz had failed this experiment because his tube had too much residual gas — Thomson improved the vacuum.)</p>
+        </div>
+      </div>
+      <div class="timeline-item">
+        <div class="timeline-dot">3</div>
+        <div class="timeline-content">
+          <h4>Balanced Fields → e/m Ratio Measured</h4>
+          <p>Thomson applied both electric (E) and magnetic (B) fields simultaneously, adjusted until the beam traveled straight. At balance: <strong>eE = evB</strong>, so velocity v = E/B. He then used the electric deflection alone to find e/m, getting the same value regardless of cathode material or gas used.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Significance -->
+    <div class="section-title">Why This Matters</div>
+    <div class="significance-grid">
+      <div class="sig-card">
+        <div class="sig-icon">🧩</div>
+        <h4>Atoms Are Divisible</h4>
+        <p>For 2000 years, the atom was thought to be the smallest unit of matter. Thomson's electron proved atoms have internal structure — a revolutionary idea.</p>
+      </div>
+      <div class="sig-card">
+        <div class="sig-icon">🔋</div>
+        <h4>Universal Particle</h4>
+        <p>The same e/m ratio appeared for every cathode material and gas tested. The electron is a fundamental constituent of all matter — not just one element.</p>
+      </div>
+      <div class="sig-card">
+        <div class="sig-icon">🍮</div>
+        <h4>Plum Pudding Model</h4>
+        <p>Thomson proposed electrons were embedded in a diffuse positive "pudding" — the Plum Pudding Model. Later disproved by Rutherford's gold foil experiment.</p>
+      </div>
+      <div class="sig-card">
+        <div class="sig-icon">🏆</div>
+        <h4>Nobel Prize 1906</h4>
+        <p>Thomson won the Nobel Prize in Physics for the discovery of the electron — the first fundamental subatomic particle ever identified.</p>
+      </div>
+    </div>
+
+  </div><!-- /tab-discoveries -->
+
+</div><!-- /main -->
+
+<script>
+// ───────────────────────────────────────────
+// Tab switching
+// ───────────────────────────────────────────
+function switchTab(name, btn) {
+  document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('tab-' + name).classList.add('active');
+  btn.classList.add('active');
+}
+
+// ───────────────────────────────────────────
+// Simulation state
+// ───────────────────────────────────────────
+let mode = 'none';
+let eField = 5, bField = 5;
+let animT = 0;
+let raf = null;
+const canvas = document.getElementById('crt-canvas');
+const ctx = canvas.getContext('2d');
+
+// Responsive canvas
+const resizeObserver = new ResizeObserver(() => {
+  const wrap = canvas.parentElement;
+  const dpr = window.devicePixelRatio || 1;
+  const w = wrap.clientWidth - 32;
+  canvas.style.width = w + 'px';
+  canvas.style.height = '220px';
+  canvas.width  = w * dpr;
+  canvas.height = 220 * dpr;
+  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  drawFrame();
+});
+resizeObserver.observe(canvas.parentElement);
+
+function setMode(m, btn) {
+  mode = m;
+  document.querySelectorAll('.mode-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  const statusMap = {
+    none:     'No field — beam travels straight',
+    electric: 'Electric field ON — beam deflects toward positive plate',
+    magnetic: 'Magnetic field ON — beam curves (force ⊥ velocity)',
+    both:     'Both fields balanced — beam travels straight again (Thomson used this to calculate e/m)'
+  };
+  document.getElementById('sim-status').textContent = statusMap[m];
+  drawFrame();
+}
+
+function updateSliders() {
+  eField = parseFloat(document.getElementById('sl-e').value);
+  bField = parseFloat(document.getElementById('sl-b').value);
+  document.getElementById('val-e').textContent = eField;
+  document.getElementById('val-b').textContent = bField;
+  drawFrame();
+}
+
+function highlightExp(i) {
+  document.querySelectorAll('.exp-card').forEach((c, idx) => {
+    c.classList.toggle('active', idx === i);
+  });
+}
+
+// ───────────────────────────────────────────
+// Drawing
+// ───────────────────────────────────────────
+function drawFrame() {
+  const W = canvas.width / (window.devicePixelRatio || 1);
+  const H = canvas.height / (window.devicePixelRatio || 1);
+  if (W === 0 || H === 0) return;
+
+  ctx.clearRect(0, 0, W, H);
+
+  const cx = W / 2;
+  const cy = H / 2;
+
+  // Background
+  const bgGrad = ctx.createLinearGradient(0, 0, 0, H);
+  bgGrad.addColorStop(0, '#f8f9fc');
+  bgGrad.addColorStop(1, '#eef0f8');
+  ctx.fillStyle = bgGrad;
+  ctx.roundRect(0, 0, W, H, 8);
+  ctx.fill();
+
+  // Tube body (glass outline)
+  const tubeLeft  = 40;
+  const tubeRight = W - 30;
+  const tubeTop   = cy - 52;
+  const tubeBtm   = cy + 52;
+  ctx.save();
+  ctx.strokeStyle = '#c8cfe8';
+  ctx.lineWidth = 2;
+  ctx.setLineDash([]);
+  // Top & bottom walls
+  ctx.beginPath();
+  ctx.moveTo(tubeLeft + 10, tubeTop);
+  ctx.lineTo(tubeRight - 20, tubeTop);
+  ctx.stroke();
+  ctx.beginPath();
+  ctx.moveTo(tubeLeft + 10, tubeBtm);
+  ctx.lineTo(tubeRight - 20, tubeBtm);
+  ctx.stroke();
+  ctx.restore();
+
+  // Cathode (dark rectangle)
+  const cathX = tubeLeft + 12;
+  ctx.fillStyle = '#1a2744';
+  ctx.fillRect(cathX - 6, cy - 22, 10, 44);
+  ctx.fillStyle = '#2a3a64';
+  ctx.fillRect(cathX + 4, cy - 14, 3, 28);
+
+  // Anode slit
+  const anodeX = tubeLeft + 60;
+  ctx.fillStyle = '#4a5a8a';
+  ctx.fillRect(anodeX - 2, tubeTop + 4, 4, 38);
+  ctx.fillRect(anodeX - 2, tubeBtm - 42, 4, 38);
+  // Slit gap
+  ctx.fillStyle = '#f8f9fc';
+  ctx.fillRect(anodeX - 1, cy - 6, 3, 12);
+
+  // Labels
+  ctx.font = '10px Inter, sans-serif';
+  ctx.fillStyle = '#8090b0';
+  ctx.textAlign = 'center';
+  ctx.fillText('Cathode (−)', cathX, tubeBtm + 18);
+  ctx.fillText('Anode (+)', anodeX, tubeBtm + 18);
+
+  // Deflection plates region
+  const plateLeft  = cx - 90;
+  const plateRight = cx + 50;
+  const plateSep   = 52; // half gap between plates
+  const plateThick = 8;
+
+  if (mode === 'electric' || mode === 'both') {
+    // Top plate (positive when electric → upward deflection of electron toward it)
+    const topColor   = '#e05555';
+    const btmColor   = '#5580e0';
+
+    // Positive plate (top) glow
+    const topGrad = ctx.createLinearGradient(0, cy - plateSep - plateThick, 0, cy - plateSep + 2);
+    topGrad.addColorStop(0, 'rgba(224,85,85,0.0)');
+    topGrad.addColorStop(1, 'rgba(224,85,85,0.15)');
+    ctx.fillStyle = topGrad;
+    ctx.fillRect(plateLeft, cy - plateSep - plateThick - 20, plateRight - plateLeft, 22);
+
+    ctx.fillStyle = topColor;
+    ctx.fillRect(plateLeft, cy - plateSep - plateThick, plateRight - plateLeft, plateThick);
+
+    // Negative plate (bottom) glow
+    const btmGrad = ctx.createLinearGradient(0, cy + plateSep, 0, cy + plateSep + plateThick + 20);
+    btmGrad.addColorStop(0, 'rgba(85,128,224,0.15)');
+    btmGrad.addColorStop(1, 'rgba(85,128,224,0.0)');
+    ctx.fillStyle = btmGrad;
+    ctx.fillRect(plateLeft, cy + plateSep, plateRight - plateLeft, 22);
+
+    ctx.fillStyle = btmColor;
+    ctx.fillRect(plateLeft, cy + plateSep, plateRight - plateLeft, plateThick);
+
+    // Labels
+    ctx.font = '10px Inter';
+    ctx.fillStyle = topColor;
+    ctx.textAlign = 'center';
+    ctx.fillText('+ plate', (plateLeft + plateRight) / 2, cy - plateSep - plateThick - 6);
+    ctx.fillStyle = btmColor;
+    ctx.fillText('− plate', (plateLeft + plateRight) / 2, cy + plateSep + plateThick + 16);
+
+    // Field arrows
+    ctx.strokeStyle = 'rgba(200,80,80,0.3)';
+    ctx.lineWidth = 1;
+    for (let x = plateLeft + 18; x < plateRight - 10; x += 28) {
+      const ax = x, ay1 = cy - plateSep + 4, ay2 = cy + plateSep - 4;
+      ctx.beginPath();
+      ctx.moveTo(ax, ay1);
+      ctx.lineTo(ax, ay2);
+      const ah = 5;
+      ctx.moveTo(ax, ay1);
+      ctx.lineTo(ax - ah/2, ay1 + ah);
+      ctx.lineTo(ax + ah/2, ay1 + ah);
+      ctx.stroke();
+    }
+
+    // E label
+    ctx.font = 'italic 13px Inter';
+    ctx.fillStyle = 'rgba(200,80,80,0.6)';
+    ctx.textAlign = 'left';
+    ctx.fillText('E', plateRight + 6, cy);
+
+  } else {
+    // Neutral plates (grey)
+    ctx.fillStyle = '#b0bcd0';
+    ctx.fillRect(plateLeft, cy - plateSep - plateThick, plateRight - plateLeft, plateThick);
+    ctx.fillRect(plateLeft, cy + plateSep, plateRight - plateLeft, plateThick);
+    ctx.font = '10px Inter';
+    ctx.fillStyle = '#8090b0';
+    ctx.textAlign = 'center';
+    ctx.fillText('plates', (plateLeft + plateRight) / 2, cy - plateSep - plateThick - 6);
+  }
+
+  // Magnetic field indicator (circular B field symbol)
+  if (mode === 'magnetic' || mode === 'both') {
+    const bx = (plateLeft + plateRight) / 2;
+    // Draw ⊙ symbols (B into/out of page)
+    ctx.font = '14px Inter';
+    ctx.fillStyle = 'rgba(40,180,130,0.75)';
+    ctx.textAlign = 'center';
+    for (let xi = plateLeft + 24; xi < plateRight; xi += 30) {
+      ctx.fillText('⊙', xi, cy - plateSep + 16);
+    }
+    ctx.font = '11px Inter';
+    ctx.fillStyle = 'rgba(40,180,130,0.7)';
+    ctx.fillText('B (out of page)', bx, cy - plateSep + 34);
+  }
+
+  // Screen
+  const screenX = tubeRight - 22;
+  ctx.strokeStyle = '#c8cfe8';
+  ctx.lineWidth = 3;
+  ctx.beginPath();
+  ctx.moveTo(screenX, tubeTop + 4);
+  ctx.lineTo(screenX, tubeBtm - 4);
+  ctx.stroke();
+  ctx.font = '10px Inter';
+  ctx.fillStyle = '#8090b0';
+  ctx.textAlign = 'center';
+  ctx.fillText('Screen', screenX, tubeBtm + 18);
+
+  // ── Beam path ──
+  const beamStartX = cathX + 14;
+  const beamEndX   = screenX - 2;
+  const beamY0 = cy;
+
+  // Calculate deflection magnitude
+  let deflection = 0;
+  if (mode === 'electric') {
+    deflection = -(eField / 10) * 30;
+  } else if (mode === 'magnetic') {
+    deflection = -(bField / 10) * 24;
+  } else if (mode === 'both') {
+    deflection = 0;
+  }
+
+  // Build beam path as array of {x,y} points
+  const steps = 120;
+  const beamPoints = [];
+  for (let s = 0; s <= steps; s++) {
+    const t = s / steps;
+    const bx = beamStartX + t * (beamEndX - beamStartX);
+    let dy = 0;
+    if (bx > plateLeft && bx < plateRight) {
+      const frac = (bx - plateLeft) / (plateRight - plateLeft);
+      dy = deflection * frac * frac;
+    } else if (bx >= plateRight) {
+      dy = deflection;
+      const exitAngle = deflection / (plateRight - plateLeft) * 2;
+      dy += exitAngle * (bx - plateRight) * 0.55;
+    }
+    // Clamp inside tube
+    const clampedDy = Math.max(tubeTop - beamY0 + 8, Math.min(tubeBtm - beamY0 - 8, dy));
+    beamPoints.push({ x: bx, y: beamY0 + clampedDy });
+  }
+
+  // ── Animated glow pulse along beam ──
+  animT = (animT + 0.012) % 1;
+
+  // Layer 1: Wide outer glow (static, dim)
+  ctx.save();
+  ctx.beginPath();
+  ctx.moveTo(beamPoints[0].x, beamPoints[0].y);
+  for (let i = 1; i < beamPoints.length; i++) {
+    ctx.lineTo(beamPoints[i].x, beamPoints[i].y);
+  }
+  ctx.strokeStyle = 'rgba(74,158,255,0.12)';
+  ctx.lineWidth = 14;
+  ctx.lineCap = 'round';
+  ctx.lineJoin = 'round';
+  ctx.stroke();
+  ctx.restore();
+
+  // Layer 2: Mid glow
+  ctx.save();
+  ctx.beginPath();
+  ctx.moveTo(beamPoints[0].x, beamPoints[0].y);
+  for (let i = 1; i < beamPoints.length; i++) {
+    ctx.lineTo(beamPoints[i].x, beamPoints[i].y);
+  }
+  ctx.strokeStyle = 'rgba(74,158,255,0.28)';
+  ctx.lineWidth = 6;
+  ctx.lineCap = 'round';
+  ctx.lineJoin = 'round';
+  ctx.stroke();
+  ctx.restore();
+
+  // Layer 3: Bright core beam
+  ctx.save();
+  ctx.beginPath();
+  ctx.moveTo(beamPoints[0].x, beamPoints[0].y);
+  for (let i = 1; i < beamPoints.length; i++) {
+    ctx.lineTo(beamPoints[i].x, beamPoints[i].y);
+  }
+  ctx.strokeStyle = 'rgba(140,220,255,0.92)';
+  ctx.lineWidth = 2.5;
+  ctx.lineCap = 'round';
+  ctx.lineJoin = 'round';
+  ctx.stroke();
+  ctx.restore();
+
+  // Layer 4: Animated bright pulse traveling along beam
+  const pulsePos = animT; // 0→1 along beam
+  const pIdx = Math.floor(pulsePos * (beamPoints.length - 1));
+  const pulseX = beamPoints[pIdx].x;
+  const pulseY = beamPoints[pIdx].y;
+  const pulseGlow = ctx.createRadialGradient(pulseX, pulseY, 0, pulseX, pulseY, 16);
+  pulseGlow.addColorStop(0, 'rgba(200,240,255,0.7)');
+  pulseGlow.addColorStop(0.4, 'rgba(96,180,255,0.3)');
+  pulseGlow.addColorStop(1, 'rgba(74,158,255,0)');
+  ctx.fillStyle = pulseGlow;
+  ctx.beginPath();
+  ctx.arc(pulseX, pulseY, 16, 0, Math.PI * 2);
+  ctx.fill();
+
+  // Screen hit glow
+  const lastPt = beamPoints[beamPoints.length - 1];
+  const hitY = lastPt.y;
+
+  const screenGlow = ctx.createRadialGradient(screenX, hitY, 0, screenX, hitY, 22);
+  screenGlow.addColorStop(0, 'rgba(160,230,255,0.8)');
+  screenGlow.addColorStop(0.35, 'rgba(74,158,255,0.35)');
+  screenGlow.addColorStop(1, 'rgba(74,158,255,0)');
+  ctx.fillStyle = screenGlow;
+  ctx.beginPath();
+  ctx.arc(screenX, hitY, 22, 0, Math.PI * 2);
+  ctx.fill();
+
+  // Bright phosphor spot on screen
+  ctx.beginPath();
+  ctx.arc(screenX, hitY, 5.5, 0, Math.PI * 2);
+  ctx.fillStyle = 'rgba(220,248,255,0.98)';
+  ctx.fill();
+  ctx.beginPath();
+  ctx.arc(screenX, hitY, 3, 0, Math.PI * 2);
+  ctx.fillStyle = '#ffffff';
+  ctx.fill();
+}
+
+// Animation loop
+function animate() {
+  drawFrame();
+  raf = requestAnimationFrame(animate);
+}
+animate();
+
+</script>
+</body>
+</html>

@@ -1,0 +1,852 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Gas Laws — Nobel Prep AP Chemistry</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --navy: #1a2744;
+  --navy-light: #2c3e6b;
+  --gold: #c9a84c;
+  --gold-light: #e8c97a;
+  --bg: #f7f8fc;
+  --surface: #ffffff;
+  --border: #e2e6f0;
+  --text-primary: #1a2744;
+  --text-secondary: #5a6480;
+  --text-muted: #9099b0;
+  --blue: #378add;
+  --red: #e24b4a;
+  --teal: #1d9e75;
+  --amber: #c9a84c;
+  --radius-md: 8px;
+  --radius-lg: 14px;
+  --radius-xl: 20px;
+}
+
+body {
+  font-family: 'Inter', sans-serif;
+  background: var(--bg);
+  color: var(--text-primary);
+  min-height: 100vh;
+}
+
+/* ── Header ── */
+.header {
+  background: var(--navy);
+  padding: 18px 2rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.header-left { display: flex; align-items: center; gap: 14px; }
+.header-logo {
+  font-size: 13px; font-weight: 600; color: var(--gold);
+  letter-spacing: 0.08em; text-transform: uppercase;
+}
+.header-title { font-size: 16px; font-weight: 500; color: #fff; }
+.header-badge {
+  font-size: 11px; background: rgba(201,168,76,0.18); color: var(--gold-light);
+  padding: 3px 10px; border-radius: 20px; border: 1px solid rgba(201,168,76,0.35);
+  font-weight: 500;
+}
+
+/* ── Tabs ── */
+.tabs-wrapper {
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+  padding: 0 2rem;
+  display: flex;
+  gap: 0;
+  overflow-x: auto;
+}
+.tab-btn {
+  padding: 14px 22px;
+  font-size: 13px; font-weight: 500;
+  color: var(--text-secondary);
+  background: none; border: none;
+  border-bottom: 3px solid transparent;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: color 0.15s, border-color 0.15s;
+  display: flex; align-items: center; gap: 8px;
+}
+.tab-btn:hover { color: var(--text-primary); }
+.tab-btn.active { color: var(--navy); border-bottom-color: var(--gold); }
+.tab-dot {
+  width: 8px; height: 8px; border-radius: 50%;
+  display: inline-block;
+}
+
+/* ── Main layout ── */
+.main { padding: 1.5rem 2rem; max-width: 1100px; margin: 0 auto; }
+
+.panel { display: none; }
+.panel.active { display: grid; grid-template-columns: 1fr 1fr; gap: 1.25rem; }
+@media (max-width: 700px) { .panel.active { grid-template-columns: 1fr; } }
+
+/* ── Cards ── */
+.card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 18px;
+}
+.card-label {
+  font-size: 10px; font-weight: 600; color: var(--text-muted);
+  letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 8px;
+}
+.law-name { font-size: 17px; font-weight: 600; color: var(--navy); margin-bottom: 5px; }
+.law-formula {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 12px; color: var(--navy);
+  background: #eef1f8; display: inline-block;
+  padding: 4px 12px; border-radius: 5px; margin-bottom: 14px;
+  border: 1px solid #d8dff0;
+}
+
+canvas.sim-canvas {
+  width: 100%; height: 200px; display: block;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border);
+  background: #f8faff;
+}
+
+/* ── Slider ── */
+.slider-section { margin-top: 14px; }
+.slider-row { display: flex; align-items: center; gap: 10px; }
+.slider-label { font-size: 12px; color: var(--text-secondary); min-width: 72px; font-weight: 500; }
+.slider-row input[type=range] {
+  flex: 1; height: 4px; cursor: pointer;
+  accent-color: var(--navy);
+}
+.slider-val {
+  font-size: 13px; font-weight: 600; min-width: 70px; text-align: right;
+  color: var(--navy); font-family: 'JetBrains Mono', monospace;
+}
+
+/* ── Metrics ── */
+.metric-row { display: flex; gap: 8px; margin-top: 12px; }
+.metric-card {
+  flex: 1; padding: 9px 10px;
+  background: var(--bg);
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border);
+}
+.m-label { font-size: 10px; color: var(--text-muted); margin-bottom: 3px; font-weight: 500; }
+.m-value { font-size: 15px; font-weight: 600; color: var(--text-primary); font-family: 'JetBrains Mono', monospace; }
+
+/* ── Collision badge ── */
+.collision-badge {
+  display: flex; align-items: center; gap: 6px;
+  margin-top: 10px; font-size: 12px; color: var(--text-secondary);
+  background: var(--bg); border: 1px solid var(--border);
+  border-radius: 6px; padding: 5px 10px; width: fit-content;
+}
+.col-dot {
+  width: 7px; height: 7px; border-radius: 50%;
+  background: var(--red); display: inline-block;
+  animation: pulse 1s ease-in-out infinite;
+}
+@keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.4} }
+
+/* ── Chart ── */
+.chart-wrap { position: relative; width: 100%; height: 210px; margin-top: 6px; }
+
+/* ── Info note ── */
+.info-note {
+  margin-top: 12px; font-size: 12px; color: var(--text-secondary);
+  line-height: 1.7; padding: 10px 12px;
+  background: var(--bg); border-radius: var(--radius-md);
+  border-left: 3px solid var(--border);
+}
+.info-note strong { color: var(--text-primary); font-weight: 600; }
+
+/* ── Footer ── */
+.footer {
+  text-align: center; padding: 24px;
+  font-size: 12px; color: var(--text-muted);
+  border-top: 1px solid var(--border); margin-top: 1rem;
+}
+</style>
+</head>
+<body>
+
+<header class="header">
+  <div class="header-left">
+    <span class="header-logo">Nobel Prep</span>
+    <span style="color:rgba(255,255,255,0.25);">|</span>
+    <span class="header-title">Gas Laws — Interactive Simulation</span>
+  </div>
+  <span class="header-badge">AP Chemistry · Chapter 5</span>
+</header>
+
+<div class="tabs-wrapper">
+  <button class="tab-btn active" onclick="switchTab('boyle')" id="btn-boyle">
+    <span class="tab-dot" style="background:#378add"></span> Boyle's Law
+  </button>
+  <button class="tab-btn" onclick="switchTab('charles')" id="btn-charles">
+    <span class="tab-dot" style="background:#e24b4a"></span> Charles's Law
+  </button>
+  <button class="tab-btn" onclick="switchTab('gay')" id="btn-gay">
+    <span class="tab-dot" style="background:#1d9e75"></span> Gay-Lussac's Law
+  </button>
+  <button class="tab-btn" onclick="switchTab('avogadro')" id="btn-avogadro">
+    <span class="tab-dot" style="background:#c9a84c"></span> Avogadro's Law
+  </button>
+</div>
+
+<main class="main">
+
+  <!-- ── BOYLE ── -->
+  <div id="panel-boyle" class="panel active">
+    <div class="card">
+      <div class="card-label">Animation</div>
+      <div class="law-name">Boyle's Law</div>
+      <div class="law-formula">P × V = constant &nbsp;(T, n fixed)</div>
+      <canvas id="boyle-canvas" class="sim-canvas"></canvas>
+      <div class="slider-section">
+        <div class="slider-row">
+          <span class="slider-label">Pressure</span>
+          <input type="range" id="boyle-p" min="0.5" max="4" step="0.1" value="1">
+          <span class="slider-val"><span id="boyle-p-val">1.0</span> atm</span>
+        </div>
+      </div>
+      <div class="metric-row">
+        <div class="metric-card"><div class="m-label">Pressure</div><div class="m-value" id="boyle-m-p">1.0 atm</div></div>
+        <div class="metric-card"><div class="m-label">Volume</div><div class="m-value" id="boyle-m-v">10.0 L</div></div>
+        <div class="metric-card"><div class="m-label">P × V</div><div class="m-value" id="boyle-m-pv">10.0</div></div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-label">Graph — P vs V</div>
+      <div class="chart-wrap"><canvas id="boyle-chart" role="img" aria-label="Boyle's Law hyperbola: pressure vs volume">Inverse relationship between pressure and volume at constant temperature.</canvas></div>
+      <div class="info-note">
+        At <strong>constant T and n</strong>, compressing the gas (↑ P) forces molecules into a smaller space → volume decreases.<br>
+        The P–V curve is a <strong>hyperbola</strong>: P × V = k.
+      </div>
+    </div>
+  </div>
+
+  <!-- ── CHARLES ── -->
+  <div id="panel-charles" class="panel">
+    <div class="card">
+      <div class="card-label">Animation</div>
+      <div class="law-name">Charles's Law</div>
+      <div class="law-formula">V / T = constant &nbsp;(P, n fixed)</div>
+      <canvas id="charles-canvas" class="sim-canvas"></canvas>
+      <div class="slider-section">
+        <div class="slider-row">
+          <span class="slider-label">Temperature</span>
+          <input type="range" id="charles-t" min="100" max="600" step="10" value="300">
+          <span class="slider-val"><span id="charles-t-val">300</span> K</span>
+        </div>
+      </div>
+      <div class="metric-row">
+        <div class="metric-card"><div class="m-label">Temperature</div><div class="m-value" id="charles-m-t">300 K</div></div>
+        <div class="metric-card"><div class="m-label">Volume</div><div class="m-value" id="charles-m-v">10.0 L</div></div>
+        <div class="metric-card"><div class="m-label">V / T</div><div class="m-value" id="charles-m-vt">0.0333</div></div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-label">Graph — V vs T</div>
+      <div class="chart-wrap"><canvas id="charles-chart" role="img" aria-label="Charles's Law: volume vs temperature linear">Linear relationship between volume and temperature at constant pressure.</canvas></div>
+      <div class="info-note">
+        At <strong>constant P and n</strong>, heating the gas makes molecules move faster → they push outward → volume expands.<br>
+        The V–T curve is a <strong>straight line</strong> through the origin (0 K).
+      </div>
+    </div>
+  </div>
+
+  <!-- ── GAY-LUSSAC ── -->
+  <div id="panel-gay" class="panel">
+    <div class="card">
+      <div class="card-label">Animation</div>
+      <div class="law-name">Gay-Lussac's Law</div>
+      <div class="law-formula">P / T = constant &nbsp;(V, n fixed)</div>
+      <canvas id="gay-canvas" class="sim-canvas"></canvas>
+      <div class="collision-badge">
+        <span class="col-dot"></span>
+        Wall collisions / sec: <strong id="col-rate">—</strong>
+      </div>
+      <div class="slider-section">
+        <div class="slider-row">
+          <span class="slider-label">Temperature</span>
+          <input type="range" id="gay-t" min="100" max="700" step="10" value="300">
+          <span class="slider-val"><span id="gay-t-val">300</span> K</span>
+        </div>
+      </div>
+      <div class="metric-row">
+        <div class="metric-card"><div class="m-label">Temperature</div><div class="m-value" id="gay-m-t">300 K</div></div>
+        <div class="metric-card"><div class="m-label">Pressure</div><div class="m-value" id="gay-m-p">1.00 atm</div></div>
+        <div class="metric-card"><div class="m-label">P / T</div><div class="m-value" id="gay-m-pt">0.0033</div></div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-label">Graph — P vs T</div>
+      <div class="chart-wrap"><canvas id="gay-chart" role="img" aria-label="Gay-Lussac's Law: pressure vs temperature linear">Linear relationship between pressure and temperature at constant volume.</canvas></div>
+      <div class="info-note">
+        At <strong>constant V and n</strong>, higher T → molecules move faster → <strong>more frequent and harder wall collisions</strong> → pressure rises.<br>
+        Watch the wall flash red on each collision!
+      </div>
+    </div>
+  </div>
+
+  <!-- ── AVOGADRO ── -->
+  <div id="panel-avogadro" class="panel">
+    <div class="card">
+      <div class="card-label">Animation</div>
+      <div class="law-name">Avogadro's Law</div>
+      <div class="law-formula">V / n = constant &nbsp;(T, P fixed)</div>
+      <canvas id="avogadro-canvas" class="sim-canvas"></canvas>
+      <div class="slider-section">
+        <div class="slider-row">
+          <span class="slider-label">Moles (n)</span>
+          <input type="range" id="avogadro-n" min="0.5" max="4" step="0.1" value="1">
+          <span class="slider-val"><span id="avogadro-n-val">1.0</span> mol</span>
+        </div>
+      </div>
+      <div class="metric-row">
+        <div class="metric-card"><div class="m-label">Moles (n)</div><div class="m-value" id="avogadro-m-n">1.0 mol</div></div>
+        <div class="metric-card"><div class="m-label">Volume</div><div class="m-value" id="avogadro-m-v">10.0 L</div></div>
+        <div class="metric-card"><div class="m-label">V / n</div><div class="m-value" id="avogadro-m-vn">10.0</div></div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-label">Graph — V vs n</div>
+      <div class="chart-wrap"><canvas id="avogadro-chart" role="img" aria-label="Avogadro's Law: volume vs moles linear">Linear relationship between volume and number of moles at constant temperature and pressure.</canvas></div>
+      <div class="info-note">
+        At <strong>constant T and P</strong>, adding more molecules requires more space to maintain the same pressure → volume expands proportionally.<br>
+        1 mol of any ideal gas at STP = <strong>22.4 L</strong>.
+      </div>
+    </div>
+  </div>
+
+</main>
+
+<footer class="footer">
+  Nobel Prep · AP Chemistry Chapter 5 · Gas Laws Interactive Simulation
+</footer>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<script>
+// ── Constants ──
+const NAVY = '#1a2744';
+const BLUE = '#378add';
+const RED  = '#e24b4a';
+const TEAL = '#1d9e75';
+const GOLD = '#c9a84c';
+
+// ── Tab switching ──
+function switchTab(name) {
+  ['boyle','charles','gay','avogadro'].forEach(n => {
+    document.getElementById('panel-'+n).classList.toggle('active', n===name);
+    document.getElementById('btn-'+n).classList.toggle('active', n===name);
+  });
+  setTimeout(() => { drawChart(name); }, 60);
+}
+
+// ═══════════════════════════════════════════
+// CHART DRAWING
+// ═══════════════════════════════════════════
+const charts = {};
+function makeChart(id, labels, data, xLabel, yLabel, color, currentX, currentY) {
+  if (charts[id]) { charts[id].destroy(); }
+  const ctx = document.getElementById(id);
+  charts[id] = new Chart(ctx, {
+    type: 'line',
+    data: {
+      labels: labels.map(v => v.toFixed(1)),
+      datasets: [
+        {
+          data: data,
+          borderColor: color,
+          backgroundColor: color + '18',
+          fill: true, tension: 0.35,
+          pointRadius: 0, borderWidth: 2.5,
+          label: 'curve'
+        },
+        {
+          data: currentX !== null ? [{ x: currentX.toFixed(1), y: currentY }] : [],
+          type: 'scatter',
+          pointBackgroundColor: NAVY,
+          pointBorderColor: '#fff',
+          pointBorderWidth: 2.5,
+          pointRadius: 7,
+          label: 'current'
+        }
+      ]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      plugins: { legend: { display: false } },
+      scales: {
+        x: {
+          title: { display: true, text: xLabel, font: { size: 11, family: 'Inter' }, color: '#9099b0' },
+          ticks: { maxTicksLimit: 6, font: { size: 10 }, color: '#9099b0',
+            callback: (v, i) => labels[i] !== undefined ? labels[i].toFixed(0) : '' },
+          grid: { color: '#eff1f7' }
+        },
+        y: {
+          title: { display: true, text: yLabel, font: { size: 11, family: 'Inter' }, color: '#9099b0' },
+          ticks: { maxTicksLimit: 5, font: { size: 10 }, color: '#9099b0' },
+          grid: { color: '#eff1f7' }
+        }
+      }
+    }
+  });
+}
+
+function updateCurrentPoint(chartId, x, y) {
+  const c = charts[chartId];
+  if (!c) return;
+  c.data.datasets[1].data = [{ x: x.toFixed(1), y: y }];
+  c.update('none');
+}
+
+function drawChart(name) {
+  if (name === 'boyle') {
+    const ps = Array.from({length:70}, (_,i) => 0.5 + i * 0.051);
+    const vs = ps.map(p => 10/p);
+    const curP = parseFloat(document.getElementById('boyle-p').value);
+    makeChart('boyle-chart', ps, vs, 'Pressure (atm)', 'Volume (L)', BLUE, curP, 10/curP);
+  } else if (name === 'charles') {
+    const ts = Array.from({length:60}, (_,i) => 80 + i * 9);
+    const vs = ts.map(t => 10*t/300);
+    const curT = parseFloat(document.getElementById('charles-t').value);
+    makeChart('charles-chart', ts, vs, 'Temperature (K)', 'Volume (L)', RED, curT, 10*curT/300);
+  } else if (name === 'gay') {
+    const ts = Array.from({length:61}, (_,i) => 100 + i * 10);
+    const ps = ts.map(t => 1*t/300);
+    const curT = parseFloat(document.getElementById('gay-t').value);
+    makeChart('gay-chart', ts, ps, 'Temperature (K)', 'Pressure (atm)', TEAL, curT, 1*curT/300);
+  } else if (name === 'avogadro') {
+    const ns = Array.from({length:60}, (_,i) => 0.4 + i * 0.061);
+    const vs = ns.map(n => 10*n);
+    const curN = parseFloat(document.getElementById('avogadro-n').value);
+    makeChart('avogadro-chart', ns, vs, 'Moles (n)', 'Volume (L)', GOLD, curN, 10*curN);
+  }
+}
+
+// ═══════════════════════════════════════════
+// MOLECULE ENGINE
+// ═══════════════════════════════════════════
+const molState = {};
+
+function containerBounds(W, H, paddingRatio) {
+  const pr = paddingRatio || 0.12;
+  const cw = W * (1 - pr*2);
+  const ch = H * 0.72;
+  const x0 = W * pr;
+  const y0 = (H - ch) / 2 - 8;
+  return { cw, ch, x0, y0 };
+}
+
+function initMols(id, count, x0, y0, cw, ch, speed) {
+  const mols = [];
+  for (let i = 0; i < count; i++) {
+    const a = Math.random() * Math.PI * 2;
+    const s = (speed || 1.5) * (0.7 + Math.random() * 0.6);
+    mols.push({
+      x: x0 + m.r + Math.random() * (cw - 2*m.r),
+      y: y0 + m.r + Math.random() * (ch - 2*m.r),
+      vx: Math.cos(a) * s, vy: Math.sin(a) * s, r: 5
+    });
+  }
+  return mols;
+}
+
+// simpler init
+function createMols(count, x0, y0, cw, ch, speed) {
+  const mols = [];
+  for (let i = 0; i < count; i++) {
+    const a = Math.random() * Math.PI * 2;
+    const s = (speed || 1.5) * (0.7 + Math.random() * 0.6);
+    const r = 5;
+    mols.push({
+      x: x0 + r + Math.random() * (cw - 2*r),
+      y: y0 + r + Math.random() * (ch - 2*r),
+      vx: Math.cos(a) * s, vy: Math.sin(a) * s, r
+    });
+  }
+  return mols;
+}
+
+function stepMols(mols, x0, y0, cw, ch, wallFlashes) {
+  const now = performance.now();
+  mols.forEach(m => {
+    m.x += m.vx; m.y += m.vy;
+    if (m.x - m.r < x0)         { m.x = x0+m.r;       m.vx = Math.abs(m.vx);  if(wallFlashes) { wallFlashes.push({wall:'left',t:now}); } }
+    if (m.x + m.r > x0+cw)      { m.x = x0+cw-m.r;    m.vx = -Math.abs(m.vx); if(wallFlashes) { wallFlashes.push({wall:'right',t:now}); } }
+    if (m.y - m.r < y0)         { m.y = y0+m.r;       m.vy = Math.abs(m.vy);  if(wallFlashes) { wallFlashes.push({wall:'top',t:now}); } }
+    if (m.y + m.r > y0+ch)      { m.y = y0+ch-m.r;    m.vy = -Math.abs(m.vy); if(wallFlashes) { wallFlashes.push({wall:'bottom',t:now}); } }
+  });
+}
+
+function drawMolecules(ctx, mols, color) {
+  mols.forEach(m => {
+    ctx.beginPath(); ctx.arc(m.x, m.y, m.r, 0, Math.PI*2);
+    ctx.fillStyle = color;
+    ctx.fill();
+    ctx.strokeStyle = '#fff'; ctx.lineWidth = 1.2; ctx.stroke();
+  });
+}
+
+function drawArrows(ctx, x0, y0, cw, ch, n, color) {
+  const step = ch / (n+1);
+  for (let i = 1; i <= n; i++) {
+    const y = y0 + step*i;
+    arrowHead(ctx, x0-28, y, x0-5, y, color);
+    arrowHead(ctx, x0+cw+28, y, x0+cw+5, y, color);
+  }
+}
+
+function arrowHead(ctx, x1, y1, x2, y2, color) {
+  const dx=x2-x1, dy=y2-y1;
+  const ang = Math.atan2(dy,dx);
+  ctx.strokeStyle = color; ctx.lineWidth = 2;
+  ctx.beginPath(); ctx.moveTo(x1,y1); ctx.lineTo(x2,y2); ctx.stroke();
+  ctx.beginPath();
+  ctx.moveTo(x2,y2);
+  ctx.lineTo(x2-9*Math.cos(ang-0.4), y2-9*Math.sin(ang-0.4));
+  ctx.lineTo(x2-9*Math.cos(ang+0.4), y2-9*Math.sin(ang+0.4));
+  ctx.closePath(); ctx.fillStyle=color; ctx.fill();
+}
+
+function drawContainer(ctx, x0, y0, cw, ch, wallAlpha) {
+  // fill
+  ctx.fillStyle = '#f3f6ff';
+  ctx.beginPath(); ctx.roundRect(x0,y0,cw,ch,6); ctx.fill();
+
+  function wallCol(a) {
+    if (a < 0.02) return '#c8d4ee';
+    const r = Math.round(26 + (226-26)*a);
+    const g = Math.round(39 + (75-39)*a);
+    const b = Math.round(68 + (74-68)*a);
+    return `rgb(${r},${g},${b})`;
+  }
+  const lw = 2.5;
+  // top
+  ctx.strokeStyle = wallCol(wallAlpha.top||0); ctx.lineWidth=lw;
+  ctx.beginPath(); ctx.moveTo(x0,y0); ctx.lineTo(x0+cw,y0); ctx.stroke();
+  // bottom
+  ctx.strokeStyle = wallCol(wallAlpha.bottom||0);
+  ctx.beginPath(); ctx.moveTo(x0,y0+ch); ctx.lineTo(x0+cw,y0+ch); ctx.stroke();
+  // left
+  ctx.strokeStyle = wallCol(wallAlpha.left||0);
+  ctx.beginPath(); ctx.moveTo(x0,y0); ctx.lineTo(x0,y0+ch); ctx.stroke();
+  // right
+  ctx.strokeStyle = wallCol(wallAlpha.right||0);
+  ctx.beginPath(); ctx.moveTo(x0+cw,y0); ctx.lineTo(x0+cw,y0+ch); ctx.stroke();
+}
+
+function getWallAlpha(wallFlashes) {
+  const now = performance.now();
+  const dur = 180;
+  const a = {top:0, bottom:0, left:0, right:0};
+  wallFlashes.forEach(f => {
+    const fade = 1-(now-f.t)/dur;
+    if (fade>0) a[f.wall] = Math.max(a[f.wall], fade);
+  });
+  return a;
+}
+
+function drawFlames(ctx, x0, y0, ch, cw, T, now) {
+  const heat = Math.max(0, (T-200)/500);
+  if (heat <= 0) return;
+  const count = Math.ceil(heat*5)+1;
+  for (let i=0; i<count; i++) {
+    const fx = x0 + cw*(0.12 + i*(0.76/Math.max(count-1,1)));
+    const fh = 8 + heat*24 + Math.sin(now/100+i*1.3)*3;
+    const fy = y0 + ch;
+    const grad = ctx.createLinearGradient(fx, fy+fh, fx, fy);
+    grad.addColorStop(0, `rgba(220,75,20,0)`);
+    grad.addColorStop(0.5, `rgba(230,110,10,${0.25+heat*0.55})`);
+    grad.addColorStop(1, `rgba(240,160,20,${0.15+heat*0.3})`);
+    ctx.beginPath();
+    ctx.moveTo(fx-6,fy);
+    ctx.quadraticCurveTo(fx-2, fy+fh*0.5, fx, fy+fh);
+    ctx.quadraticCurveTo(fx+2, fy+fh*0.5, fx+6, fy);
+    ctx.closePath();
+    ctx.fillStyle=grad; ctx.fill();
+  }
+}
+
+function setupCanvas(id) {
+  const c = document.getElementById(id);
+  const dpr = window.devicePixelRatio||1;
+  const rect = c.getBoundingClientRect();
+  const W = rect.width||300, H = rect.height||200;
+  if (c.width !== Math.round(W*dpr)) {
+    c.width = Math.round(W*dpr); c.height = Math.round(H*dpr);
+  }
+  const ctx = c.getContext('2d');
+  ctx.setTransform(dpr,0,0,dpr,0,0);
+  return {ctx,W,H};
+}
+
+// ═══════════════════════════════════════════
+// BOYLE STATE
+// ═══════════════════════════════════════════
+let boyleMols = null;
+let boyleP = 1.0;
+
+function initBoyle(W, H) {
+  const {x0,y0,cw,ch} = containerBounds(W, H);
+  boyleMols = createMols(16, x0, y0, cw, ch, 1.4);
+}
+
+function animBoyle() {
+  const {ctx, W, H} = setupCanvas('boyle-canvas');
+  if (!boyleMols) initBoyle(W,H);
+  const V = 10/boyleP;
+  const maxCW = W*0.74, minCW = W*0.2;
+  const containerW = Math.max(minCW, Math.min(maxCW, maxCW*(V/10)));
+  const containerH = H*0.68;
+  const x0 = (W-containerW)/2, y0 = (H-containerH)/2 - 8;
+  ctx.clearRect(0,0,W,H);
+  drawContainer(ctx, x0, y0, containerW, containerH, {});
+  const arrowN = Math.round(boyleP * 1.5 + 0.5);
+  drawArrows(ctx, x0, y0, containerW, containerH, arrowN, BLUE);
+  // keep mols in bounds
+  boyleMols.forEach(m => {
+    if(m.x<x0+m.r){m.x=x0+m.r;m.vx=Math.abs(m.vx);}
+    if(m.x>x0+containerW-m.r){m.x=x0+containerW-m.r;m.vx=-Math.abs(m.vx);}
+    if(m.y<y0+m.r){m.y=y0+m.r;m.vy=Math.abs(m.vy);}
+    if(m.y>y0+containerH-m.r){m.y=y0+containerH-m.r;m.vy=-Math.abs(m.vy);}
+    m.x+=m.vx; m.y+=m.vy;
+    if(m.x<x0+m.r){m.x=x0+m.r;m.vx=Math.abs(m.vx);}
+    if(m.x>x0+containerW-m.r){m.x=x0+containerW-m.r;m.vx=-Math.abs(m.vx);}
+    if(m.y<y0+m.r){m.y=y0+m.r;m.vy=Math.abs(m.vy);}
+    if(m.y>y0+containerH-m.r){m.y=y0+containerH-m.r;m.vy=-Math.abs(m.vy);}
+  });
+  drawMolecules(ctx, boyleMols, BLUE);
+  ctx.font='500 11px Inter'; ctx.fillStyle=NAVY; ctx.textAlign='center';
+  ctx.fillText('P = '+boyleP.toFixed(1)+' atm  |  V = '+(10/boyleP).toFixed(1)+' L', W/2, y0+containerH+18);
+}
+
+document.getElementById('boyle-p').addEventListener('input', function() {
+  boyleP = parseFloat(this.value);
+  document.getElementById('boyle-p-val').textContent = boyleP.toFixed(1);
+  const V = 10/boyleP;
+  document.getElementById('boyle-m-p').textContent = boyleP.toFixed(1)+' atm';
+  document.getElementById('boyle-m-v').textContent = V.toFixed(1)+' L';
+  document.getElementById('boyle-m-pv').textContent = (boyleP*V).toFixed(1);
+  updateCurrentPoint('boyle-chart', boyleP, V);
+});
+
+// ═══════════════════════════════════════════
+// CHARLES STATE
+// ═══════════════════════════════════════════
+let charlesMols = null;
+let charlesT = 300;
+
+function initCharles(W, H) {
+  charlesMols = createMols(14, W*0.12, H*0.1, W*0.76, H*0.7, 1.4);
+}
+
+function animCharles() {
+  const {ctx, W, H} = setupCanvas('charles-canvas');
+  if (!charlesMols) initCharles(W,H);
+  const V = 10*charlesT/300;
+  const maxCW=W*0.74, minCW=W*0.22;
+  const ratio = V/10;
+  const containerW = Math.max(minCW, Math.min(maxCW, W*0.4*ratio + W*0.15));
+  const containerH = Math.max(H*0.28, Math.min(H*0.72, H*0.38*ratio + H*0.15));
+  const x0=(W-containerW)/2, y0=(H-containerH)/2 - 6;
+  ctx.clearRect(0,0,W,H);
+  const now = performance.now();
+  drawFlames(ctx, x0, y0, containerH, containerW, charlesT, now);
+  drawContainer(ctx, x0, y0, containerW, containerH, {});
+  const speed = 0.6 + charlesT/300 * 1.2;
+  charlesMols.forEach(m => {
+    if(m.x<x0+m.r){m.x=x0+m.r;m.vx=Math.abs(m.vx);}
+    if(m.x>x0+containerW-m.r){m.x=x0+containerW-m.r;m.vx=-Math.abs(m.vx);}
+    if(m.y<y0+m.r){m.y=y0+m.r;m.vy=Math.abs(m.vy);}
+    if(m.y>y0+containerH-m.r){m.y=y0+containerH-m.r;m.vy=-Math.abs(m.vy);}
+    const sv = Math.hypot(m.vx,m.vy);
+    if(sv>0.01) { m.vx=m.vx/sv*speed; m.vy=m.vy/sv*speed; }
+    m.x+=m.vx; m.y+=m.vy;
+  });
+  drawMolecules(ctx, charlesMols, charlesT>350 ? RED : BLUE);
+  ctx.font='500 11px Inter'; ctx.fillStyle=NAVY; ctx.textAlign='center';
+  ctx.fillText('T = '+charlesT+' K  |  V = '+V.toFixed(1)+' L', W/2, y0+containerH+18);
+}
+
+document.getElementById('charles-t').addEventListener('input', function() {
+  charlesT = parseInt(this.value);
+  document.getElementById('charles-t-val').textContent = charlesT;
+  const V = 10*charlesT/300;
+  document.getElementById('charles-m-t').textContent = charlesT+' K';
+  document.getElementById('charles-m-v').textContent = V.toFixed(1)+' L';
+  document.getElementById('charles-m-vt').textContent = (V/charlesT).toFixed(4);
+  updateCurrentPoint('charles-chart', charlesT, V);
+});
+
+// ═══════════════════════════════════════════
+// GAY-LUSSAC STATE
+// ═══════════════════════════════════════════
+let gayMols = null;
+let gayT = 300;
+let gayWallFlashes = [];
+let collisionTimes = [];
+let lastColUpdate = 0;
+
+function baseSpeed(T) { return 0.7 + (T/100)*0.5; }
+
+function rescaleGaySpeeds(newT) {
+  if (!gayMols) return;
+  const factor = baseSpeed(newT) / baseSpeed(gayT);
+  gayMols.forEach(m => { m.vx *= factor; m.vy *= factor; });
+}
+
+function initGay(W, H) {
+  const containerW = W*0.74, containerH = H*0.68;
+  const x0=(W-containerW)/2, y0=(H-containerH)/2-8;
+  gayMols = createMols(18, x0, y0, containerW, containerH, baseSpeed(gayT));
+}
+
+function animGay() {
+  const {ctx, W, H} = setupCanvas('gay-canvas');
+  if (!gayMols) initGay(W,H);
+  const containerW=W*0.74, containerH=H*0.68;
+  const x0=(W-containerW)/2, y0=(H-containerH)/2-8;
+  ctx.clearRect(0,0,W,H);
+  const now = performance.now();
+  gayWallFlashes = gayWallFlashes.filter(f => now-f.t < 200);
+  const wa = getWallAlpha(gayWallFlashes);
+  drawFlames(ctx, x0, y0, containerH, containerW, gayT, now);
+  drawContainer(ctx, x0, y0, containerW, containerH, wa);
+  ctx.font='500 10px Inter'; ctx.fillStyle='#8899bb'; ctx.textAlign='left';
+  ctx.fillText('V = fixed', x0+7, y0+14);
+  stepMols(gayMols, x0, y0, containerW, containerH, gayWallFlashes);
+  // color by speed
+  gayMols.forEach(m => {
+    const sp = Math.hypot(m.vx,m.vy);
+    const ratio = Math.min(1,(sp-0.7)/4.5);
+    const r=Math.round(29+(226-29)*ratio), g=Math.round(158+(75-158)*ratio), b=Math.round(117+(74-117)*ratio);
+    ctx.beginPath(); ctx.arc(m.x,m.y,m.r,0,Math.PI*2);
+    ctx.fillStyle=`rgb(${r},${g},${b})`; ctx.fill();
+    ctx.strokeStyle='#fff'; ctx.lineWidth=1.2; ctx.stroke();
+  });
+  collisionTimes = collisionTimes.filter(t => now-t < 1000);
+  const wallHits = gayWallFlashes.filter(f => now-f.t<1000).length;
+  if (now-lastColUpdate>300) {
+    document.getElementById('col-rate').textContent = collisionTimes.length;
+    lastColUpdate=now;
+  }
+  ctx.font='500 11px Inter'; ctx.fillStyle=NAVY; ctx.textAlign='center';
+  ctx.fillText('T = '+gayT+' K  |  P = '+(1*gayT/300).toFixed(2)+' atm', W/2, y0+containerH+18);
+}
+
+document.getElementById('gay-t').addEventListener('input', function() {
+  const newT = parseInt(this.value);
+  rescaleGaySpeeds(newT);
+  gayT = newT;
+  document.getElementById('gay-t-val').textContent = gayT;
+  const P = 1*gayT/300;
+  document.getElementById('gay-m-t').textContent = gayT+' K';
+  document.getElementById('gay-m-p').textContent = P.toFixed(2)+' atm';
+  document.getElementById('gay-m-pt').textContent = (P/gayT).toFixed(4);
+  updateCurrentPoint('gay-chart', gayT, P);
+});
+
+// track collisions for gay-lussac
+const origStepMols = stepMols;
+function stepGayMols() {
+  if (!gayMols) return;
+  const c = document.getElementById('gay-canvas');
+  const W = c.getBoundingClientRect().width||300;
+  const H = c.getBoundingClientRect().height||200;
+  const containerW=W*0.74, containerH=H*0.68;
+  const x0=(W-containerW)/2, y0=(H-containerH)/2-8;
+  const now=performance.now();
+  gayMols.forEach(m => {
+    m.x+=m.vx; m.y+=m.vy;
+    if(m.x-m.r<x0){m.x=x0+m.r;m.vx=Math.abs(m.vx);gayWallFlashes.push({wall:'left',t:now});collisionTimes.push(now);}
+    if(m.x+m.r>x0+containerW){m.x=x0+containerW-m.r;m.vx=-Math.abs(m.vx);gayWallFlashes.push({wall:'right',t:now});collisionTimes.push(now);}
+    if(m.y-m.r<y0){m.y=y0+m.r;m.vy=Math.abs(m.vy);gayWallFlashes.push({wall:'top',t:now});collisionTimes.push(now);}
+    if(m.y+m.r>y0+containerH){m.y=y0+containerH-m.r;m.vy=-Math.abs(m.vy);gayWallFlashes.push({wall:'bottom',t:now});collisionTimes.push(now);}
+  });
+}
+
+// ═══════════════════════════════════════════
+// AVOGADRO STATE
+// ═══════════════════════════════════════════
+let avogadroMols = null;
+let avogadroN = 1.0;
+let lastAvogadroN = 1.0;
+
+function initAvogadro(W, H, n) {
+  const count = Math.round(n*8);
+  const maxCW=W*0.72, minCW=W*0.22;
+  const ratio=n/4;
+  const containerW=Math.max(minCW,Math.min(maxCW,W*0.45*ratio+W*0.12));
+  const containerH=Math.max(H*0.25,Math.min(H*0.7,H*0.42*ratio+H*0.1));
+  const x0=(W-containerW)/2, y0=(H-containerH)/2-8;
+  avogadroMols = createMols(count, x0, y0, containerW, containerH, 1.4);
+}
+
+function animAvogadro() {
+  const {ctx, W, H} = setupCanvas('avogadro-canvas');
+  if (!avogadroMols || Math.abs(avogadroN-lastAvogadroN)>0.05) {
+    initAvogadro(W,H,avogadroN);
+    lastAvogadroN=avogadroN;
+  }
+  const maxCW=W*0.72, minCW=W*0.22;
+  const ratio=avogadroN/4;
+  const containerW=Math.max(minCW,Math.min(maxCW,W*0.45*ratio+W*0.12));
+  const containerH=Math.max(H*0.25,Math.min(H*0.7,H*0.42*ratio+H*0.1));
+  const x0=(W-containerW)/2, y0=(H-containerH)/2-8;
+  ctx.clearRect(0,0,W,H);
+  drawContainer(ctx, x0, y0, containerW, containerH, {});
+  avogadroMols.forEach(m => {
+    if(m.x<x0+m.r){m.x=x0+m.r;m.vx=Math.abs(m.vx);}
+    if(m.x>x0+containerW-m.r){m.x=x0+containerW-m.r;m.vx=-Math.abs(m.vx);}
+    if(m.y<y0+m.r){m.y=y0+m.r;m.vy=Math.abs(m.vy);}
+    if(m.y>y0+containerH-m.r){m.y=y0+containerH-m.r;m.vy=-Math.abs(m.vy);}
+    m.x+=m.vx; m.y+=m.vy;
+    if(m.x<x0+m.r){m.x=x0+m.r;m.vx=Math.abs(m.vx);}
+    if(m.x>x0+containerW-m.r){m.x=x0+containerW-m.r;m.vx=-Math.abs(m.vx);}
+    if(m.y<y0+m.r){m.y=y0+m.r;m.vy=Math.abs(m.vy);}
+    if(m.y>y0+containerH-m.r){m.y=y0+containerH-m.r;m.vy=-Math.abs(m.vy);}
+  });
+  drawMolecules(ctx, avogadroMols, GOLD);
+  ctx.font='500 11px Inter'; ctx.fillStyle=NAVY; ctx.textAlign='center';
+  ctx.fillText('n = '+avogadroN.toFixed(1)+' mol  |  V = '+(10*avogadroN).toFixed(1)+' L', W/2, y0+containerH+18);
+}
+
+document.getElementById('avogadro-n').addEventListener('input', function() {
+  avogadroN = parseFloat(this.value);
+  document.getElementById('avogadro-n-val').textContent = avogadroN.toFixed(1);
+  const V = 10*avogadroN;
+  document.getElementById('avogadro-m-n').textContent = avogadroN.toFixed(1)+' mol';
+  document.getElementById('avogadro-m-v').textContent = V.toFixed(1)+' L';
+  document.getElementById('avogadro-m-vn').textContent = (V/avogadroN).toFixed(1);
+  updateCurrentPoint('avogadro-chart', avogadroN, V);
+});
+
+// ═══════════════════════════════════════════
+// MAIN LOOP
+// ═══════════════════════════════════════════
+function loop() {
+  animBoyle();
+  stepGayMols();
+  animGay();
+  animCharles();
+  animAvogadro();
+  requestAnimationFrame(loop);
+}
+
+// Init on load
+setTimeout(() => {
+  drawChart('boyle');
+  loop();
+}, 200);
+</script>
+</body>
+</html>
