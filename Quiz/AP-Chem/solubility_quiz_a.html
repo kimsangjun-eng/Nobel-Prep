@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Nobel Prep — Solubility Rules Quiz A</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
+  :root{--navy:#1B2A4A;--navy2:#243660;--gold:#C9A84C;--gold2:#e8c56a;--white:#FFFFFF;--off:#F7F8FA;--gray1:#E8EAF0;--gray2:#9AA0B2;--gray3:#555D72;--green:#2D7D46;--green-bg:#EBF7EF;--red:#C0392B;--red-bg:#FDECEA;--radius:10px;--shadow:0 2px 12px rgba(27,42,74,0.10);}
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{font-family:'Inter',sans-serif;background:var(--off);color:var(--navy);min-height:100vh;}
+  header{background:var(--navy);padding:16px 28px 0;position:sticky;top:0;z-index:100;box-shadow:0 2px 10px rgba(0,0,0,0.25);}
+  .header-top{display:flex;align-items:center;justify-content:space-between;padding-bottom:14px;}
+  .logo{display:flex;align-items:center;gap:12px;}
+  .logo-badge{width:38px;height:38px;background:var(--gold);border-radius:8px;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:15px;color:var(--navy);}
+  .logo-text h1{font-size:16px;font-weight:700;color:var(--white);}
+  .logo-text p{font-size:11px;color:var(--gold);margin-top:1px;}
+  .quiz-badge{background:var(--gold);color:var(--navy);font-size:11px;font-weight:700;padding:4px 12px;border-radius:20px;letter-spacing:0.5px;}
+  .progress-bar-wrap{width:100%;height:3px;background:rgba(255,255,255,0.15);}
+  .progress-bar{height:100%;background:var(--gold);width:0%;transition:width 0.4s ease;}
+  main{max-width:780px;margin:0 auto;padding:28px 16px 80px;}
+  .name-card{background:var(--white);border-radius:var(--radius);box-shadow:var(--shadow);padding:24px 28px;margin-bottom:24px;border-left:4px solid var(--gold);}
+  .name-card h2{font-size:14px;font-weight:600;color:var(--navy2);margin-bottom:12px;}
+  .name-row{display:flex;gap:12px;flex-wrap:wrap;}
+  .name-row input{flex:1;min-width:180px;padding:10px 14px;border:1.5px solid var(--gray1);border-radius:8px;font-family:'Inter',sans-serif;font-size:14px;color:var(--navy);outline:none;transition:border-color 0.2s;}
+  .name-row input:focus{border-color:var(--gold);}
+  .section-header{background:var(--navy2);color:var(--white);padding:10px 18px;border-radius:8px 8px 0 0;font-size:12px;font-weight:600;letter-spacing:0.8px;text-transform:uppercase;display:flex;align-items:center;gap:8px;margin-top:24px;}
+  .section-header .badge{background:var(--gold);color:var(--navy);padding:2px 8px;border-radius:10px;font-size:10px;}
+  .q-card{background:var(--white);border:1px solid var(--gray1);border-top:none;padding:20px 22px;}
+  .q-card:last-of-type{border-radius:0 0 var(--radius) var(--radius);}
+  .q-card.answered-correct{border-left:4px solid var(--green);}
+  .q-card.answered-wrong{border-left:4px solid var(--red);}
+  .q-card.selected-only{border-left:4px solid var(--gold);}
+  .q-card.unanswered-warn{border-left:4px solid #F39C12;animation:shake 0.3s;}
+  @keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-4px)}75%{transform:translateX(4px)}}
+  .q-num{font-size:10px;font-weight:700;color:var(--gold);letter-spacing:1px;text-transform:uppercase;margin-bottom:6px;}
+  .q-text{font-size:14px;font-weight:500;line-height:1.65;color:var(--navy);margin-bottom:14px;}
+  .options{display:flex;flex-direction:column;gap:8px;}
+  .option-btn{display:flex;align-items:center;gap:10px;padding:10px 14px;border-radius:8px;border:1.5px solid var(--gray1);background:var(--off);cursor:pointer;font-family:'Inter',sans-serif;font-size:13.5px;color:var(--navy);text-align:left;transition:all 0.15s;width:100%;}
+  .option-btn:hover:not(:disabled){border-color:var(--gold);background:#FEF9EE;}
+  .option-btn.selected{border-color:var(--navy);background:#EEF1F8;font-weight:500;}
+  .option-btn.correct{border-color:var(--green);background:var(--green-bg);color:var(--green);font-weight:600;}
+  .option-btn.wrong{border-color:var(--red);background:var(--red-bg);color:var(--red);}
+  .option-btn.reveal-correct{border-color:var(--green);background:var(--green-bg);color:var(--green);font-weight:600;}
+  .opt-letter{width:24px;height:24px;border-radius:50%;background:var(--gray1);color:var(--gray3);font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+  .option-btn.correct .opt-letter,.option-btn.reveal-correct .opt-letter{background:var(--green);color:var(--white);}
+  .option-btn.wrong .opt-letter{background:var(--red);color:var(--white);}
+  .sa-wrap{display:flex;flex-direction:column;gap:6px;}
+  .sa-input{width:100%;padding:10px 14px;border-radius:8px;border:1.5px solid var(--gray1);font-family:'Inter',sans-serif;font-size:14px;color:var(--navy);outline:none;transition:border-color 0.2s;background:var(--off);}
+  .sa-input:focus{border-color:var(--gold);background:var(--white);}
+  .sa-input.correct{border-color:var(--green);background:var(--green-bg);}
+  .sa-input.wrong{border-color:var(--red);background:var(--red-bg);}
+  .feedback{margin-top:10px;padding:10px 14px;border-radius:8px;font-size:13px;font-weight:500;display:none;}
+  .feedback.correct{background:var(--green-bg);color:var(--green);display:flex;align-items:flex-start;gap:8px;}
+  .feedback.wrong{background:var(--red-bg);color:var(--red);display:flex;align-items:flex-start;gap:8px;}
+  .feedback-icon{font-size:16px;flex-shrink:0;}
+  .feedback-text{line-height:1.5;}
+  .progress-pill{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:var(--navy);color:var(--white);padding:10px 24px;border-radius:30px;font-size:13px;font-weight:600;box-shadow:0 4px 20px rgba(0,0,0,0.2);display:flex;gap:16px;align-items:center;z-index:200;}
+  .progress-pill span{color:var(--gold);}
+  .submit-section{margin-top:32px;text-align:center;}
+  .submit-btn{padding:14px 48px;background:var(--gold);color:var(--navy);border:none;border-radius:10px;font-size:15px;font-weight:700;font-family:'Inter',sans-serif;cursor:pointer;box-shadow:0 4px 16px rgba(201,168,76,0.35);transition:all 0.2s;}
+  .submit-btn:hover{background:var(--gold2);transform:translateY(-1px);}
+  .submit-btn:disabled{background:var(--gray2);color:var(--white);transform:none;box-shadow:none;cursor:default;}
+  .result-card{display:none;background:var(--white);border-radius:var(--radius);box-shadow:0 8px 32px rgba(27,42,74,0.15);padding:36px 32px;text-align:center;margin-top:32px;border-top:5px solid var(--gold);}
+  .result-score{font-size:56px;font-weight:700;color:var(--navy);line-height:1;}
+  .result-label{font-size:14px;color:var(--gray2);margin-top:6px;margin-bottom:24px;}
+  .result-badge{display:inline-block;padding:8px 24px;border-radius:30px;font-size:15px;font-weight:700;margin-bottom:20px;}
+  .result-badge.pass{background:var(--green-bg);color:var(--green);}
+  .result-badge.fail{background:var(--red-bg);color:var(--red);}
+  .result-breakdown{font-size:13px;color:var(--gray3);}
+</style>
+</head>
+<body>
+<header>
+  <div class="header-top">
+    <div class="logo"><div class="logo-badge">NP</div><div class="logo-text"><h1>Nobel Prep</h1><p>AP Chemistry · Solubility Rules</p></div></div>
+    <div class="quiz-badge">QUIZ A</div>
+  </div>
+  <div class="progress-bar-wrap"><div class="progress-bar" id="progressBar"></div></div>
+</header>
+<main>
+  <div class="name-card">
+    <h2>Student Information</h2>
+    <div class="name-row">
+      <input type="text" id="studentName" placeholder="Full Name"/>
+      <input type="text" id="studentPeriod" placeholder="Period" style="max-width:120px;"/>
+    </div>
+  </div>
+
+  <div class="section-header">Section 1 — Multiple Choice <span class="badge">Q1–Q5</span></div>
+
+  <!-- Q1: 정답 C = Soluble (NaCl) -->
+  <div class="q-card" id="qcard-1">
+    <div class="q-num">Question 1</div>
+    <div class="q-text">Which best describes the solubility of <strong>NaCl</strong> in water?</div>
+    <div class="options" id="opts-1">
+      <button class="option-btn" onclick="selectMCQ(1,'A','Insoluble')"><span class="opt-letter">A</span>Insoluble — Na⁺ forms stable ionic lattices</button>
+      <button class="option-btn" onclick="selectMCQ(1,'B','Insoluble')"><span class="opt-letter">B</span>Insoluble — Cl⁻ salts are generally insoluble</button>
+      <button class="option-btn" onclick="selectMCQ(1,'C','Soluble')"><span class="opt-letter">C</span>Soluble</button>
+      <button class="option-btn" onclick="selectMCQ(1,'D','Insoluble')"><span class="opt-letter">D</span>Insoluble — only dissolves at high temperatures</button>
+    </div>
+    <div class="feedback" id="fb-1"></div>
+  </div>
+
+  <!-- Q2: 정답 A = Insoluble (AgCl) -->
+  <div class="q-card" id="qcard-2">
+    <div class="q-num">Question 2</div>
+    <div class="q-text">Which best describes the solubility of <strong>AgCl</strong> in water?</div>
+    <div class="options" id="opts-2">
+      <button class="option-btn" onclick="selectMCQ(2,'A','Insoluble')"><span class="opt-letter">A</span>Insoluble</button>
+      <button class="option-btn" onclick="selectMCQ(2,'B','Soluble')"><span class="opt-letter">B</span>Soluble — all chloride salts dissolve in water</button>
+      <button class="option-btn" onclick="selectMCQ(2,'C','Soluble')"><span class="opt-letter">C</span>Soluble — Ag⁺ is a transition metal, always soluble</button>
+      <button class="option-btn" onclick="selectMCQ(2,'D','Soluble')"><span class="opt-letter">D</span>Soluble — Cl⁻ makes all salts soluble</button>
+    </div>
+    <div class="feedback" id="fb-2"></div>
+  </div>
+
+  <!-- Q3: 정답 D = Insoluble (BaSO4) -->
+  <div class="q-card" id="qcard-3">
+    <div class="q-num">Question 3</div>
+    <div class="q-text">A student mixes Ba²⁺(aq) and SO₄²⁻(aq). A white precipitate forms. Which statement is correct?</div>
+    <div class="options" id="opts-3">
+      <button class="option-btn" onclick="selectMCQ(3,'A','Soluble')"><span class="opt-letter">A</span>BaSO₄ is soluble — all sulfate salts dissolve</button>
+      <button class="option-btn" onclick="selectMCQ(3,'B','Soluble')"><span class="opt-letter">B</span>BaSO₄ is soluble — Ba²⁺ is a group 2 metal</button>
+      <button class="option-btn" onclick="selectMCQ(3,'C','Soluble')"><span class="opt-letter">C</span>BaSO₄ is soluble — SO₄²⁻ salts are always soluble</button>
+      <button class="option-btn" onclick="selectMCQ(3,'D','Insoluble')"><span class="opt-letter">D</span>BaSO₄ is insoluble — Ba²⁺ is an exception to the sulfate rule</button>
+    </div>
+    <div class="feedback" id="fb-3"></div>
+  </div>
+
+  <!-- Q4: 정답 B = Insoluble (Ca(OH)2) -->
+  <div class="q-card" id="qcard-4">
+    <div class="q-num">Question 4</div>
+    <div class="q-text">Which best describes the solubility of <strong>Ca(OH)₂</strong> in water?</div>
+    <div class="options" id="opts-4">
+      <button class="option-btn" onclick="selectMCQ(4,'A','Soluble')"><span class="opt-letter">A</span>Soluble — all hydroxide salts dissolve in water</button>
+      <button class="option-btn" onclick="selectMCQ(4,'B','Insoluble')"><span class="opt-letter">B</span>Insoluble</button>
+      <button class="option-btn" onclick="selectMCQ(4,'C','Soluble')"><span class="opt-letter">C</span>Soluble — Ca²⁺ is a group 2 metal, always soluble</button>
+      <button class="option-btn" onclick="selectMCQ(4,'D','Soluble')"><span class="opt-letter">D</span>Soluble — OH⁻ salts are generally soluble</button>
+    </div>
+    <div class="feedback" id="fb-4"></div>
+  </div>
+
+  <!-- Q5: 정답 C = Soluble (NH4NO3) -->
+  <div class="q-card" id="qcard-5">
+    <div class="q-num">Question 5</div>
+    <div class="q-text">Which best describes the solubility of <strong>NH₄NO₃</strong> in water?</div>
+    <div class="options" id="opts-5">
+      <button class="option-btn" onclick="selectMCQ(5,'A','Insoluble')"><span class="opt-letter">A</span>Insoluble — nitrogen compounds are generally insoluble</button>
+      <button class="option-btn" onclick="selectMCQ(5,'B','Insoluble')"><span class="opt-letter">B</span>Insoluble — NO₃⁻ salts precipitate easily</button>
+      <button class="option-btn" onclick="selectMCQ(5,'C','Soluble')"><span class="opt-letter">C</span>Soluble</button>
+      <button class="option-btn" onclick="selectMCQ(5,'D','Insoluble')"><span class="opt-letter">D</span>Insoluble — NH₄⁺ salts are unstable in water</button>
+    </div>
+    <div class="feedback" id="fb-5"></div>
+  </div>
+
+  <div class="section-header" style="margin-top:28px;">Section 2 — Predict Solubility <span class="badge">Q6–Q15</span></div>
+
+  <div class="q-card" id="qcard-6"><div class="q-num">Question 6</div><div class="q-text">Is <strong>K₂SO₄</strong> soluble or insoluble in water?</div><div class="sa-wrap"><input class="sa-input" type="text" id="sa-6" placeholder="Type your answer"/></div><div class="feedback" id="fb-6"></div></div>
+  <div class="q-card" id="qcard-7"><div class="q-num">Question 7</div><div class="q-text">Is <strong>PbCl₂</strong> soluble or insoluble in water?</div><div class="sa-wrap"><input class="sa-input" type="text" id="sa-7" placeholder="Type your answer"/></div><div class="feedback" id="fb-7"></div></div>
+  <div class="q-card" id="qcard-8"><div class="q-num">Question 8</div><div class="q-text">Is <strong>Fe(OH)₃</strong> soluble or insoluble in water?</div><div class="sa-wrap"><input class="sa-input" type="text" id="sa-8" placeholder="Type your answer"/></div><div class="feedback" id="fb-8"></div></div>
+  <div class="q-card" id="qcard-9"><div class="q-num">Question 9</div><div class="q-text">Is <strong>(NH₄)₂SO₄</strong> soluble or insoluble in water?</div><div class="sa-wrap"><input class="sa-input" type="text" id="sa-9" placeholder="Type your answer"/></div><div class="feedback" id="fb-9"></div></div>
+  <div class="q-card" id="qcard-10"><div class="q-num">Question 10</div><div class="q-text">Is <strong>CaCO₃</strong> soluble or insoluble in water?</div><div class="sa-wrap"><input class="sa-input" type="text" id="sa-10" placeholder="Type your answer"/></div><div class="feedback" id="fb-10"></div></div>
+  <div class="q-card" id="qcard-11"><div class="q-num">Question 11</div><div class="q-text">Is <strong>KNO₃</strong> soluble or insoluble in water?</div><div class="sa-wrap"><input class="sa-input" type="text" id="sa-11" placeholder="Type your answer"/></div><div class="feedback" id="fb-11"></div></div>
+  <div class="q-card" id="qcard-12"><div class="q-num">Question 12</div><div class="q-text">Is <strong>PbSO₄</strong> soluble or insoluble in water?</div><div class="sa-wrap"><input class="sa-input" type="text" id="sa-12" placeholder="Type your answer"/></div><div class="feedback" id="fb-12"></div></div>
+  <div class="q-card" id="qcard-13"><div class="q-num">Question 13</div><div class="q-text">Is <strong>MgCl₂</strong> soluble or insoluble in water?</div><div class="sa-wrap"><input class="sa-input" type="text" id="sa-13" placeholder="Type your answer"/></div><div class="feedback" id="fb-13"></div></div>
+  <div class="q-card" id="qcard-14"><div class="q-num">Question 14</div><div class="q-text">Is <strong>Ag₂SO₄</strong> soluble or insoluble in water?</div><div class="sa-wrap"><input class="sa-input" type="text" id="sa-14" placeholder="Type your answer"/></div><div class="feedback" id="fb-14"></div></div>
+  <div class="q-card" id="qcard-15"><div class="q-num">Question 15</div><div class="q-text">Is <strong>Na₂CO₃</strong> soluble or insoluble in water?</div><div class="sa-wrap"><input class="sa-input" type="text" id="sa-15" placeholder="Type your answer"/></div><div class="feedback" id="fb-15"></div></div>
+
+  <div class="submit-section">
+    <button class="submit-btn" id="submitBtn" onclick="submitQuiz()">Submit &amp; See Results</button>
+    <p style="font-size:12px;color:#9AA0B2;margin-top:12px;">Answers will be revealed after submission.</p>
+  </div>
+  <div class="result-card" id="resultCard">
+    <div class="result-score" id="resultScore">—</div>
+    <div class="result-label">out of 15 questions</div>
+    <div class="result-badge" id="resultBadge"></div>
+    <div class="result-breakdown" id="resultBreakdown"></div>
+  </div>
+</main>
+<div class="progress-pill">Answered: <span id="pillCount">0</span> / 15</div>
+
+<script>
+const MCQ_HASHES={
+  1:'950836f3f6cae8f4d4d4e17f1ba104c2307fef10086c0b7a34fbf341056c6cf3',
+  2:'455838fc7f78d7dde7a09ce8fe7796f08750ae372ed9f8a1de803f315117a457',
+  3:'455838fc7f78d7dde7a09ce8fe7796f08750ae372ed9f8a1de803f315117a457',
+  4:'455838fc7f78d7dde7a09ce8fe7796f08750ae372ed9f8a1de803f315117a457',
+  5:'950836f3f6cae8f4d4d4e17f1ba104c2307fef10086c0b7a34fbf341056c6cf3',
+};
+const SOL_H=['950836f3f6cae8f4d4d4e17f1ba104c2307fef10086c0b7a34fbf341056c6cf3','8db59feb4d217f26c79d6e76eea6ff80398e8b823e376bb783be870a96cab9e7'];
+const INSOL_H=['455838fc7f78d7dde7a09ce8fe7796f08750ae372ed9f8a1de803f315117a457','dc27ef6764595ed1f5a7d1f486a9761be67ee9e620a9a1e60c2c8163a2abb0e3'];
+const SA_TYPE={6:'sol',7:'insol',8:'insol',9:'sol',10:'insol',11:'sol',12:'insol',13:'sol',14:'insol',15:'sol'};
+const SA_LABEL={sol:'Soluble',insol:'Insoluble'};
+const selections={};
+
+async function hashStr(s){const n=s.trim().toLowerCase().replace(/\s+/g,'');const b=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(n));return Array.from(new Uint8Array(b)).map(x=>x.toString(16).padStart(2,'0')).join('');}
+function checkSA(raw,type){const sets={sol:SOL_H,insol:INSOL_H};return hashStr(raw).then(h=>({ok:sets[type].includes(h),reason:`Incorrect. Correct: ${SA_LABEL[type]}`}));}
+function selectMCQ(q,l,v){if(document.getElementById('resultCard').style.display==='block')return;document.querySelectorAll(`#opts-${q} .option-btn`).forEach(b=>b.classList.remove('selected'));event.currentTarget.classList.add('selected');selections[q]=v;const c=document.getElementById(`qcard-${q}`);c.classList.remove('unanswered-warn');c.classList.add('selected-only');updateProgress();}
+function updateProgress(){let c=0;for(let i=1;i<=5;i++)if(selections[i])c++;for(let i=6;i<=15;i++){const e=document.getElementById(`sa-${i}`);if(e&&e.value.trim())c++;}document.getElementById('pillCount').textContent=c;document.getElementById('progressBar').style.width=(c/15*100)+'%';}
+document.addEventListener('DOMContentLoaded',async()=>{
+  for(const btn of document.querySelectorAll('.option-btn')){const m=btn.getAttribute('onclick').match(/'([^']+)'\)$/);if(m){const h=await hashStr(m[1]);btn.setAttribute('data-hash',h);}}
+  for(let i=6;i<=15;i++){const e=document.getElementById(`sa-${i}`);if(e)e.addEventListener('input',updateProgress);}
+});
+async function submitQuiz(){
+  const missing=[];
+  for(let i=1;i<=5;i++)if(!selections[i])missing.push(i);
+  for(let i=6;i<=15;i++){const e=document.getElementById(`sa-${i}`);if(!e||!e.value.trim())missing.push(i);}
+  if(missing.length){missing.forEach(n=>{const c=document.getElementById(`qcard-${n}`);c.classList.remove('unanswered-warn');void c.offsetWidth;c.classList.add('unanswered-warn');});document.getElementById(`qcard-${missing[0]}`).scrollIntoView({behavior:'smooth',block:'center'});return;}
+  document.querySelectorAll('.option-btn').forEach(b=>b.disabled=true);
+  document.querySelectorAll('.sa-input').forEach(i=>i.disabled=true);
+  document.getElementById('submitBtn').disabled=true;
+  let total=0;const det=[];
+  for(let i=1;i<=5;i++){
+    const uv=selections[i],uh=await hashStr(uv),ok=uh===MCQ_HASHES[i];
+    if(ok)total++;det.push(`Q${i}:${ok?'O':'X'}`);
+    document.querySelectorAll(`#opts-${i} .option-btn`).forEach(btn=>{
+      btn.classList.remove('selected','selected-only');
+      if(btn.getAttribute('data-hash')===MCQ_HASHES[i])btn.classList.add('reveal-correct');
+      const v=btn.getAttribute('onclick').match(/'([^']+)'\)$/)[1];
+      if(v===uv&&ok)btn.classList.add('correct');
+      if(v===uv&&!ok)btn.classList.add('wrong');
+    });
+    const fb=document.getElementById(`fb-${i}`);
+    fb.className='feedback '+(ok?'correct':'wrong');
+    fb.innerHTML=ok?`<span class="feedback-icon">✓</span><span class="feedback-text">Correct!</span>`:`<span class="feedback-icon">✗</span><span class="feedback-text">Incorrect. The correct answer is highlighted above.</span>`;
+    document.getElementById(`qcard-${i}`).classList.remove('selected-only','unanswered-warn');
+    document.getElementById(`qcard-${i}`).classList.add(ok?'answered-correct':'answered-wrong');
+  }
+  for(let i=6;i<=15;i++){
+    const raw=document.getElementById(`sa-${i}`).value.trim();
+    const r=await checkSA(raw,SA_TYPE[i]);
+    if(r.ok)total++;det.push(`Q${i}:${r.ok?'O':'X'}`);
+    document.getElementById(`sa-${i}`).classList.add(r.ok?'correct':'wrong');
+    const fb=document.getElementById(`fb-${i}`);
+    fb.className='feedback '+(r.ok?'correct':'wrong');
+    fb.innerHTML=r.ok?`<span class="feedback-icon">✓</span><span class="feedback-text">Correct!</span>`:`<span class="feedback-icon">✗</span><span class="feedback-text">${r.reason}</span>`;
+    document.getElementById(`qcard-${i}`).classList.remove('selected-only','unanswered-warn');
+    document.getElementById(`qcard-${i}`).classList.add(r.ok?'answered-correct':'answered-wrong');
+  }
+  const name=document.getElementById('studentName').value.trim()||'Anonymous';
+  const period=document.getElementById('studentPeriod').value.trim()||'—';
+  const pct=Math.round(total/15*100),pass=total>=12;
+  const mcqS=det.slice(0,5).filter(s=>s.includes(':O')).length;
+  const saS=det.slice(5).filter(s=>s.includes(':O')).length;
+  document.getElementById('resultScore').textContent=`${total} / 15`;
+  const badge=document.getElementById('resultBadge');
+  badge.textContent=pass?'✓ Pass':'✗ Needs Review';
+  badge.className='result-badge '+(pass?'pass':'fail');
+  document.getElementById('resultBreakdown').innerHTML=`${name} &nbsp;·&nbsp; Period ${period} &nbsp;·&nbsp; ${pct}% &nbsp;|&nbsp; MCQ: ${mcqS}/5 &nbsp;·&nbsp; Prediction: ${saS}/10`;
+  const rc=document.getElementById('resultCard');rc.style.display='block';rc.scrollIntoView({behavior:'smooth'});
+  sendToSheets({name,period,total,pct,mcqScore:mcqS,saScore:saS,pass,details:det.join(',')});
+}
+const SHEETS_URL='https://script.google.com/macros/s/AKfycbwx_9BeLcbAPz-IV-QZuICNU-VWnafY5-Kf1DmuJY4UzowkDchhUylIGUdScBZmGVHFpw/exec';
+function sendToSheets(d){fetch(SHEETS_URL,{method:'POST',mode:'no-cors',headers:{'Content-Type':'application/json'},body:JSON.stringify({quiz:'Solubility A',name:d.name,period:d.period,score:d.total,total:15,percent:d.pct,pass:d.pass?'Pass':'Fail',mcq:d.mcqScore,sa:d.saScore,timestamp:new Date().toISOString(),details:d.details})}).catch(()=>{});}
+</script>
+</body>
+</html>
