@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Nobel Prep — Net Ionic Equations Quiz B</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
+  :root{--navy:#1B2A4A;--navy2:#243660;--gold:#C9A84C;--white:#FFFFFF;--off:#F7F8FA;--gray1:#E8EAF0;--gray2:#9AA0B2;--gray3:#555D72;--green:#2D7D46;--green-bg:#EBF7EF;--red:#C0392B;--red-bg:#FDECEA;--teal:#1A7A8A;--teal-bg:#E6F4F6;--radius:10px;--shadow:0 2px 12px rgba(27,42,74,0.10);}
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{font-family:'Inter',sans-serif;background:var(--off);color:var(--navy);min-height:100vh;}
+  header{background:var(--navy);padding:16px 28px 0;position:sticky;top:0;z-index:100;box-shadow:0 2px 10px rgba(0,0,0,0.25);}
+  .header-top{display:flex;align-items:center;justify-content:space-between;padding-bottom:14px;}
+  .logo{display:flex;align-items:center;gap:12px;}
+  .logo-badge{width:38px;height:38px;background:var(--gold);border-radius:8px;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:15px;color:var(--navy);}
+  .logo-text h1{font-size:16px;font-weight:700;color:var(--white);}
+  .logo-text p{font-size:11px;color:var(--gold);margin-top:1px;}
+  .quiz-badge{background:var(--teal);color:var(--white);font-size:11px;font-weight:700;padding:4px 12px;border-radius:20px;letter-spacing:0.5px;}
+  .progress-bar-wrap{width:100%;height:3px;background:rgba(255,255,255,0.15);}
+  .progress-bar{height:100%;background:var(--teal);width:0%;transition:width 0.4s ease;}
+  main{max-width:780px;margin:0 auto;padding:28px 16px 80px;}
+  .name-card{background:var(--white);border-radius:var(--radius);box-shadow:var(--shadow);padding:24px 28px;margin-bottom:24px;border-left:4px solid var(--teal);}
+  .name-card h2{font-size:14px;font-weight:600;color:var(--navy2);margin-bottom:12px;}
+  .name-row{display:flex;gap:12px;flex-wrap:wrap;}
+  .name-row input{flex:1;min-width:180px;padding:10px 14px;border:1.5px solid var(--gray1);border-radius:8px;font-family:'Inter',sans-serif;font-size:14px;color:var(--navy);outline:none;transition:border-color 0.2s;}
+  .name-row input:focus{border-color:var(--teal);}
+  .section-header{background:var(--navy2);color:var(--white);padding:10px 18px;border-radius:8px 8px 0 0;font-size:12px;font-weight:600;letter-spacing:0.8px;text-transform:uppercase;display:flex;align-items:center;gap:8px;margin-top:24px;}
+  .section-header .badge{background:var(--teal);color:var(--white);padding:2px 8px;border-radius:10px;font-size:10px;}
+  .q-card{background:var(--white);border:1px solid var(--gray1);border-top:none;padding:20px 22px;}
+  .q-card:last-of-type{border-radius:0 0 var(--radius) var(--radius);}
+  .q-card.answered-correct{border-left:4px solid var(--green);}
+  .q-card.answered-wrong{border-left:4px solid var(--red);}
+  .q-card.selected-only{border-left:4px solid var(--teal);}
+  .q-card.unanswered-warn{border-left:4px solid #F39C12;animation:shake 0.3s;}
+  @keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-4px)}75%{transform:translateX(4px)}}
+  .q-num{font-size:10px;font-weight:700;color:var(--teal);letter-spacing:1px;text-transform:uppercase;margin-bottom:6px;}
+  .q-text{font-size:14px;font-weight:500;line-height:1.65;color:var(--navy);margin-bottom:14px;}
+  .options{display:flex;flex-direction:column;gap:8px;}
+  .option-btn{display:flex;align-items:center;gap:10px;padding:10px 14px;border-radius:8px;border:1.5px solid var(--gray1);background:var(--off);cursor:pointer;font-family:'JetBrains Mono',monospace;font-size:12.5px;color:var(--navy);text-align:left;transition:all 0.15s;width:100%;}
+  .option-btn:hover:not(:disabled){border-color:var(--teal);background:var(--teal-bg);}
+  .option-btn.selected{border-color:var(--navy);background:#EEF1F8;font-weight:500;}
+  .option-btn.correct{border-color:var(--green);background:var(--green-bg);color:var(--green);font-weight:600;}
+  .option-btn.wrong{border-color:var(--red);background:var(--red-bg);color:var(--red);}
+  .option-btn.reveal-correct{border-color:var(--green);background:var(--green-bg);color:var(--green);font-weight:600;}
+  .opt-letter{width:24px;height:24px;border-radius:50%;background:var(--gray1);color:var(--gray3);font-size:11px;font-weight:700;font-family:'Inter',sans-serif;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+  .option-btn.correct .opt-letter,.option-btn.reveal-correct .opt-letter{background:var(--green);color:var(--white);}
+  .option-btn.wrong .opt-letter{background:var(--red);color:var(--white);}
+  .feedback{margin-top:10px;padding:10px 14px;border-radius:8px;font-size:13px;font-weight:500;display:none;}
+  .feedback.correct{background:var(--green-bg);color:var(--green);display:flex;align-items:flex-start;gap:8px;}
+  .feedback.wrong{background:var(--red-bg);color:var(--red);display:flex;align-items:flex-start;gap:8px;}
+  .feedback-icon{font-size:16px;flex-shrink:0;}
+  .progress-pill{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:var(--navy);color:var(--white);padding:10px 24px;border-radius:30px;font-size:13px;font-weight:600;box-shadow:0 4px 20px rgba(0,0,0,0.2);display:flex;gap:16px;align-items:center;z-index:200;}
+  .progress-pill span{color:var(--teal);}
+  .submit-section{margin-top:32px;text-align:center;}
+  .submit-btn{padding:14px 48px;background:var(--teal);color:var(--white);border:none;border-radius:10px;font-size:15px;font-weight:700;font-family:'Inter',sans-serif;cursor:pointer;box-shadow:0 4px 16px rgba(26,122,138,0.35);transition:all 0.2s;}
+  .submit-btn:hover{background:#155f6e;transform:translateY(-1px);}
+  .submit-btn:disabled{background:var(--gray2);color:var(--white);transform:none;box-shadow:none;cursor:default;}
+  .result-card{display:none;background:var(--white);border-radius:var(--radius);box-shadow:0 8px 32px rgba(27,42,74,0.15);padding:36px 32px;text-align:center;margin-top:32px;border-top:5px solid var(--teal);}
+  .result-score{font-size:56px;font-weight:700;color:var(--navy);line-height:1;}
+  .result-label{font-size:14px;color:var(--gray2);margin-top:6px;margin-bottom:24px;}
+  .result-badge{display:inline-block;padding:8px 24px;border-radius:30px;font-size:15px;font-weight:700;margin-bottom:20px;}
+  .result-badge.pass{background:var(--green-bg);color:var(--green);}
+  .result-badge.fail{background:var(--red-bg);color:var(--red);}
+  .result-breakdown{font-size:13px;color:var(--gray3);}
+</style>
+</head>
+<body>
+<header>
+  <div class="header-top">
+    <div class="logo"><div class="logo-badge">NP</div><div class="logo-text"><h1>Nobel Prep</h1><p>AP Chemistry · Net Ionic Equations</p></div></div>
+    <div class="quiz-badge">QUIZ B</div>
+  </div>
+  <div class="progress-bar-wrap"><div class="progress-bar" id="progressBar"></div></div>
+</header>
+<main>
+  <div class="name-card">
+    <h2>Student Information</h2>
+    <div class="name-row">
+      <input type="text" id="studentName" placeholder="Full Name"/>
+      <input type="text" id="studentPeriod" placeholder="Period" style="max-width:120px;"/>
+    </div>
+  </div>
+
+  <div class="section-header">Section 1 — Neutralization Reactions <span class="badge">Q1–Q7</span></div>
+
+  <div class="q-card" id="qcard-1">
+    <div class="q-num">Question 1</div>
+    <div class="q-text">What is the net ionic equation for the reaction between <strong>HBr(aq)</strong> and <strong>NaOH(aq)</strong>?</div>
+    <div class="options" id="opts-1">
+      <button class="option-btn" onclick="selectMCQ(1,'A','H+(aq)+OH-(aq)→H2O(l)')"><span class="opt-letter">A</span>HBr(aq) + NaOH(aq) → NaBr(aq) + H₂O(l)</button>
+      <button class="option-btn" onclick="selectMCQ(1,'B','H+(aq)+OH-(aq)→H2O(l)')"><span class="opt-letter">B</span>H⁺(aq) + OH⁻(aq) → H₂O(l)</button>
+      <button class="option-btn" onclick="selectMCQ(1,'C','H+(aq)+OH-(aq)→H2O(l)')"><span class="opt-letter">C</span>Na⁺(aq) + Br⁻(aq) → NaBr(aq)</button>
+      <button class="option-btn" onclick="selectMCQ(1,'D','H+(aq)+OH-(aq)→H2O(l)')"><span class="opt-letter">D</span>H⁺(aq) + Br⁻(aq) + Na⁺(aq) + OH⁻(aq) → Na⁺(aq) + Br⁻(aq) + H₂O(l)</button>
+    </div>
+    <div class="feedback" id="fb-1"></div>
+  </div>
+
+  <div class="q-card" id="qcard-2">
+    <div class="q-num">Question 2</div>
+    <div class="q-text">What is the net ionic equation for the reaction between <strong>CH₃COOH(aq)</strong> and <strong>KOH(aq)</strong>?</div>
+    <div class="options" id="opts-2">
+      <button class="option-btn" onclick="selectMCQ(2,'A','CH3COOH(aq)+OH-(aq)→CH3COO-(aq)+H2O(l)')"><span class="opt-letter">A</span>H⁺(aq) + OH⁻(aq) → H₂O(l)</button>
+      <button class="option-btn" onclick="selectMCQ(2,'B','CH3COOH(aq)+OH-(aq)→CH3COO-(aq)+H2O(l)')"><span class="opt-letter">B</span>CH₃COOH(aq) + KOH(aq) → CH₃COOK(aq) + H₂O(l)</button>
+      <button class="option-btn" onclick="selectMCQ(2,'C','CH3COOH(aq)+OH-(aq)→CH3COO-(aq)+H2O(l)')"><span class="opt-letter">C</span>K⁺(aq) + CH₃COO⁻(aq) → CH₃COOK(aq)</button>
+      <button class="option-btn" onclick="selectMCQ(2,'D','CH3COOH(aq)+OH-(aq)→CH3COO-(aq)+H2O(l)')"><span class="opt-letter">D</span>CH₃COOH(aq) + OH⁻(aq) → CH₃COO⁻(aq) + H₂O(l)</button>
+    </div>
+    <div class="feedback" id="fb-2"></div>
+  </div>
+
+  <div class="q-card" id="qcard-3">
+    <div class="q-num">Question 3</div>
+    <div class="q-text">What is the net ionic equation for the reaction between <strong>HCl(aq)</strong> and <strong>NH₃(aq)</strong>?</div>
+    <div class="options" id="opts-3">
+      <button class="option-btn" onclick="selectMCQ(3,'A','H+(aq)+NH3(aq)→NH4+(aq)')"><span class="opt-letter">A</span>H⁺(aq) + NH₃(aq) → NH₄⁺(aq)</button>
+      <button class="option-btn" onclick="selectMCQ(3,'B','H+(aq)+NH3(aq)→NH4+(aq)')"><span class="opt-letter">B</span>H⁺(aq) + OH⁻(aq) → H₂O(l)</button>
+      <button class="option-btn" onclick="selectMCQ(3,'C','H+(aq)+NH3(aq)→NH4+(aq)')"><span class="opt-letter">C</span>HCl(aq) + NH₃(aq) → NH₄Cl(aq)</button>
+      <button class="option-btn" onclick="selectMCQ(3,'D','H+(aq)+NH3(aq)→NH4+(aq)')"><span class="opt-letter">D</span>Cl⁻(aq) + NH₄⁺(aq) → NH₄Cl(aq)</button>
+    </div>
+    <div class="feedback" id="fb-3"></div>
+  </div>
+
+  <div class="q-card" id="qcard-4">
+    <div class="q-num">Question 4</div>
+    <div class="q-text">What is the net ionic equation for the reaction between <strong>HI(aq)</strong> and <strong>LiOH(aq)</strong>?</div>
+    <div class="options" id="opts-4">
+      <button class="option-btn" onclick="selectMCQ(4,'A','H+(aq)+OH-(aq)→H2O(l)')"><span class="opt-letter">A</span>Li⁺(aq) + I⁻(aq) → LiI(aq)</button>
+      <button class="option-btn" onclick="selectMCQ(4,'B','H+(aq)+OH-(aq)→H2O(l)')"><span class="opt-letter">B</span>HI(aq) + LiOH(aq) → LiI(aq) + H₂O(l)</button>
+      <button class="option-btn" onclick="selectMCQ(4,'C','H+(aq)+OH-(aq)→H2O(l)')"><span class="opt-letter">C</span>H⁺(aq) + OH⁻(aq) → H₂O(l)</button>
+      <button class="option-btn" onclick="selectMCQ(4,'D','H+(aq)+OH-(aq)→H2O(l)')"><span class="opt-letter">D</span>H⁺(aq) + I⁻(aq) + Li⁺(aq) + OH⁻(aq) → Li⁺(aq) + I⁻(aq) + H₂O(l)</button>
+    </div>
+    <div class="feedback" id="fb-4"></div>
+  </div>
+
+  <div class="q-card" id="qcard-5">
+    <div class="q-num">Question 5</div>
+    <div class="q-text">What is the net ionic equation for the reaction between <strong>CH₃COOH(aq)</strong> and <strong>NaOH(aq)</strong>?</div>
+    <div class="options" id="opts-5">
+      <button class="option-btn" onclick="selectMCQ(5,'A','CH3COOH(aq)+OH-(aq)→CH3COO-(aq)+H2O(l)')"><span class="opt-letter">A</span>H⁺(aq) + OH⁻(aq) → H₂O(l)</button>
+      <button class="option-btn" onclick="selectMCQ(5,'B','CH3COOH(aq)+OH-(aq)→CH3COO-(aq)+H2O(l)')"><span class="opt-letter">B</span>CH₃COOH(aq) + OH⁻(aq) → CH₃COO⁻(aq) + H₂O(l)</button>
+      <button class="option-btn" onclick="selectMCQ(5,'C','CH3COOH(aq)+OH-(aq)→CH3COO-(aq)+H2O(l)')"><span class="opt-letter">C</span>Na⁺(aq) + CH₃COO⁻(aq) → CH₃COONa(aq)</button>
+      <button class="option-btn" onclick="selectMCQ(5,'D','CH3COOH(aq)+OH-(aq)→CH3COO-(aq)+H2O(l)')"><span class="opt-letter">D</span>CH₃COOH(aq) + NaOH(aq) → CH₃COONa(aq) + H₂O(l)</button>
+    </div>
+    <div class="feedback" id="fb-5"></div>
+  </div>
+
+  <div class="q-card" id="qcard-6">
+    <div class="q-num">Question 6</div>
+    <div class="q-text">What is the net ionic equation for the reaction between <strong>HNO₃(aq)</strong> and <strong>Ca(OH)₂(aq)</strong>?</div>
+    <div class="options" id="opts-6">
+      <button class="option-btn" onclick="selectMCQ(6,'A','H+(aq)+OH-(aq)→H2O(l)')"><span class="opt-letter">A</span>2HNO₃(aq) + Ca(OH)₂(aq) → Ca(NO₃)₂(aq) + 2H₂O(l)</button>
+      <button class="option-btn" onclick="selectMCQ(6,'B','H+(aq)+OH-(aq)→H2O(l)')"><span class="opt-letter">B</span>Ca²⁺(aq) + 2NO₃⁻(aq) → Ca(NO₃)₂(aq)</button>
+      <button class="option-btn" onclick="selectMCQ(6,'C','H+(aq)+OH-(aq)→H2O(l)')"><span class="opt-letter">C</span>2H⁺(aq) + 2NO₃⁻(aq) + Ca²⁺(aq) + 2OH⁻(aq) → Ca²⁺(aq) + 2NO₃⁻(aq) + 2H₂O(l)</button>
+      <button class="option-btn" onclick="selectMCQ(6,'D','H+(aq)+OH-(aq)→H2O(l)')"><span class="opt-letter">D</span>H⁺(aq) + OH⁻(aq) → H₂O(l)</button>
+    </div>
+    <div class="feedback" id="fb-6"></div>
+  </div>
+
+  <div class="q-card" id="qcard-7">
+    <div class="q-num">Question 7</div>
+    <div class="q-text">What is the net ionic equation for the reaction between <strong>HBr(aq)</strong> and <strong>NH₃(aq)</strong>?</div>
+    <div class="options" id="opts-7">
+      <button class="option-btn" onclick="selectMCQ(7,'A','H+(aq)+NH3(aq)→NH4+(aq)')"><span class="opt-letter">A</span>H⁺(aq) + NH₃(aq) → NH₄⁺(aq)</button>
+      <button class="option-btn" onclick="selectMCQ(7,'B','H+(aq)+NH3(aq)→NH4+(aq)')"><span class="opt-letter">B</span>HBr(aq) + NH₃(aq) → NH₄Br(aq)</button>
+      <button class="option-btn" onclick="selectMCQ(7,'C','H+(aq)+NH3(aq)→NH4+(aq)')"><span class="opt-letter">C</span>H⁺(aq) + OH⁻(aq) → H₂O(l)</button>
+      <button class="option-btn" onclick="selectMCQ(7,'D','H+(aq)+NH3(aq)→NH4+(aq)')"><span class="opt-letter">D</span>Br⁻(aq) + NH₄⁺(aq) → NH₄Br(aq)</button>
+    </div>
+    <div class="feedback" id="fb-7"></div>
+  </div>
+
+  <div class="section-header" style="margin-top:28px;">Section 2 — Precipitation Reactions <span class="badge">Q8–Q15</span></div>
+
+  <div class="q-card" id="qcard-8">
+    <div class="q-num">Question 8</div>
+    <div class="q-text">What is the net ionic equation for mixing <strong>AgNO₃(aq)</strong> and <strong>KCl(aq)</strong>?</div>
+    <div class="options" id="opts-8">
+      <button class="option-btn" onclick="selectMCQ(8,'A','Ag+(aq)+Cl-(aq)→AgCl(s)')"><span class="opt-letter">A</span>K⁺(aq) + NO₃⁻(aq) → KNO₃(aq)</button>
+      <button class="option-btn" onclick="selectMCQ(8,'B','Ag+(aq)+Cl-(aq)→AgCl(s)')"><span class="opt-letter">B</span>AgNO₃(aq) + KCl(aq) → AgCl(s) + KNO₃(aq)</button>
+      <button class="option-btn" onclick="selectMCQ(8,'C','Ag+(aq)+Cl-(aq)→AgCl(s)')"><span class="opt-letter">C</span>Ag⁺(aq) + Cl⁻(aq) → AgCl(s)</button>
+      <button class="option-btn" onclick="selectMCQ(8,'D','Ag+(aq)+Cl-(aq)→AgCl(s)')"><span class="opt-letter">D</span>Ag⁺(aq) + NO₃⁻(aq) + K⁺(aq) + Cl⁻(aq) → AgCl(s) + K⁺(aq) + NO₃⁻(aq)</button>
+    </div>
+    <div class="feedback" id="fb-8"></div>
+  </div>
+
+  <div class="q-card" id="qcard-9">
+    <div class="q-num">Question 9</div>
+    <div class="q-text">What is the net ionic equation for mixing <strong>CaCl₂(aq)</strong> and <strong>K₂CO₃(aq)</strong>?</div>
+    <div class="options" id="opts-9">
+      <button class="option-btn" onclick="selectMCQ(9,'A','Ca2+(aq)+CO32-(aq)→CaCO3(s)')"><span class="opt-letter">A</span>CaCl₂(aq) + K₂CO₃(aq) → CaCO₃(s) + 2KCl(aq)</button>
+      <button class="option-btn" onclick="selectMCQ(9,'B','Ca2+(aq)+CO32-(aq)→CaCO3(s)')"><span class="opt-letter">B</span>Ca²⁺(aq) + CO₃²⁻(aq) → CaCO₃(s)</button>
+      <button class="option-btn" onclick="selectMCQ(9,'C','Ca2+(aq)+CO32-(aq)→CaCO3(s)')"><span class="opt-letter">C</span>2K⁺(aq) + 2Cl⁻(aq) → 2KCl(aq)</button>
+      <button class="option-btn" onclick="selectMCQ(9,'D','Ca2+(aq)+CO32-(aq)→CaCO3(s)')"><span class="opt-letter">D</span>Ca²⁺(aq) + 2Cl⁻(aq) + 2K⁺(aq) + CO₃²⁻(aq) → CaCO₃(s) + 2K⁺(aq) + 2Cl⁻(aq)</button>
+    </div>
+    <div class="feedback" id="fb-9"></div>
+  </div>
+
+  <div class="q-card" id="qcard-10">
+    <div class="q-num">Question 10</div>
+    <div class="q-text">What is the net ionic equation for mixing <strong>Fe(NO₃)₃(aq)</strong> and <strong>3NaOH(aq)</strong>?</div>
+    <div class="options" id="opts-10">
+      <button class="option-btn" onclick="selectMCQ(10,'A','Fe3+(aq)+3OH-(aq)→Fe(OH)3(s)')"><span class="opt-letter">A</span>Fe(NO₃)₃(aq) + 3NaOH(aq) → Fe(OH)₃(s) + 3NaNO₃(aq)</button>
+      <button class="option-btn" onclick="selectMCQ(10,'B','Fe3+(aq)+3OH-(aq)→Fe(OH)3(s)')"><span class="opt-letter">B</span>H⁺(aq) + OH⁻(aq) → H₂O(l)</button>
+      <button class="option-btn" onclick="selectMCQ(10,'C','Fe3+(aq)+3OH-(aq)→Fe(OH)3(s)')"><span class="opt-letter">C</span>3Na⁺(aq) + 3NO₃⁻(aq) → 3NaNO₃(aq)</button>
+      <button class="option-btn" onclick="selectMCQ(10,'D','Fe3+(aq)+3OH-(aq)→Fe(OH)3(s)')"><span class="opt-letter">D</span>Fe³⁺(aq) + 3OH⁻(aq) → Fe(OH)₃(s)</button>
+    </div>
+    <div class="feedback" id="fb-10"></div>
+  </div>
+
+  <div class="q-card" id="qcard-11">
+    <div class="q-num">Question 11</div>
+    <div class="q-text">What is the net ionic equation for mixing <strong>Ba(NO₃)₂(aq)</strong> and <strong>Na₂SO₄(aq)</strong>?</div>
+    <div class="options" id="opts-11">
+      <button class="option-btn" onclick="selectMCQ(11,'A','Ba2+(aq)+SO42-(aq)→BaSO4(s)')"><span class="opt-letter">A</span>Ba²⁺(aq) + SO₄²⁻(aq) → BaSO₄(s)</button>
+      <button class="option-btn" onclick="selectMCQ(11,'B','Ba2+(aq)+SO42-(aq)→BaSO4(s)')"><span class="opt-letter">B</span>2Na⁺(aq) + 2NO₃⁻(aq) → 2NaNO₃(aq)</button>
+      <button class="option-btn" onclick="selectMCQ(11,'C','Ba2+(aq)+SO42-(aq)→BaSO4(s)')"><span class="opt-letter">C</span>Ba(NO₃)₂(aq) + Na₂SO₄(aq) → BaSO₄(s) + 2NaNO₃(aq)</button>
+      <button class="option-btn" onclick="selectMCQ(11,'D','Ba2+(aq)+SO42-(aq)→BaSO4(s)')"><span class="opt-letter">D</span>Ba²⁺(aq) + 2NO₃⁻(aq) + 2Na⁺(aq) + SO₄²⁻(aq) → BaSO₄(s) + 2Na⁺(aq) + 2NO₃⁻(aq)</button>
+    </div>
+    <div class="feedback" id="fb-11"></div>
+  </div>
+
+  <div class="q-card" id="qcard-12">
+    <div class="q-num">Question 12</div>
+    <div class="q-text">What is the net ionic equation for mixing <strong>Pb(NO₃)₂(aq)</strong> and <strong>2NaI(aq)</strong>?</div>
+    <div class="options" id="opts-12">
+      <button class="option-btn" onclick="selectMCQ(12,'A','Pb2+(aq)+2I-(aq)→PbI2(s)')"><span class="opt-letter">A</span>2Na⁺(aq) + 2NO₃⁻(aq) → 2NaNO₃(aq)</button>
+      <button class="option-btn" onclick="selectMCQ(12,'B','Pb2+(aq)+2I-(aq)→PbI2(s)')"><span class="opt-letter">B</span>Pb(NO₃)₂(aq) + 2NaI(aq) → PbI₂(s) + 2NaNO₃(aq)</button>
+      <button class="option-btn" onclick="selectMCQ(12,'C','Pb2+(aq)+2I-(aq)→PbI2(s)')"><span class="opt-letter">C</span>Pb²⁺(aq) + 2I⁻(aq) → PbI₂(s)</button>
+      <button class="option-btn" onclick="selectMCQ(12,'D','Pb2+(aq)+2I-(aq)→PbI2(s)')"><span class="opt-letter">D</span>Pb²⁺(aq) + 2NO₃⁻(aq) + 2Na⁺(aq) + 2I⁻(aq) → PbI₂(s) + 2Na⁺(aq) + 2NO₃⁻(aq)</button>
+    </div>
+    <div class="feedback" id="fb-12"></div>
+  </div>
+
+  <div class="q-card" id="qcard-13">
+    <div class="q-num">Question 13</div>
+    <div class="q-text">What is the net ionic equation for mixing <strong>AgNO₃(aq)</strong> and <strong>HCl(aq)</strong>?</div>
+    <div class="options" id="opts-13">
+      <button class="option-btn" onclick="selectMCQ(13,'A','Ag+(aq)+Cl-(aq)→AgCl(s)')"><span class="opt-letter">A</span>H⁺(aq) + NO₃⁻(aq) → HNO₃(aq)</button>
+      <button class="option-btn" onclick="selectMCQ(13,'B','Ag+(aq)+Cl-(aq)→AgCl(s)')"><span class="opt-letter">B</span>Ag⁺(aq) + Cl⁻(aq) → AgCl(s)</button>
+      <button class="option-btn" onclick="selectMCQ(13,'C','Ag+(aq)+Cl-(aq)→AgCl(s)')"><span class="opt-letter">C</span>AgNO₃(aq) + HCl(aq) → AgCl(s) + HNO₃(aq)</button>
+      <button class="option-btn" onclick="selectMCQ(13,'D','Ag+(aq)+Cl-(aq)→AgCl(s)')"><span class="opt-letter">D</span>H⁺(aq) + OH⁻(aq) → H₂O(l)</button>
+    </div>
+    <div class="feedback" id="fb-13"></div>
+  </div>
+
+  <div class="q-card" id="qcard-14">
+    <div class="q-num">Question 14</div>
+    <div class="q-text">What is the net ionic equation for mixing <strong>Ca(NO₃)₂(aq)</strong> and <strong>Na₂CO₃(aq)</strong>?</div>
+    <div class="options" id="opts-14">
+      <button class="option-btn" onclick="selectMCQ(14,'A','Ca2+(aq)+CO32-(aq)→CaCO3(s)')"><span class="opt-letter">A</span>2Na⁺(aq) + 2NO₃⁻(aq) → 2NaNO₃(aq)</button>
+      <button class="option-btn" onclick="selectMCQ(14,'B','Ca2+(aq)+CO32-(aq)→CaCO3(s)')"><span class="opt-letter">B</span>Ca(NO₃)₂(aq) + Na₂CO₃(aq) → CaCO₃(s) + 2NaNO₃(aq)</button>
+      <button class="option-btn" onclick="selectMCQ(14,'C','Ca2+(aq)+CO32-(aq)→CaCO3(s)')"><span class="opt-letter">C</span>Ca²⁺(aq) + CO₃²⁻(aq) → CaCO₃(s)</button>
+      <button class="option-btn" onclick="selectMCQ(14,'D','Ca2+(aq)+CO32-(aq)→CaCO3(s)')"><span class="opt-letter">D</span>Ca²⁺(aq) + CO₃²⁻(aq) → CaCO₃(s)</button>
+    </div>
+    <div class="feedback" id="fb-14"></div>
+  </div>
+
+  <div class="q-card" id="qcard-15">
+    <div class="q-num">Question 15</div>
+    <div class="q-text">What is the net ionic equation for mixing <strong>BaCl₂(aq)</strong> and <strong>H₂SO₄(aq)</strong>?</div>
+    <div class="options" id="opts-15">
+      <button class="option-btn" onclick="selectMCQ(15,'A','Ba2+(aq)+SO42-(aq)→BaSO4(s)')"><span class="opt-letter">A</span>Ba²⁺(aq) + SO₄²⁻(aq) → BaSO₄(s)</button>
+      <button class="option-btn" onclick="selectMCQ(15,'B','Ba2+(aq)+SO42-(aq)→BaSO4(s)')"><span class="opt-letter">B</span>2H⁺(aq) + 2Cl⁻(aq) → 2HCl(aq)</button>
+      <button class="option-btn" onclick="selectMCQ(15,'C','Ba2+(aq)+SO42-(aq)→BaSO4(s)')"><span class="opt-letter">C</span>BaCl₂(aq) + H₂SO₄(aq) → BaSO₄(s) + 2HCl(aq)</button>
+      <button class="option-btn" onclick="selectMCQ(15,'D','Ba2+(aq)+SO42-(aq)→BaSO4(s)')"><span class="opt-letter">D</span>Ba²⁺(aq) + 2Cl⁻(aq) + 2H⁺(aq) + SO₄²⁻(aq) → BaSO₄(s) + 2H⁺(aq) + 2Cl⁻(aq)</button>
+    </div>
+    <div class="feedback" id="fb-15"></div>
+  </div>
+
+  <div class="submit-section">
+    <button class="submit-btn" id="submitBtn" onclick="submitQuiz()">Submit &amp; See Results</button>
+    <p style="font-size:12px;color:#9AA0B2;margin-top:12px;">Answers will be revealed after submission.</p>
+  </div>
+  <div class="result-card" id="resultCard">
+    <div class="result-score" id="resultScore">—</div>
+    <div class="result-label">out of 15 questions</div>
+    <div class="result-badge" id="resultBadge"></div>
+    <div class="result-breakdown" id="resultBreakdown"></div>
+  </div>
+</main>
+<div class="progress-pill">Answered: <span id="pillCount">0</span> / 15</div>
+
+<script>
+const MCQ_HASHES={
+  1:'9482e7c70112d70f1877064999cca4b5566e2974214f010ec4738a551a29b16a',
+  2:'2538dd2a60cdce10e3e83b3e1e36e16c3d2aa966d76ef28d1f1983d93c18000f',
+  3:'974ce9e000c37c49f26798dc91c7989a515d325ad3fbf184eb8790396b46dd66',
+  4:'9482e7c70112d70f1877064999cca4b5566e2974214f010ec4738a551a29b16a',
+  5:'2538dd2a60cdce10e3e83b3e1e36e16c3d2aa966d76ef28d1f1983d93c18000f',
+  6:'9482e7c70112d70f1877064999cca4b5566e2974214f010ec4738a551a29b16a',
+  7:'974ce9e000c37c49f26798dc91c7989a515d325ad3fbf184eb8790396b46dd66',
+  8:'859222d8a8fa6a0a9662ff9107eb27538390e884307f6e359e2c58426a965c3c',
+  9:'8fd155f99be2e6cd4dc2e56fb8bea3552c10346be3e0904f82a9ef28fcccd378',
+  10:'fd270d53373eb92f30a752a377f895731579d745942ee38835e2d8b638a1134f',
+  11:'584c376753daed77d1541d58b4c3c192bc77ada82d361c23308a313452ec8152',
+  12:'0a33c5db5f9b4a640cafd6805a854e96528c496e147e8570651f961b04e91b96',
+  13:'859222d8a8fa6a0a9662ff9107eb27538390e884307f6e359e2c58426a965c3c',
+  14:'8fd155f99be2e6cd4dc2e56fb8bea3552c10346be3e0904f82a9ef28fcccd378',
+  15:'584c376753daed77d1541d58b4c3c192bc77ada82d361c23308a313452ec8152',
+};
+const selections={};
+async function hashStr(s){const n=s.trim().toLowerCase().replace(/\s+/g,'');const b=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(n));return Array.from(new Uint8Array(b)).map(x=>x.toString(16).padStart(2,'0')).join('');}
+function selectMCQ(q,l,v){if(document.getElementById('resultCard').style.display==='block')return;document.querySelectorAll(`#opts-${q} .option-btn`).forEach(b=>b.classList.remove('selected'));event.currentTarget.classList.add('selected');selections[q]=v;const c=document.getElementById(`qcard-${q}`);c.classList.remove('unanswered-warn');c.classList.add('selected-only');updateProgress();}
+function updateProgress(){let c=0;for(let i=1;i<=15;i++)if(selections[i])c++;document.getElementById('pillCount').textContent=c;document.getElementById('progressBar').style.width=(c/15*100)+'%';}
+document.addEventListener('DOMContentLoaded',async()=>{
+  for(const btn of document.querySelectorAll('.option-btn')){const m=btn.getAttribute('onclick').match(/'([^']+)'\)$/);if(m){const h=await hashStr(m[1]);btn.setAttribute('data-hash',h);}}
+});
+async function submitQuiz(){
+  const missing=[];
+  for(let i=1;i<=15;i++)if(!selections[i])missing.push(i);
+  if(missing.length){missing.forEach(n=>{const c=document.getElementById(`qcard-${n}`);c.classList.remove('unanswered-warn');void c.offsetWidth;c.classList.add('unanswered-warn');});document.getElementById(`qcard-${missing[0]}`).scrollIntoView({behavior:'smooth',block:'center'});return;}
+  document.querySelectorAll('.option-btn').forEach(b=>b.disabled=true);
+  document.getElementById('submitBtn').disabled=true;
+  let total=0;const det=[];
+  for(let i=1;i<=15;i++){
+    const uv=selections[i],uh=await hashStr(uv),ok=uh===MCQ_HASHES[i];
+    if(ok)total++;det.push(`Q${i}:${ok?'O':'X'}`);
+    document.querySelectorAll(`#opts-${i} .option-btn`).forEach(btn=>{
+      btn.classList.remove('selected','selected-only');
+      if(btn.getAttribute('data-hash')===MCQ_HASHES[i])btn.classList.add('reveal-correct');
+      const v=btn.getAttribute('onclick').match(/'([^']+)'\)$/)[1];
+      if(v===uv&&ok)btn.classList.add('correct');
+      if(v===uv&&!ok)btn.classList.add('wrong');
+    });
+    const fb=document.getElementById(`fb-${i}`);
+    fb.className='feedback '+(ok?'correct':'wrong');
+    fb.innerHTML=ok?`<span class="feedback-icon">✓</span><span class="feedback-text">Correct!</span>`:`<span class="feedback-icon">✗</span><span class="feedback-text">Incorrect. The correct answer is highlighted above.</span>`;
+    document.getElementById(`qcard-${i}`).classList.remove('selected-only','unanswered-warn');
+    document.getElementById(`qcard-${i}`).classList.add(ok?'answered-correct':'answered-wrong');
+  }
+  const name=document.getElementById('studentName').value.trim()||'Anonymous';
+  const period=document.getElementById('studentPeriod').value.trim()||'—';
+  const pct=Math.round(total/15*100),pass=total>=12;
+  const neutS=det.slice(0,7).filter(s=>s.includes(':O')).length;
+  const precipS=det.slice(7).filter(s=>s.includes(':O')).length;
+  document.getElementById('resultScore').textContent=`${total} / 15`;
+  const badge=document.getElementById('resultBadge');
+  badge.textContent=pass?'✓ Pass':'✗ Needs Review';
+  badge.className='result-badge '+(pass?'pass':'fail');
+  document.getElementById('resultBreakdown').innerHTML=`${name} &nbsp;·&nbsp; Period ${period} &nbsp;·&nbsp; ${pct}% &nbsp;|&nbsp; Neutralization: ${neutS}/7 &nbsp;·&nbsp; Precipitation: ${precipS}/8`;
+  const rc=document.getElementById('resultCard');rc.style.display='block';rc.scrollIntoView({behavior:'smooth'});
+  sendToSheets({name,period,total,pct,neutScore:neutS,precipScore:precipS,pass,details:det.join(',')});
+}
+const SHEETS_URL='https://script.google.com/macros/s/AKfycbxFhpPY1oUJCfTH6Agqoq-PL3oEoBLqibHHcgr_r0FnCSQRac6RazHBzgy8-ayI1zioBA/exec';
+function sendToSheets(d){fetch(SHEETS_URL,{method:'POST',mode:'no-cors',headers:{'Content-Type':'application/json'},body:JSON.stringify({quiz:'Net Ionic B',name:d.name,period:d.period,score:d.total,total:15,percent:d.pct,pass:d.pass?'Pass':'Fail',mcq:d.total,sa:0,timestamp:new Date().toISOString(),details:d.details})}).catch(()=>{});}
+</script>
+</body>
+</html>
