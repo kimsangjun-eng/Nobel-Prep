@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Nobel Prep — Oxidation Numbers Quiz B</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
+  :root{--navy:#1B2A4A;--navy2:#243660;--gold:#C9A84C;--white:#FFFFFF;--off:#F7F8FA;--gray1:#E8EAF0;--gray2:#9AA0B2;--gray3:#555D72;--green:#2D7D46;--green-bg:#EBF7EF;--red:#C0392B;--red-bg:#FDECEA;--teal:#1A7A8A;--teal-bg:#E6F4F6;--radius:10px;--shadow:0 2px 12px rgba(27,42,74,0.10);}
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{font-family:'Inter',sans-serif;background:var(--off);color:var(--navy);min-height:100vh;}
+  header{background:var(--navy);padding:16px 28px 0;position:sticky;top:0;z-index:100;box-shadow:0 2px 10px rgba(0,0,0,0.25);}
+  .header-top{display:flex;align-items:center;justify-content:space-between;padding-bottom:14px;}
+  .logo{display:flex;align-items:center;gap:12px;}
+  .logo-badge{width:38px;height:38px;background:var(--gold);border-radius:8px;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:15px;color:var(--navy);}
+  .logo-text h1{font-size:16px;font-weight:700;color:var(--white);}
+  .logo-text p{font-size:11px;color:var(--gold);margin-top:1px;}
+  .quiz-badge{background:var(--teal);color:var(--white);font-size:11px;font-weight:700;padding:4px 12px;border-radius:20px;letter-spacing:0.5px;}
+  .progress-bar-wrap{width:100%;height:3px;background:rgba(255,255,255,0.15);}
+  .progress-bar{height:100%;background:var(--teal);width:0%;transition:width 0.4s ease;}
+  main{max-width:780px;margin:0 auto;padding:28px 16px 80px;}
+  .name-card{background:var(--white);border-radius:var(--radius);box-shadow:var(--shadow);padding:24px 28px;margin-bottom:24px;border-left:4px solid var(--teal);}
+  .name-card h2{font-size:14px;font-weight:600;color:var(--navy2);margin-bottom:12px;}
+  .name-row{display:flex;gap:12px;flex-wrap:wrap;}
+  .name-row input{flex:1;min-width:180px;padding:10px 14px;border:1.5px solid var(--gray1);border-radius:8px;font-family:'Inter',sans-serif;font-size:14px;color:var(--navy);outline:none;transition:border-color 0.2s;}
+  .name-row input:focus{border-color:var(--teal);}
+  .notation-guide{background:var(--teal-bg);border-radius:8px;padding:10px 14px;font-size:12px;color:var(--navy2);margin-bottom:20px;border-left:3px solid var(--teal);}
+  .notation-guide strong{display:block;margin-bottom:4px;color:var(--navy);}
+  .notation-guide code{font-family:'JetBrains Mono',monospace;background:var(--white);padding:1px 5px;border-radius:3px;}
+  .section-header{background:var(--navy2);color:var(--white);padding:10px 18px;border-radius:8px 8px 0 0;font-size:12px;font-weight:600;letter-spacing:0.8px;text-transform:uppercase;display:flex;align-items:center;gap:8px;margin-top:24px;}
+  .section-header .badge{background:var(--teal);color:var(--white);padding:2px 8px;border-radius:10px;font-size:10px;}
+  .q-card{background:var(--white);border:1px solid var(--gray1);border-top:none;padding:20px 22px;}
+  .q-card:last-of-type{border-radius:0 0 var(--radius) var(--radius);}
+  .q-card.answered-correct{border-left:4px solid var(--green);}
+  .q-card.answered-wrong{border-left:4px solid var(--red);}
+  .q-card.selected-only{border-left:4px solid var(--teal);}
+  .q-card.unanswered-warn{border-left:4px solid #F39C12;animation:shake 0.3s;}
+  @keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-4px)}75%{transform:translateX(4px)}}
+  .q-num{font-size:10px;font-weight:700;color:var(--teal);letter-spacing:1px;text-transform:uppercase;margin-bottom:6px;}
+  .q-text{font-size:14px;font-weight:500;line-height:1.65;color:var(--navy);margin-bottom:14px;}
+  .options{display:flex;flex-direction:column;gap:8px;}
+  .option-btn{display:flex;align-items:center;gap:10px;padding:10px 14px;border-radius:8px;border:1.5px solid var(--gray1);background:var(--off);cursor:pointer;font-family:'JetBrains Mono',monospace;font-size:14px;color:var(--navy);text-align:left;transition:all 0.15s;width:100%;}
+  .option-btn:hover:not(:disabled){border-color:var(--teal);background:var(--teal-bg);}
+  .option-btn.selected{border-color:var(--navy);background:#EEF1F8;font-weight:500;}
+  .option-btn.correct{border-color:var(--green);background:var(--green-bg);color:var(--green);font-weight:600;}
+  .option-btn.wrong{border-color:var(--red);background:var(--red-bg);color:var(--red);}
+  .option-btn.reveal-correct{border-color:var(--green);background:var(--green-bg);color:var(--green);font-weight:600;}
+  .opt-letter{width:24px;height:24px;border-radius:50%;background:var(--gray1);color:var(--gray3);font-size:11px;font-weight:700;font-family:'Inter',sans-serif;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+  .option-btn.correct .opt-letter,.option-btn.reveal-correct .opt-letter{background:var(--green);color:var(--white);}
+  .option-btn.wrong .opt-letter{background:var(--red);color:var(--white);}
+  .sa-wrap{display:flex;flex-direction:column;gap:6px;}
+  .sa-input{width:100%;padding:10px 14px;border-radius:8px;border:1.5px solid var(--gray1);font-family:'JetBrains Mono',monospace;font-size:16px;color:var(--navy);outline:none;transition:border-color 0.2s;background:var(--off);}
+  .sa-input:focus{border-color:var(--teal);background:var(--white);}
+  .sa-input.correct{border-color:var(--green);background:var(--green-bg);}
+  .sa-input.wrong{border-color:var(--red);background:var(--red-bg);}
+  .sa-hint{font-size:11px;color:var(--gray2);font-family:'JetBrains Mono',monospace;}
+  .feedback{margin-top:10px;padding:10px 14px;border-radius:8px;font-size:13px;font-weight:500;display:none;}
+  .feedback.correct{background:var(--green-bg);color:var(--green);display:flex;align-items:flex-start;gap:8px;}
+  .feedback.wrong{background:var(--red-bg);color:var(--red);display:flex;align-items:flex-start;gap:8px;}
+  .feedback-icon{font-size:16px;flex-shrink:0;}
+  .feedback-text{line-height:1.5;}
+  .progress-pill{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:var(--navy);color:var(--white);padding:10px 24px;border-radius:30px;font-size:13px;font-weight:600;box-shadow:0 4px 20px rgba(0,0,0,0.2);display:flex;gap:16px;align-items:center;z-index:200;}
+  .progress-pill span{color:var(--teal);}
+  .submit-section{margin-top:32px;text-align:center;}
+  .submit-btn{padding:14px 48px;background:var(--teal);color:var(--white);border:none;border-radius:10px;font-size:15px;font-weight:700;font-family:'Inter',sans-serif;cursor:pointer;box-shadow:0 4px 16px rgba(26,122,138,0.35);transition:all 0.2s;}
+  .submit-btn:hover{background:#155f6e;transform:translateY(-1px);}
+  .submit-btn:disabled{background:var(--gray2);color:var(--white);transform:none;box-shadow:none;cursor:default;}
+  .result-card{display:none;background:var(--white);border-radius:var(--radius);box-shadow:0 8px 32px rgba(27,42,74,0.15);padding:36px 32px;text-align:center;margin-top:32px;border-top:5px solid var(--teal);}
+  .result-score{font-size:56px;font-weight:700;color:var(--navy);line-height:1;}
+  .result-label{font-size:14px;color:var(--gray2);margin-top:6px;margin-bottom:24px;}
+  .result-badge{display:inline-block;padding:8px 24px;border-radius:30px;font-size:15px;font-weight:700;margin-bottom:20px;}
+  .result-badge.pass{background:var(--green-bg);color:var(--green);}
+  .result-badge.fail{background:var(--red-bg);color:var(--red);}
+  .result-breakdown{font-size:13px;color:var(--gray3);}
+</style>
+</head>
+<body>
+<header>
+  <div class="header-top">
+    <div class="logo"><div class="logo-badge">NP</div><div class="logo-text"><h1>Nobel Prep</h1><p>AP Chemistry · Oxidation Numbers</p></div></div>
+    <div class="quiz-badge">QUIZ B</div>
+  </div>
+  <div class="progress-bar-wrap"><div class="progress-bar" id="progressBar"></div></div>
+</header>
+<main>
+  <div class="name-card">
+    <h2>Student Information</h2>
+    <div class="name-row">
+      <input type="text" id="studentName" placeholder="Full Name"/>
+      <input type="text" id="studentPeriod" placeholder="Period" style="max-width:120px;"/>
+    </div>
+  </div>
+  <div class="notation-guide">
+    <strong>📝 Short Answer Format</strong>
+    Include sign: <code>+2</code>, <code>-1</code>, <code>0</code> &nbsp;|&nbsp; Both <code>+2</code> and <code>2</code> accepted for positive values. &nbsp;Answers revealed after submission.
+  </div>
+
+  <div class="section-header">Section 1 — Multiple Choice <span class="badge">Q1–Q5</span></div>
+
+  <!-- Q1: 정답 B = +1 (Na in NaOH) -->
+  <div class="q-card" id="qcard-1">
+    <div class="q-num">Question 1</div>
+    <div class="q-text">What is the oxidation number of <strong>Na</strong> in NaOH?</div>
+    <div class="options" id="opts-1">
+      <button class="option-btn" onclick="selectMCQ(1,'A','0')"><span class="opt-letter">A</span>0</button>
+      <button class="option-btn" onclick="selectMCQ(1,'B','+1')"><span class="opt-letter">B</span>+1</button>
+      <button class="option-btn" onclick="selectMCQ(1,'C','-1')"><span class="opt-letter">C</span>−1</button>
+      <button class="option-btn" onclick="selectMCQ(1,'D','+2')"><span class="opt-letter">D</span>+2</button>
+    </div>
+    <div class="feedback" id="fb-1"></div>
+  </div>
+
+  <!-- Q2: 정답 D = -2 (O in CO2) -->
+  <div class="q-card" id="qcard-2">
+    <div class="q-num">Question 2</div>
+    <div class="q-text">What is the oxidation number of <strong>O</strong> in CO₂?</div>
+    <div class="options" id="opts-2">
+      <button class="option-btn" onclick="selectMCQ(2,'A','+2')"><span class="opt-letter">A</span>+2</button>
+      <button class="option-btn" onclick="selectMCQ(2,'B','0')"><span class="opt-letter">B</span>0</button>
+      <button class="option-btn" onclick="selectMCQ(2,'C','+4')"><span class="opt-letter">C</span>+4</button>
+      <button class="option-btn" onclick="selectMCQ(2,'D','-2')"><span class="opt-letter">D</span>−2</button>
+    </div>
+    <div class="feedback" id="fb-2"></div>
+  </div>
+
+  <!-- Q3: 정답 A = +7 (Mn in KMnO4) -->
+  <div class="q-card" id="qcard-3">
+    <div class="q-num">Question 3</div>
+    <div class="q-text">What is the oxidation number of <strong>Mn</strong> in KMnO₄?</div>
+    <div class="options" id="opts-3">
+      <button class="option-btn" onclick="selectMCQ(3,'A','+7')"><span class="opt-letter">A</span>+7</button>
+      <button class="option-btn" onclick="selectMCQ(3,'B','+2')"><span class="opt-letter">B</span>+2</button>
+      <button class="option-btn" onclick="selectMCQ(3,'C','+4')"><span class="opt-letter">C</span>+4</button>
+      <button class="option-btn" onclick="selectMCQ(3,'D','+6')"><span class="opt-letter">D</span>+6</button>
+    </div>
+    <div class="feedback" id="fb-3"></div>
+  </div>
+
+  <!-- Q4: 정답 C = +4 (S in SO2) -->
+  <div class="q-card" id="qcard-4">
+    <div class="q-num">Question 4</div>
+    <div class="q-text">What is the oxidation number of <strong>S</strong> in SO₂?</div>
+    <div class="options" id="opts-4">
+      <button class="option-btn" onclick="selectMCQ(4,'A','+6')"><span class="opt-letter">A</span>+6</button>
+      <button class="option-btn" onclick="selectMCQ(4,'B','-2')"><span class="opt-letter">B</span>−2</button>
+      <button class="option-btn" onclick="selectMCQ(4,'C','+4')"><span class="opt-letter">C</span>+4</button>
+      <button class="option-btn" onclick="selectMCQ(4,'D','+2')"><span class="opt-letter">D</span>+2</button>
+    </div>
+    <div class="feedback" id="fb-4"></div>
+  </div>
+
+  <!-- Q5: 정답 B = +5 (N in NO3-) -->
+  <div class="q-card" id="qcard-5">
+    <div class="q-num">Question 5</div>
+    <div class="q-text">What is the oxidation number of <strong>N</strong> in NO₃⁻?</div>
+    <div class="options" id="opts-5">
+      <button class="option-btn" onclick="selectMCQ(5,'A','+3')"><span class="opt-letter">A</span>+3</button>
+      <button class="option-btn" onclick="selectMCQ(5,'B','+5')"><span class="opt-letter">B</span>+5</button>
+      <button class="option-btn" onclick="selectMCQ(5,'C','-3')"><span class="opt-letter">C</span>−3</button>
+      <button class="option-btn" onclick="selectMCQ(5,'D','+4')"><span class="opt-letter">D</span>+4</button>
+    </div>
+    <div class="feedback" id="fb-5"></div>
+  </div>
+
+  <div class="section-header" style="margin-top:28px;">Section 2 — Short Answer <span class="badge">Q6–Q15</span></div>
+
+  <div class="q-card" id="qcard-6"><div class="q-num">Question 6</div><div class="q-text">What is the oxidation number of <strong>Fe</strong> in FeCl₃?</div><div class="sa-wrap"><input class="sa-input" type="text" id="sa-6" placeholder="+  or  −"/><div class="sa-hint">Include sign (e.g. +3, -2, 0)</div></div><div class="feedback" id="fb-6"></div></div>
+  <div class="q-card" id="qcard-7"><div class="q-num">Question 7</div><div class="q-text">What is the oxidation number of <strong>Cl</strong> in HCl?</div><div class="sa-wrap"><input class="sa-input" type="text" id="sa-7" placeholder="+  or  −"/></div><div class="feedback" id="fb-7"></div></div>
+  <div class="q-card" id="qcard-8"><div class="q-num">Question 8</div><div class="q-text">What is the oxidation number of <strong>S</strong> in H₂SO₄?</div><div class="sa-wrap"><input class="sa-input" type="text" id="sa-8" placeholder="+  or  −"/></div><div class="feedback" id="fb-8"></div></div>
+  <div class="q-card" id="qcard-9"><div class="q-num">Question 9</div><div class="q-text">What is the oxidation number of <strong>Fe</strong> in elemental iron (Fe)?</div><div class="sa-wrap"><input class="sa-input" type="text" id="sa-9" placeholder="+  or  −"/></div><div class="feedback" id="fb-9"></div></div>
+  <div class="q-card" id="qcard-10"><div class="q-num">Question 10</div><div class="q-text">What is the oxidation number of <strong>C</strong> in CO₂?</div><div class="sa-wrap"><input class="sa-input" type="text" id="sa-10" placeholder="+  or  −"/></div><div class="feedback" id="fb-10"></div></div>
+  <div class="q-card" id="qcard-11"><div class="q-num">Question 11</div><div class="q-text">What is the oxidation number of <strong>Pb</strong> in PbO?</div><div class="sa-wrap"><input class="sa-input" type="text" id="sa-11" placeholder="+  or  −"/></div><div class="feedback" id="fb-11"></div></div>
+  <div class="q-card" id="qcard-12"><div class="q-num">Question 12</div><div class="q-text">What is the oxidation number of <strong>N</strong> in NH₄⁺?</div><div class="sa-wrap"><input class="sa-input" type="text" id="sa-12" placeholder="+  or  −"/></div><div class="feedback" id="fb-12"></div></div>
+  <div class="q-card" id="qcard-13"><div class="q-num">Question 13</div><div class="q-text">What is the oxidation number of <strong>Cr</strong> in K₂Cr₂O₇?</div><div class="sa-wrap"><input class="sa-input" type="text" id="sa-13" placeholder="+  or  −"/></div><div class="feedback" id="fb-13"></div></div>
+  <div class="q-card" id="qcard-14"><div class="q-num">Question 14</div><div class="q-text">What is the oxidation number of <strong>H</strong> in NaH (sodium hydride)?</div><div class="sa-wrap"><input class="sa-input" type="text" id="sa-14" placeholder="+  or  −"/></div><div class="feedback" id="fb-14"></div></div>
+  <div class="q-card" id="qcard-15"><div class="q-num">Question 15</div><div class="q-text">What is the oxidation number of <strong>Al</strong> in Al₂O₃?</div><div class="sa-wrap"><input class="sa-input" type="text" id="sa-15" placeholder="+  or  −"/></div><div class="feedback" id="fb-15"></div></div>
+
+  <div class="submit-section">
+    <button class="submit-btn" id="submitBtn" onclick="submitQuiz()">Submit &amp; See Results</button>
+    <p style="font-size:12px;color:#9AA0B2;margin-top:12px;">Answers will be revealed after submission.</p>
+  </div>
+  <div class="result-card" id="resultCard">
+    <div class="result-score" id="resultScore">—</div>
+    <div class="result-label">out of 15 questions</div>
+    <div class="result-badge" id="resultBadge"></div>
+    <div class="result-breakdown" id="resultBreakdown"></div>
+  </div>
+</main>
+<div class="progress-pill">Answered: <span id="pillCount">0</span> / 15</div>
+
+<script>
+const MCQ_HASHES={
+  1:'c59dc4e44ff99288156d4dff2168f6ac7ddee6b1fc7ccc0754656ffaa6d351ea',
+  2:'cf3bae39dd692048a8bf961182e6a34dfd323eeb0748e162eaf055107f1cb873',
+  3:'72b9fdd468dd3502e9de26691450d5d18b503eb0cd8fcdc4c3b300f2a8f2e549',
+  4:'978ab575574b6a3610fe1c046dcff0fc5e448e99d40b6d0d7b8bb3effc62f0d7',
+  5:'03dec1b6379a35cbe10edb6ca30cf987b00116202c3825dece1d98c7a0718a09',
+};
+const SA_HASHES={
+  6: ['25330787f7103595ba4b15f0fae03a4256be5cef360745865a5bd1f87d0b098e','4e07408562bedb8b60ce05c1decfe3ad16b72230967de01f640b7e4729b49fce'],
+  7: ['1bad6b8cf97131fceab8543e81f7757195fbb1d36b376ee994ad1cf17699c464'],
+  8: ['6f86ac1fd772849670a3779a98363ecf512dea4cf0b9d7ff15c81eeb51287821','e7f6c011776e8db7cd330b54174fd76f7d0216b612387a5ffcfb81e6f0919683'],
+  9: ['5feceb66ffc86f38d952786c6d696c79c2dbc239dd4e91b46729d73a27fb57e9'],
+  10:['978ab575574b6a3610fe1c046dcff0fc5e448e99d40b6d0d7b8bb3effc62f0d7','4b227777d4dd1fc61c6f884f48641d02b4d121d3fd328cb08b5531fcacdabf8a'],
+  11:['31171179540ec3202f5e189f82298f6f2b41ceaa8fd339f57e0ea0e63977411b','d4735e3a265e16eee03f59718b9b5d03019c07d8b6c51f90da3a666eec13ab35'],
+  12:['615bdd17c2556f82f384392ea8557f8cc88b03501c759e23093ab0b2a9b5cd48'],
+  13:['6f86ac1fd772849670a3779a98363ecf512dea4cf0b9d7ff15c81eeb51287821','e7f6c011776e8db7cd330b54174fd76f7d0216b612387a5ffcfb81e6f0919683'],
+  14:['1bad6b8cf97131fceab8543e81f7757195fbb1d36b376ee994ad1cf17699c464'],
+  15:['25330787f7103595ba4b15f0fae03a4256be5cef360745865a5bd1f87d0b098e','4e07408562bedb8b60ce05c1decfe3ad16b72230967de01f640b7e4729b49fce'],
+};
+const SA_CORRECT={6:'+3',7:'−1',8:'+6',9:'0',10:'+4',11:'+2',12:'−3',13:'+6',14:'−1',15:'+3'};
+const selections={};
+async function hashStr(s){const n=s.trim().toLowerCase().replace(/\s+/g,'');const b=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(n));return Array.from(new Uint8Array(b)).map(x=>x.toString(16).padStart(2,'0')).join('');}
+function selectMCQ(q,l,v){if(document.getElementById('resultCard').style.display==='block')return;document.querySelectorAll(`#opts-${q} .option-btn`).forEach(b=>b.classList.remove('selected'));event.currentTarget.classList.add('selected');selections[q]=v;const c=document.getElementById(`qcard-${q}`);c.classList.remove('unanswered-warn');c.classList.add('selected-only');updateProgress();}
+function updateProgress(){let c=0;for(let i=1;i<=5;i++)if(selections[i])c++;for(let i=6;i<=15;i++){const e=document.getElementById(`sa-${i}`);if(e&&e.value.trim())c++;}document.getElementById('pillCount').textContent=c;document.getElementById('progressBar').style.width=(c/15*100)+'%';}
+document.addEventListener('DOMContentLoaded',async()=>{
+  for(const btn of document.querySelectorAll('.option-btn')){const m=btn.getAttribute('onclick').match(/'([^']+)'\)$/);if(m){const h=await hashStr(m[1]);btn.setAttribute('data-hash',h);}}
+  for(let i=6;i<=15;i++){const e=document.getElementById(`sa-${i}`);if(e)e.addEventListener('input',updateProgress);}
+});
+async function submitQuiz(){
+  const missing=[];
+  for(let i=1;i<=5;i++)if(!selections[i])missing.push(i);
+  for(let i=6;i<=15;i++){const e=document.getElementById(`sa-${i}`);if(!e||!e.value.trim())missing.push(i);}
+  if(missing.length){missing.forEach(n=>{const c=document.getElementById(`qcard-${n}`);c.classList.remove('unanswered-warn');void c.offsetWidth;c.classList.add('unanswered-warn');});document.getElementById(`qcard-${missing[0]}`).scrollIntoView({behavior:'smooth',block:'center'});return;}
+  document.querySelectorAll('.option-btn').forEach(b=>b.disabled=true);
+  document.querySelectorAll('.sa-input').forEach(i=>i.disabled=true);
+  document.getElementById('submitBtn').disabled=true;
+  let total=0;const det=[];
+  for(let i=1;i<=5;i++){
+    const uv=selections[i],uh=await hashStr(uv),ok=uh===MCQ_HASHES[i];
+    if(ok)total++;det.push(`Q${i}:${ok?'O':'X'}`);
+    document.querySelectorAll(`#opts-${i} .option-btn`).forEach(btn=>{
+      btn.classList.remove('selected','selected-only');
+      if(btn.getAttribute('data-hash')===MCQ_HASHES[i])btn.classList.add('reveal-correct');
+      const v=btn.getAttribute('onclick').match(/'([^']+)'\)$/)[1];
+      if(v===uv&&ok)btn.classList.add('correct');
+      if(v===uv&&!ok)btn.classList.add('wrong');
+    });
+    const fb=document.getElementById(`fb-${i}`);
+    fb.className='feedback '+(ok?'correct':'wrong');
+    fb.innerHTML=ok?`<span class="feedback-icon">✓</span><span class="feedback-text">Correct!</span>`:`<span class="feedback-icon">✗</span><span class="feedback-text">Incorrect. The correct answer is highlighted above.</span>`;
+    document.getElementById(`qcard-${i}`).classList.remove('selected-only','unanswered-warn');
+    document.getElementById(`qcard-${i}`).classList.add(ok?'answered-correct':'answered-wrong');
+  }
+  for(let i=6;i<=15;i++){
+    const raw=document.getElementById(`sa-${i}`).value.trim();
+    const uh=await hashStr(raw);
+    const ok=SA_HASHES[i].includes(uh);
+    if(ok)total++;det.push(`Q${i}:${ok?'O':'X'}`);
+    document.getElementById(`sa-${i}`).classList.add(ok?'correct':'wrong');
+    const fb=document.getElementById(`fb-${i}`);
+    fb.className='feedback '+(ok?'correct':'wrong');
+    fb.innerHTML=ok?`<span class="feedback-icon">✓</span><span class="feedback-text">Correct!</span>`:`<span class="feedback-icon">✗</span><span class="feedback-text">Incorrect. Correct answer: ${SA_CORRECT[i]}</span>`;
+    document.getElementById(`qcard-${i}`).classList.remove('selected-only','unanswered-warn');
+    document.getElementById(`qcard-${i}`).classList.add(ok?'answered-correct':'answered-wrong');
+  }
+  const name=document.getElementById('studentName').value.trim()||'Anonymous';
+  const period=document.getElementById('studentPeriod').value.trim()||'—';
+  const pct=Math.round(total/15*100),pass=total>=12;
+  const mcqS=det.slice(0,5).filter(s=>s.includes(':O')).length;
+  const saS=det.slice(5).filter(s=>s.includes(':O')).length;
+  document.getElementById('resultScore').textContent=`${total} / 15`;
+  const badge=document.getElementById('resultBadge');
+  badge.textContent=pass?'✓ Pass':'✗ Needs Review';
+  badge.className='result-badge '+(pass?'pass':'fail');
+  document.getElementById('resultBreakdown').innerHTML=`${name} &nbsp;·&nbsp; Period ${period} &nbsp;·&nbsp; ${pct}% &nbsp;|&nbsp; MCQ: ${mcqS}/5 &nbsp;·&nbsp; Short Answer: ${saS}/10`;
+  const rc=document.getElementById('resultCard');rc.style.display='block';rc.scrollIntoView({behavior:'smooth'});
+  sendToSheets({name,period,total,pct,mcqScore:mcqS,saScore:saS,pass,details:det.join(',')});
+}
+const SHEETS_URL='https://script.google.com/macros/s/AKfycbwNI9ScSA88svEmmltwfxSIHOih1O2xTDpblZ0hRmNxXIBSkClRTMn7tRviwTgx3KHK/exec';
+function sendToSheets(d){fetch(SHEETS_URL,{method:'POST',mode:'no-cors',headers:{'Content-Type':'application/json'},body:JSON.stringify({quiz:'Oxidation B',name:d.name,period:d.period,score:d.total,total:15,percent:d.pct,pass:d.pass?'Pass':'Fail',mcq:d.mcqScore,sa:d.saScore,timestamp:new Date().toISOString(),details:d.details})}).catch(()=>{});}
+</script>
+</body>
+</html>
