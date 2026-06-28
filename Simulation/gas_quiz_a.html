@@ -1,0 +1,389 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Nobel Prep — Gas Laws Quiz A</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
+  :root {
+    --navy:#1B2A4A; --navy2:#243660; --gold:#C9A84C; --gold2:#e8c56a;
+    --white:#FFFFFF; --off:#F7F8FA; --gray1:#E8EAF0; --gray2:#9AA0B2;
+    --gray3:#555D72; --green:#2D7D46; --green-bg:#EBF7EF;
+    --red:#C0392B; --red-bg:#FDECEA; --radius:10px;
+    --shadow:0 2px 12px rgba(27,42,74,0.10);
+  }
+  * { box-sizing:border-box; margin:0; padding:0; }
+  body { font-family:'Inter',sans-serif; background:var(--off); color:var(--navy); min-height:100vh; }
+  header { background:var(--navy); padding:18px 28px; display:flex; align-items:center; justify-content:space-between; position:sticky; top:0; z-index:100; box-shadow:0 2px 10px rgba(0,0,0,0.25); }
+  .logo { display:flex; align-items:center; gap:12px; }
+  .logo-badge { width:38px; height:38px; background:var(--gold); border-radius:8px; display:flex; align-items:center; justify-content:center; font-weight:700; font-size:15px; color:var(--navy); }
+  .logo-text h1 { font-size:16px; font-weight:700; color:var(--white); }
+  .logo-text p  { font-size:11px; color:var(--gold); margin-top:1px; }
+  .header-right { display:flex; flex-direction:column; align-items:flex-end; gap:4px; }
+  .timer { background:rgba(255,255,255,0.12); color:var(--white); border-radius:8px; padding:7px 14px; font-family:'JetBrains Mono',monospace; font-size:15px; }
+  .quiz-badge { background:var(--gold); color:var(--navy); font-size:10px; font-weight:700; padding:3px 10px; border-radius:20px; letter-spacing:0.8px; }
+  .progress-bar-wrap { width:100%; height:3px; background:rgba(255,255,255,0.15); }
+  .progress-bar { height:3px; background:var(--gold); transition:width 0.4s ease; width:0%; }
+  .container { max-width:760px; margin:0 auto; padding:28px 20px 60px; }
+  .info-card { background:var(--white); border-radius:var(--radius); box-shadow:var(--shadow); padding:24px 28px; margin-bottom:20px; border-top:3px solid var(--gold); }
+  .info-card h2 { font-size:16px; font-weight:700; margin-bottom:4px; }
+  .info-card p  { font-size:13px; color:var(--gray3); margin-bottom:18px; }
+  .form-row { display:flex; gap:14px; flex-wrap:wrap; }
+  .form-group { flex:1; min-width:180px; }
+  .form-group label { display:block; font-size:11px; font-weight:600; color:var(--gray3); margin-bottom:6px; text-transform:uppercase; letter-spacing:0.5px; }
+  .form-group input, .form-group select { width:100%; padding:10px 13px; border:1.5px solid var(--gray1); border-radius:7px; font-size:14px; font-family:'Inter',sans-serif; color:var(--navy); background:var(--off); outline:none; transition:border-color 0.2s; }
+  .form-group input:focus, .form-group select:focus { border-color:var(--gold); background:var(--white); }
+  .instructions { background:var(--white); border-radius:var(--radius); padding:16px 20px; margin-bottom:20px; box-shadow:var(--shadow); font-size:13px; color:var(--gray3); border-left:3px solid var(--gold); line-height:1.7; }
+  .section-label { display:flex; align-items:center; gap:10px; margin:24px 0 10px; }
+  .section-label .pill { background:var(--navy); color:var(--gold); font-size:10px; font-weight:700; padding:3px 10px; border-radius:20px; letter-spacing:0.8px; text-transform:uppercase; }
+  .section-label .line { flex:1; height:1px; background:var(--gray1); }
+  .q-card { background:var(--white); border-radius:var(--radius); box-shadow:var(--shadow); padding:20px 24px; margin-bottom:12px; border-left:4px solid var(--gray1); transition:border-color 0.2s; }
+  .q-card:focus-within { border-left-color:var(--gold); }
+  .q-card.correct   { border-left-color:var(--green); background:var(--green-bg); }
+  .q-card.incorrect { border-left-color:var(--red);   background:var(--red-bg); }
+  .q-header { display:flex; align-items:flex-start; gap:14px; margin-bottom:14px; }
+  .q-num { min-width:28px; height:28px; background:var(--navy); color:var(--white); border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:12px; font-weight:700; flex-shrink:0; margin-top:2px; }
+  .q-num.correct   { background:var(--green); }
+  .q-num.incorrect { background:var(--red); }
+  .q-tag { font-size:10px; font-weight:600; color:var(--gold); text-transform:uppercase; letter-spacing:0.6px; margin-bottom:4px; }
+  .q-type-badge { display:inline-block; font-size:9px; font-weight:700; padding:2px 7px; border-radius:10px; margin-left:6px; vertical-align:middle; }
+  .q-type-badge.mcq  { background:#EEF2FF; color:#3B5BDB; }
+  .q-type-badge.sa   { background:#FFF3CD; color:#856404; }
+  .q-text { font-size:14.5px; line-height:1.7; }
+  .formula { font-family:'JetBrains Mono',monospace; font-size:13px; }
+  /* MCQ options */
+  .mcq-options { display:flex; flex-direction:column; gap:8px; margin-top:4px; }
+  .mcq-option { display:flex; align-items:center; gap:10px; padding:9px 14px; border:1.5px solid var(--gray1); border-radius:7px; cursor:pointer; transition:all 0.15s; font-size:14px; }
+  .mcq-option:hover { border-color:var(--gold); background:#FFFBF0; }
+  .mcq-option.selected { border-color:var(--navy); background:#EEF2FF; }
+  .mcq-option.correct-ans  { border-color:var(--green); background:var(--green-bg); color:var(--green); font-weight:600; }
+  .mcq-option.wrong-ans    { border-color:var(--red);   background:var(--red-bg);   color:var(--red); }
+  .mcq-option input[type=radio] { accent-color:var(--navy); width:15px; height:15px; flex-shrink:0; }
+  .mcq-option.disabled { cursor:not-allowed; }
+  /* SA input */
+  .answer-input { width:100%; padding:10px 14px; border:1.5px solid var(--gray1); border-radius:7px; font-size:14px; font-family:'JetBrains Mono',monospace; color:var(--navy); background:var(--off); outline:none; transition:border-color 0.2s; margin-top:4px; }
+  .answer-input:focus    { border-color:var(--navy); background:var(--white); }
+  .answer-input.correct  { border-color:var(--green); background:var(--green-bg); }
+  .answer-input.incorrect{ border-color:var(--red);   background:var(--red-bg); }
+  .answer-input:disabled { cursor:not-allowed; }
+  .feedback { margin-top:10px; padding:8px 12px; border-radius:6px; font-size:13px; display:none; }
+  .feedback.correct   { display:block; background:rgba(45,125,70,0.12); color:var(--green); }
+  .feedback.incorrect { display:block; background:rgba(192,57,43,0.10); color:var(--red); }
+  .submit-wrap { text-align:center; margin-top:28px; }
+  .submit-wrap p { font-size:12px; color:var(--gray2); margin-top:10px; }
+  .btn-primary { background:var(--gold); color:var(--navy); font-size:15px; font-weight:700; padding:14px 36px; border:none; border-radius:8px; cursor:pointer; transition:background 0.2s; }
+  .btn-primary:hover { background:var(--gold2); }
+  .btn-secondary { background:var(--navy); color:var(--white); font-size:14px; font-weight:600; padding:12px 28px; border:none; border-radius:8px; cursor:pointer; }
+  #results-section { display:none; }
+  .results-card { background:var(--navy); border-radius:14px; padding:32px; text-align:center; color:var(--white); margin-bottom:20px; }
+  .score-ring { width:110px; height:110px; border-radius:50%; border:5px solid var(--gold); display:flex; flex-direction:column; align-items:center; justify-content:center; margin:0 auto 18px; }
+  .score-ring .big   { font-size:30px; font-weight:700; color:var(--gold); }
+  .score-ring .denom { font-size:12px; color:var(--gray2); }
+  .results-card h2   { font-size:20px; font-weight:700; margin-bottom:4px; }
+  .results-card .sub { font-size:13px; color:var(--gray2); }
+  .pass-banner { margin-top:14px; padding:12px 20px; border-radius:8px; font-size:15px; font-weight:700; }
+  .pass-banner.pass { background:var(--green); color:var(--white); }
+  .pass-banner.fail { background:var(--red);   color:var(--white); }
+  .breakdown-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:10px; margin-bottom:20px; }
+  .breakdown-item { background:var(--white); border-radius:var(--radius); padding:14px; text-align:center; box-shadow:var(--shadow); }
+  .breakdown-item .val { font-size:20px; font-weight:700; }
+  .breakdown-item .lbl { font-size:11px; color:var(--gray2); margin-top:2px; text-transform:uppercase; }
+  .sheet-status { margin-top:12px; padding:10px 16px; border-radius:7px; font-size:13px; display:none; }
+  .sheet-status.sending { display:block; background:#EEF2FF; color:#3B5BDB; }
+  .sheet-status.success { display:block; background:var(--green-bg); color:var(--green); }
+  .sheet-status.error   { display:block; background:var(--red-bg);   color:var(--red); }
+  .results-actions { display:flex; gap:12px; justify-content:center; margin-top:18px; flex-wrap:wrap; }
+  .progress-text { font-size:11px; color:var(--gray2); }
+  sub { font-size:0.75em; vertical-align:sub; }
+  sup { font-size:0.75em; vertical-align:super; }
+  @media(max-width:560px){ .container{padding:16px 14px 50px;} header{padding:14px 16px;} }
+</style>
+</head>
+<body>
+<header>
+  <div class="logo">
+    <div class="logo-badge">NP</div>
+    <div class="logo-text">
+      <h1>Nobel Prep</h1>
+      <p>AP Chemistry · Unit 3: Gas Laws</p>
+    </div>
+  </div>
+  <div class="header-right">
+    <div class="timer" id="timer">00:00</div>
+    <div class="quiz-badge">QUIZ A — 1차</div>
+    <div class="progress-text" id="progress-text">0 / 15 answered</div>
+  </div>
+</header>
+<div class="progress-bar-wrap"><div class="progress-bar" id="progress-bar"></div></div>
+
+<div class="container">
+  <div class="info-card">
+    <h2>Student Information</h2>
+    <p>Enter your information before starting the quiz.</p>
+    <div class="form-row">
+      <div class="form-group">
+        <label>Full Name</label>
+        <input type="text" id="student-name" placeholder="e.g. Kim Minjun">
+      </div>
+      <div class="form-group">
+        <label>Period / Class</label>
+        <select id="student-period">
+          <option value="">Select period</option>
+          <option>Period 1</option><option>Period 2</option>
+          <option>Period 3</option><option>Period 4</option>
+          <option>Period 5</option><option>Afternoon</option><option>Weekend</option>
+        </select>
+      </div>
+    </div>
+  </div>
+
+  <div class="instructions">
+    <strong>Directions:</strong>
+    This quiz contains <strong>MCQ</strong> (multiple choice) and <strong>Short Answer</strong> questions.
+    For MCQ, select the best answer. For short answer calculation problems, use
+    <strong>E-notation</strong> (e.g. <code>3.08e-4</code> for 3.08 × 10⁻⁴).
+    Pass standard: <strong>12/15 (80%) or above</strong>.
+  </div>
+
+  <div id="quiz-form"></div>
+
+  <div class="submit-wrap">
+    <button class="btn-primary" id="submit-btn" onclick="submitQuiz()">Submit Quiz A</button>
+    <p>Once submitted, your answers cannot be changed.</p>
+  </div>
+
+  <div id="results-section">
+    <div class="results-card">
+      <div class="score-ring">
+        <span class="big" id="res-score">—</span>
+        <span class="denom">/ 15</span>
+      </div>
+      <h2 id="res-name">—</h2>
+      <p class="sub" id="res-period">—</p>
+      <div class="pass-banner" id="pass-banner">—</div>
+    </div>
+    <div class="breakdown-grid">
+      <div class="breakdown-item"><div class="val" id="bd-correct" style="color:var(--green)">—</div><div class="lbl">Correct</div></div>
+      <div class="breakdown-item"><div class="val" id="bd-wrong" style="color:var(--red)">—</div><div class="lbl">Incorrect</div></div>
+      <div class="breakdown-item"><div class="val" id="bd-pct">—</div><div class="lbl">Score %</div></div>
+    </div>
+    <div class="sheet-status" id="sheet-status"></div>
+    <div class="results-actions">
+      <button class="btn-secondary" onclick="reviewAnswers()">Review Answers</button>
+      <button class="btn-primary" onclick="retakeQuiz()">Retake Quiz A</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const SHEET_URL  = "https://script.google.com/macros/s/AKfycbwzUL_9uD-ts9ao9rUvR8JGUbd9aejte84P2uxmQ6C2AH2i2t19zF5faRp2JmwNvEaNBQ/exec";
+const QUIZ_ID    = "A";
+const PASS_SCORE = 12;
+
+// Question types: mcq or sa (short answer)
+const questions = [
+  // ── Boyle's Law ──────────────────────────────
+  { id:1, tag:"Boyle's Law", type:"mcq",
+    q:"A gas occupies 4.0 L at 2.0 atm. What is the volume at 1.0 atm (temperature constant)?",
+    options:["2.0 L","4.0 L","8.0 L","16.0 L","1.0 L"],
+    correct:2, display:"8.0 L",
+    explanation:"P₁V₁ = P₂V₂ → (2.0)(4.0) = (1.0)(V₂) → V₂ = 8.0 L" },
+
+  // ── Charles's Law ────────────────────────────
+  { id:2, tag:"Charles's Law", type:"mcq",
+    q:"A gas occupies 3.0 L at 300 K. What volume does it occupy at 600 K (pressure constant)?",
+    options:["1.5 L","3.0 L","6.0 L","9.0 L","12.0 L"],
+    correct:2, display:"6.0 L",
+    explanation:"V₁/T₁ = V₂/T₂ → 3.0/300 = V₂/600 → V₂ = 6.0 L" },
+
+  // ── Gay-Lussac's Law ─────────────────────────
+  { id:3, tag:"Gay-Lussac's Law", type:"mcq",
+    q:"A gas has a pressure of 1.5 atm at 300 K. What is the pressure at 450 K (volume constant)?",
+    options:["1.0 atm","2.25 atm","3.0 atm","0.75 atm","4.5 atm"],
+    correct:1, display:"2.25 atm",
+    explanation:"P₁/T₁ = P₂/T₂ → 1.5/300 = P₂/450 → P₂ = 2.25 atm" },
+
+  // ── Combined Gas Law ─────────────────────────
+  { id:4, tag:"Combined Gas Law", type:"mcq",
+    q:"A gas at 2.0 atm, 5.0 L, 300 K is changed to 1.0 atm and 400 K. What is the new volume?",
+    options:["6.7 L","13.3 L","3.75 L","10.0 L","5.0 L"],
+    correct:1, display:"13.3 L",
+    explanation:"P₁V₁/T₁ = P₂V₂/T₂ → (2.0×5.0)/300 = (1.0×V₂)/400 → V₂ = 13.3 L" },
+
+  // ── Ideal Gas Law ────────────────────────────
+  { id:5, tag:"Ideal Gas Law", type:"mcq",
+    q:"How many moles of gas occupy 22.4 L at 1.00 atm and 273 K? (R = 0.0821 L·atm/mol·K)",
+    options:["0.50 mol","1.00 mol","2.00 mol","0.25 mol","1.50 mol"],
+    correct:1, display:"1.00 mol",
+    explanation:"PV = nRT → n = PV/RT = (1.00×22.4)/(0.0821×273) = 1.00 mol" },
+
+  { id:6, tag:"Ideal Gas Law", type:"sa",
+    q:"Calculate the pressure (in atm) of 2.00 mol of an ideal gas in a 10.0 L container at 300 K.\n(R = 0.0821 L·atm/mol·K)\n\nEnter answer in E-notation if needed (e.g. 4.93e0 or 4.93)",
+    answers:["4.93","4.926","4.9"],
+    display:"4.93 atm",
+    explanation:"P = nRT/V = (2.00 × 0.0821 × 300) / 10.0 = 4.93 atm" },
+
+  // ── Dalton's Law ─────────────────────────────
+  { id:7, tag:"Dalton's Law", type:"mcq",
+    q:"A mixture of gases has partial pressures: N₂ = 0.60 atm, O₂ = 0.25 atm, Ar = 0.15 atm. What is the total pressure?",
+    options:["0.85 atm","0.75 atm","1.00 atm","1.25 atm","0.60 atm"],
+    correct:2, display:"1.00 atm",
+    explanation:"P_total = P_N₂ + P_O₂ + P_Ar = 0.60 + 0.25 + 0.15 = 1.00 atm" },
+
+  { id:8, tag:"Dalton's Law", type:"sa",
+    q:"A gas collected over water at 25°C has a total pressure of 0.980 atm.\nVapor pressure of water at 25°C = 0.0313 atm.\nWhat is the partial pressure of the dry gas (in atm)?",
+    answers:["0.949","0.9487","0.95"],
+    display:"0.949 atm",
+    explanation:"P_gas = 0.980 − 0.0313 = 0.9487 ≈ 0.949 atm" },
+
+  // ── Graham's Law ─────────────────────────────
+  { id:9, tag:"Graham's Law", type:"mcq",
+    q:"Which gas effuses fastest at the same temperature and pressure?",
+    options:["CO₂ (M = 44 g/mol)","O₂ (M = 32 g/mol)","N₂ (M = 28 g/mol)","He (M = 4 g/mol)","Cl₂ (M = 71 g/mol)"],
+    correct:3, display:"He (M = 4 g/mol)",
+    explanation:"Graham's Law: rate ∝ 1/√M. Lowest molar mass = fastest effusion → He" },
+
+  { id:10, tag:"Graham's Law", type:"sa",
+    q:"Calculate the ratio of effusion rates of H₂ (M = 2 g/mol) to O₂ (M = 32 g/mol).\n\nEnter as a decimal (e.g. 4.0)",
+    answers:["4.0","4","4.00"],
+    display:"4.0",
+    explanation:"rate_H₂/rate_O₂ = √(32/2) = √16 = 4.0" },
+
+  // ── Concept MCQ ──────────────────────────────
+  { id:11, tag:"Boyle's Law", type:"mcq",
+    q:"Which graph correctly represents Boyle's Law (at constant temperature)?",
+    options:["P vs V — straight line through origin","P vs V — hyperbola (inverse)","P vs T — straight line","V vs T — straight line","P vs 1/V — hyperbola"],
+    correct:1, display:"P vs V — hyperbola (inverse)",
+    explanation:"Boyle's Law: PV = constant → P and V are inversely proportional → hyperbola" },
+
+  { id:12, tag:"Charles's Law", type:"mcq",
+    q:"A gas is cooled at constant pressure. According to Charles's Law, what happens to the volume?",
+    options:["Increases","Stays the same","Decreases","Doubles","Cannot be determined"],
+    correct:2, display:"Decreases",
+    explanation:"Charles's Law: V ∝ T (in Kelvin). Lower T → smaller V." },
+
+  { id:13, tag:"Ideal Gas Law", type:"mcq",
+    q:"Which conditions are assumed for an ideal gas? (Select the best answer)",
+    options:["Large molecular volume, strong attractions","No molecular volume, no intermolecular forces","Small molecular volume, weak attractions","Large molecular volume, no attractions","No molecular volume, strong attractions"],
+    correct:1, display:"No molecular volume, no intermolecular forces",
+    explanation:"Ideal gas assumptions: point masses (no volume), no intermolecular forces." },
+
+  { id:14, tag:"Combined Gas Law", type:"sa",
+    q:"A gas sample at STP (1.00 atm, 273 K) has a volume of 2.24 L.\nWhat is its volume at 25°C (298 K) and 0.500 atm?\n\nEnter answer in liters (e.g. 4.88)",
+    answers:["4.88","4.9","4.878"],
+    display:"4.88 L",
+    explanation:"V₂ = P₁V₁T₂/(T₁P₂) = (1.00×2.24×298)/(273×0.500) = 4.88 L" },
+
+  { id:15, tag:"Dalton's Law", type:"mcq",
+    q:"In a mixture, the mole fraction of N₂ is 0.78 and total pressure is 1.00 atm. What is P_N₂?",
+    options:["0.22 atm","0.78 atm","1.00 atm","0.50 atm","1.56 atm"],
+    correct:1, display:"0.78 atm",
+    explanation:"P_N₂ = χ_N₂ × P_total = 0.78 × 1.00 = 0.78 atm" },
+];
+
+let timerInterval, seconds=0, submitted=false;
+function startTimer(){ timerInterval=setInterval(()=>{ seconds++; const m=String(Math.floor(seconds/60)).padStart(2,'0'),s=String(seconds%60).padStart(2,'0'); document.getElementById('timer').textContent=`${m}:${s}`; },1000); }
+
+function buildQuiz(){
+  const form=document.getElementById('quiz-form'); let ct='';
+  questions.forEach(q=>{
+    if(q.tag!==ct){ ct=q.tag; const l=document.createElement('div'); l.className='section-label'; l.innerHTML=`<span class="pill">${q.tag}</span><span class="line"></span>`; form.appendChild(l); }
+    const card=document.createElement('div'); card.className='q-card'; card.id=`card-${q.id}`;
+    const typeBadge=q.type==='mcq'?'<span class="q-type-badge mcq">MCQ</span>':'<span class="q-type-badge sa">Short Answer</span>';
+    let answerHTML='';
+    if(q.type==='mcq'){
+      answerHTML=`<div class="mcq-options" id="opts-${q.id}">` +
+        q.options.map((opt,i)=>`<label class="mcq-option" id="opt-${q.id}-${i}"><input type="radio" name="q${q.id}" value="${i}" onchange="updateProgress()"> ${opt}</label>`).join('') +
+        `</div>`;
+    } else {
+      answerHTML=`<input class="answer-input" type="text" id="ans-${q.id}" placeholder="Your answer..." autocomplete="off" autocorrect="off" spellcheck="false" oninput="updateProgress()">
+    }
+    card.innerHTML=`<div class="q-header"><div class="q-num" id="num-${q.id}">${q.id}</div><div class="q-meta" style="flex:1"><div class="q-tag">${q.tag} ${typeBadge}</div><div class="q-text">${q.q.replace(/\n/g,'<br>')}</div></div></div>${answerHTML}<div class="feedback" id="fb-${q.id}"></div>`;
+    form.appendChild(card);
+  });
+  startTimer();
+}
+
+function updateProgress(){
+  let filled=0;
+  questions.forEach(q=>{
+    if(q.type==='mcq'){ if(document.querySelector(`input[name="q${q.id}"]:checked`)) filled++; }
+    else { const e=document.getElementById(`ans-${q.id}`); if(e&&e.value.trim()!=='') filled++; }
+  });
+  document.getElementById('progress-text').textContent=`${filled} / 15 answered`;
+  document.getElementById('progress-bar').style.width=`${(filled/15)*100}%`;
+}
+
+function normalizeNum(str){ return str.trim().toLowerCase().replace(/\s/g,'').replace(/×10\^?/,'e').replace(/x10\^?/,'e'); }
+
+function submitQuiz(){
+  if(submitted)return;
+  const name=document.getElementById('student-name').value.trim();
+  const period=document.getElementById('student-period').value;
+  if(!name){ document.getElementById('student-name').style.borderColor='var(--red)'; alert('Please enter your name before submitting.'); return; }
+  clearInterval(timerInterval); submitted=true;
+  let correct=0; const details=[];
+
+  questions.forEach(q=>{
+    const card=document.getElementById(`card-${q.id}`);
+    const numEl=document.getElementById(`num-${q.id}`);
+    const fb=document.getElementById(`fb-${q.id}`);
+    let isOK=false, studentAns='(no answer)';
+
+    if(q.type==='mcq'){
+      const sel=document.querySelector(`input[name="q${q.id}"]:checked`);
+      if(sel){ studentAns=q.options[parseInt(sel.value)]; isOK=parseInt(sel.value)===q.correct; }
+      // Color options
+      document.querySelectorAll(`[id^="opt-${q.id}-"]`).forEach(el=>{ el.classList.add('disabled'); el.querySelector('input').disabled=true; });
+      document.getElementById(`opt-${q.id}-${q.correct}`).classList.add('correct-ans');
+      if(sel && parseInt(sel.value)!==q.correct) document.getElementById(`opt-${q.id}-${parseInt(sel.value)}`).classList.add('wrong-ans');
+    } else {
+      const input=document.getElementById(`ans-${q.id}`);
+      studentAns=input.value.trim();
+      const norm=normalizeNum(studentAns);
+      isOK=q.answers.some(a=>normalizeNum(a)===norm);
+      input.disabled=true;
+      input.classList.add(isOK?'correct':'incorrect');
+    }
+
+    if(isOK){ correct++; card.classList.add('correct'); numEl.classList.add('correct'); fb.className='feedback correct'; fb.innerHTML=`✓ Correct! ${q.explanation?'<br><small>'+q.explanation+'</small>':''}`; }
+    else { card.classList.add('incorrect'); numEl.classList.add('incorrect'); fb.className='feedback incorrect'; fb.innerHTML=`✗ Incorrect — Answer: <strong>${q.display}</strong>${q.explanation?'<br><small>'+q.explanation+'</small>':''}`; }
+
+    details.push({ qNum:q.id, tag:q.tag, type:q.type, studentAns, correctAns:q.display, result:isOK?'O':'X' });
+  });
+
+  const pct=Math.round((correct/15)*100);
+  const passed=correct>=PASS_SCORE;
+  const mm=String(Math.floor(seconds/60)).padStart(2,'0'), ss=String(seconds%60).padStart(2,'0');
+  const timeStr=`${mm}:${ss}`;
+
+  document.getElementById('submit-btn').style.display='none';
+  const rs=document.getElementById('results-section'); rs.style.display='block';
+  document.getElementById('res-score').textContent=correct;
+  document.getElementById('res-name').textContent=name;
+  document.getElementById('res-period').textContent=`${period||'No period'} · Time: ${timeStr}`;
+  const banner=document.getElementById('pass-banner');
+  banner.className=`pass-banner ${passed?'pass':'fail'}`;
+  banner.textContent=passed?`✅ PASS — Great work! (${correct}/15)`:`❌ FAIL — Please take Quiz B (${correct}/15)`;
+  document.getElementById('bd-correct').textContent=correct;
+  document.getElementById('bd-wrong').textContent=15-correct;
+  document.getElementById('bd-pct').textContent=pct+'%';
+  rs.scrollIntoView({behavior:'smooth'});
+  sendToSheets(name,period,correct,pct,passed,timeStr,details);
+}
+
+function sendToSheets(name,period,score,pct,passed,time,details){
+  showSheetStatus('sending','⏳ 결과를 Google Sheets에 저장하는 중...');
+  const now=new Date().toLocaleString('ko-KR',{timeZone:'Asia/Seoul'});
+  fetch(SHEET_URL,{ method:'POST', mode:'no-cors', headers:{'Content-Type':'application/json'}, body:JSON.stringify({name,period,score,pct,passed:passed?'PASS':'FAIL',quizId:QUIZ_ID,time,date:now,details}) })
+  .then(()=>showSheetStatus('success','✅ 결과가 Google Sheets에 저장되었습니다.'))
+  .catch(()=>showSheetStatus('error','⚠️ Sheets 저장 실패'));
+}
+function showSheetStatus(t,m){ const el=document.getElementById('sheet-status'); el.className=`sheet-status ${t}`; el.textContent=m; }
+function reviewAnswers(){ document.querySelector('.q-card').scrollIntoView({behavior:'smooth'}); }
+function retakeQuiz(){ if(confirm('모든 답안이 초기화됩니다. 다시 시작할까요?')) location.reload(); }
+buildQuiz();
+</script>
+</body>
+</html>
