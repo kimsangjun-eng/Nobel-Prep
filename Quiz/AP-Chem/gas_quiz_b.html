@@ -7,12 +7,11 @@
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
   :root {
-    --navy:#1B2A4A; --navy2:#243660; --gold:#C9A84C; --gold2:#e8c56a;
+    --navy:#1B2A4A; --navy2:#243660; --gold:#C9A84C;
     --white:#FFFFFF; --off:#F7F8FA; --gray1:#E8EAF0; --gray2:#9AA0B2;
     --gray3:#555D72; --green:#2D7D46; --green-bg:#EBF7EF;
     --red:#C0392B; --red-bg:#FDECEA; --radius:10px;
     --shadow:0 2px 12px rgba(27,42,74,0.10);
-    --accent:#8B1A1A;
   }
   * { box-sizing:border-box; margin:0; padding:0; }
   body { font-family:'Inter',sans-serif; background:var(--off); color:var(--navy); min-height:100vh; }
@@ -49,15 +48,14 @@
   .q-num.incorrect { background:var(--red); }
   .q-tag { font-size:10px; font-weight:600; color:var(--red); text-transform:uppercase; letter-spacing:0.6px; margin-bottom:4px; }
   .q-type-badge { display:inline-block; font-size:9px; font-weight:700; padding:2px 7px; border-radius:10px; margin-left:6px; vertical-align:middle; }
-  .q-type-badge.mcq  { background:#EEF2FF; color:#3B5BDB; }
-  .q-type-badge.sa   { background:#FFF3CD; color:#856404; }
+  .q-type-badge.mcq { background:#EEF2FF; color:#3B5BDB; }
+  .q-type-badge.sa  { background:#FFF3CD; color:#856404; }
   .q-text { font-size:14.5px; line-height:1.7; }
   .mcq-options { display:flex; flex-direction:column; gap:8px; margin-top:4px; }
   .mcq-option { display:flex; align-items:center; gap:10px; padding:9px 14px; border:1.5px solid var(--gray1); border-radius:7px; cursor:pointer; transition:all 0.15s; font-size:14px; }
   .mcq-option:hover { border-color:var(--red); background:#FFF5F5; }
-  .mcq-option.selected { border-color:var(--navy); background:#EEF2FF; }
-  .mcq-option.correct-ans  { border-color:var(--green); background:var(--green-bg); color:var(--green); font-weight:600; }
-  .mcq-option.wrong-ans    { border-color:var(--red);   background:var(--red-bg);   color:var(--red); }
+  .mcq-option.correct-ans { border-color:var(--green); background:var(--green-bg); color:var(--green); font-weight:600; }
+  .mcq-option.wrong-ans   { border-color:var(--red);   background:var(--red-bg);   color:var(--red); }
   .mcq-option input[type=radio] { accent-color:var(--navy); width:15px; height:15px; flex-shrink:0; }
   .mcq-option.disabled { cursor:not-allowed; }
   .answer-input { width:100%; padding:10px 14px; border:1.5px solid var(--gray1); border-radius:7px; font-size:14px; font-family:'JetBrains Mono',monospace; color:var(--navy); background:var(--off); outline:none; transition:border-color 0.2s; margin-top:4px; }
@@ -118,7 +116,7 @@
 <div class="container">
   <div class="info-card">
     <h2>Student Information</h2>
-    <p>This is the <strong>retake quiz (Quiz B — Advanced)</strong>. Multi-step calculations and conceptual analysis included.</p>
+    <p>This is the <strong>retake quiz (Quiz B — Advanced)</strong>. Multi-step calculations included.</p>
     <div class="form-row">
       <div class="form-group">
         <label>Full Name</label>
@@ -137,9 +135,8 @@
   </div>
 
   <div class="instructions">
-    <strong>Directions (Quiz B — Advanced):</strong>
-    Multi-step gas law problems and conceptual analysis.
-    For short answer, use <strong>E-notation</strong> (e.g. <code>2.46e-2</code> for 2.46 × 10⁻²).
+    <strong>Directions (Quiz B — Advanced):</strong> Multi-step gas law problems.
+    Use <strong>E-notation</strong> for scientific notation (e.g. <code>2.46e-2</code>).
     Pass standard: <strong>12/15 (80%) or above</strong>.
   </div>
 
@@ -178,104 +175,104 @@ const SHEET_URL  = "https://script.google.com/macros/s/AKfycbwzUL_9uD-ts9ao9rUvR
 const QUIZ_ID    = "B";
 const PASS_SCORE = 12;
 
+// MCQ 5문제, SA 10문제 (심화)
 const questions = [
-  // ── Boyle's Law (심화) ───────────────────────
+  // ── Boyle's Law ──────────────────────────
   { id:1, tag:"Boyle's Law", type:"sa",
-    q:"A gas at 3.50 atm occupies 2.80 L. What pressure (in atm) is needed to compress it to 1.40 L at the same temperature?",
+    q:"A gas at 3.50 atm occupies 2.80 L. What pressure (in atm) is needed to compress it to 1.40 L? (temperature constant)",
     answers:["7.0","7.00"],
     display:"7.00 atm",
     explanation:"P₂ = P₁V₁/V₂ = (3.50×2.80)/1.40 = 7.00 atm" },
 
-  // ── Charles's Law (심화) ─────────────────────
-  { id:2, tag:"Charles's Law", type:"sa",
+  { id:2, tag:"Boyle's Law", type:"mcq",
+    q:"At constant temperature, a gas is compressed from 8.0 L to 2.0 L. If initial pressure was 1.5 atm, what is the final pressure?",
+    options:["0.375 atm","3.0 atm","6.0 atm","12.0 atm","1.5 atm"],
+    correct:2, display:"6.0 atm",
+    explanation:"P₂ = P₁V₁/V₂ = (1.5×8.0)/2.0 = 6.0 atm" },
+
+  // ── Charles's Law ────────────────────────
+  { id:3, tag:"Charles's Law", type:"sa",
     q:"A balloon has a volume of 2.50 L at 27°C. At what temperature (in °C) will the volume be 3.75 L? (pressure constant)",
     answers:["177","177.0"],
     display:"177°C",
-    explanation:"T₁=300K → T₂ = T₁×V₂/V₁ = 300×3.75/2.50 = 450K = 177°C" },
+    explanation:"T₁=300K → T₂ = 300×3.75/2.50 = 450K = 177°C" },
 
-  // ── Gay-Lussac's Law (심화) ──────────────────
-  { id:3, tag:"Gay-Lussac's Law", type:"mcq",
-    q:"A steel tank contains gas at 20.0°C and 5.00 atm. The tank is heated until the pressure reaches 6.50 atm. What is the final temperature (in °C)?",
-    options:["117°C","124°C","105°C","98°C","131°C"],
-    correct:1, display:"124°C",
-    explanation:"T₂ = T₁×P₂/P₁ = 293×6.50/5.00 = 380.9K = 107.9°C ≈ 108°C → closest: 124°C\n(T₁=293.15K → T₂=381K=108°C; select closest)" },
+  // ── Gay-Lussac's Law ─────────────────────
+  { id:4, tag:"Gay-Lussac's Law", type:"sa",
+    q:"A steel tank contains gas at 20.0°C and 5.00 atm. It is heated to 127°C. What is the new pressure (in atm)? (volume constant)",
+    answers:["6.89","6.9","6.887"],
+    display:"6.89 atm",
+    explanation:"T₁=293K, T₂=400K → P₂ = 5.00×400/293 = 6.83 atm" },
 
-  // ── Combined Gas Law (심화) ──────────────────
-  { id:4, tag:"Combined Gas Law", type:"sa",
+  // ── Combined Gas Law ─────────────────────
+  { id:5, tag:"Combined Gas Law", type:"sa",
     q:"A gas sample at 25°C, 1.50 atm, and 4.00 L is changed to STP (0°C, 1.00 atm).\nWhat is the new volume (in L)?",
     answers:["5.49","5.5","5.48"],
     display:"5.49 L",
     explanation:"V₂ = P₁V₁T₂/(T₁P₂) = (1.50×4.00×273)/(298×1.00) = 5.49 L" },
 
-  // ── Ideal Gas Law (심화) ─────────────────────
-  { id:5, tag:"Ideal Gas Law", type:"sa",
-    q:"What is the molar mass (g/mol) of a gas if 1.50 g occupies 820 mL at 25°C and 1.00 atm?\n(R = 0.0821 L·atm/mol·K)\n\nEnter answer rounded to 1 decimal (e.g. 44.8)",
+  { id:6, tag:"Combined Gas Law", type:"mcq",
+    q:"A scuba tank holds 12.0 L at 200 atm and 20°C. What volume (at sea level, 1.00 atm, 20°C) does this gas occupy?",
+    options:["240 L","1200 L","2400 L","24 L","120 L"],
+    correct:2, display:"2400 L",
+    explanation:"T constant → V₂ = P₁V₁/P₂ = (200×12.0)/1.00 = 2400 L" },
+
+  // ── Ideal Gas Law ────────────────────────
+  { id:7, tag:"Ideal Gas Law", type:"sa",
+    q:"What is the molar mass (in g/mol) of a gas if 1.50 g occupies 820 mL at 25°C and 1.00 atm?\n(R = 0.0821 L·atm/mol·K, enter to 1 decimal)",
     answers:["44.8","44.9","45.0"],
     display:"44.8 g/mol",
-    explanation:"n = (1.00×0.820)/(0.0821×298) = 0.0335 mol → M = 1.50/0.0335 = 44.8 g/mol" },
+    explanation:"n = PV/RT = (1.00×0.820)/(0.0821×298) = 0.0335 mol → M = 1.50/0.0335 = 44.8 g/mol" },
 
-  { id:6, tag:"Ideal Gas Law", type:"mcq",
-    q:"A 5.00 L flask contains 0.500 mol of N₂ and 0.300 mol of O₂ at 25°C. What is the total pressure? (R = 0.0821 L·atm/mol·K)",
-    options:["2.45 atm","3.92 atm","1.47 atm","4.90 atm","0.98 atm"],
-    correct:0, display:"2.45 atm (Dalton's law + ideal gas)",
-    explanation:"n_total=0.800 mol → P=nRT/V=(0.800×0.0821×298)/5.00=3.92 atm → closest is 3.92\n(correct answer B: 3.92 atm)" },
+  { id:8, tag:"Ideal Gas Law", type:"sa",
+    q:"A sample of gas has a density of 1.96 g/L at STP (0°C, 1.00 atm).\nWhat is the molar mass (in g/mol)?\n(R = 0.0821 L·atm/mol·K)",
+    answers:["44","43.9","44.0"],
+    display:"44 g/mol",
+    explanation:"M = dRT/P = (1.96×0.0821×273)/1.00 = 43.9 ≈ 44 g/mol" },
 
-  // ── Dalton's Law (심화) ──────────────────────
-  { id:7, tag:"Dalton's Law", type:"sa",
+  // ── Dalton's Law ─────────────────────────
+  { id:9, tag:"Dalton's Law", type:"sa",
     q:"A gas mixture contains 2.00 mol N₂, 1.00 mol O₂, and 0.500 mol CO₂ at a total pressure of 7.00 atm.\nWhat is the partial pressure of O₂ (in atm)?",
     answers:["2.0","2.00"],
     display:"2.00 atm",
     explanation:"χ_O₂ = 1.00/3.50 = 0.286 → P_O₂ = 0.286×7.00 = 2.00 atm" },
 
-  { id:8, tag:"Dalton's Law", type:"mcq",
-    q:"H₂ is collected over water at 30°C. Total pressure = 1.02 atm. Vapor pressure of water at 30°C = 0.0419 atm.\nWhat is the mole fraction of H₂?",
+  { id:10, tag:"Dalton's Law", type:"sa",
+    q:"A 10.0 L container holds 0.400 mol He and 0.200 mol Ne at 300 K.\nWhat is the total pressure (in atm)?\n(R = 0.0821 L·atm/mol·K)",
+    answers:["1.48","1.5","1.477"],
+    display:"1.48 atm",
+    explanation:"n_total=0.600 mol → P=(0.600×0.0821×300)/10.0 = 1.48 atm" },
+
+  { id:11, tag:"Dalton's Law", type:"mcq",
+    q:"H₂ is collected over water at 30°C. Total pressure = 1.02 atm. Vapor pressure of water at 30°C = 0.0419 atm. What is the mole fraction of H₂?",
     options:["0.959","0.041","0.980","0.920","1.000"],
     correct:0, display:"0.959",
-    explanation:"P_H₂ = 1.02−0.0419 = 0.978 atm → χ_H₂ = P_H₂/P_total = 0.978/1.02 = 0.959" },
+    explanation:"P_H₂ = 1.02−0.0419 = 0.978 atm → χ_H₂ = 0.978/1.02 = 0.959" },
 
-  // ── Graham's Law (심화) ──────────────────────
-  { id:9, tag:"Graham's Law", type:"sa",
-    q:"Gas X effuses 3.0 times faster than SO₂ (M = 64 g/mol).\nWhat is the molar mass (g/mol) of gas X?",
-    answers:["7.1","7.11","7.0"],
+  // ── Graham's Law ─────────────────────────
+  { id:12, tag:"Graham's Law", type:"sa",
+    q:"Gas X effuses 3.0 times faster than SO₂ (M = 64 g/mol).\nWhat is the molar mass (in g/mol) of gas X? (enter to 2 decimals)",
+    answers:["7.11","7.1","7.12"],
     display:"7.11 g/mol",
     explanation:"3.0² = 64/M_X → M_X = 64/9 = 7.11 g/mol" },
 
-  { id:10, tag:"Graham's Law", type:"mcq",
-    q:"At the same temperature, which statement about effusion is correct?",
-    options:["Heavier gases effuse faster","All gases effuse at the same rate","Lighter gases effuse faster","Effusion rate is independent of molar mass","Heavier gases effuse faster at high pressure only"],
-    correct:2, display:"Lighter gases effuse faster",
-    explanation:"Graham's Law: rate ∝ 1/√M. Lower molar mass → faster effusion." },
+  { id:13, tag:"Graham's Law", type:"sa",
+    q:"If He (M = 4 g/mol) effuses in 1.00 min, how long (in min) does Xe (M = 131 g/mol) take to effuse the same amount?\n(enter to 2 decimals)",
+    answers:["5.72","5.7"],
+    display:"5.72 min",
+    explanation:"rate_He/rate_Xe = √(131/4) = 5.72 → Xe takes 5.72 min" },
 
-  // ── Multi-step / Application ─────────────────
-  { id:11, tag:"Ideal Gas Law", type:"sa",
-    q:"A sample of gas has a density of 1.96 g/L at STP (0°C, 1.00 atm).\nIdentify the molar mass (g/mol) and determine if this is CO₂ (44), N₂ (28), or O₂ (32).\n\nEnter the molar mass only (e.g. 44)",
-    answers:["44","44.0"],
-    display:"44 g/mol → CO₂",
-    explanation:"M = (1.96×0.0821×273)/1.00 = 43.9 ≈ 44 g/mol → CO₂" },
-
-  { id:12, tag:"Combined Gas Law", type:"mcq",
-    q:"A scuba diver's tank holds 12.0 L of gas at 200 atm and 20°C. What volume would this gas occupy at sea level (1.00 atm, 20°C)?",
-    options:["240 L","2400 L","24 L","1200 L","120 L"],
-    correct:1, display:"2400 L",
-    explanation:"T constant → Boyle's Law: V₂ = P₁V₁/P₂ = (200×12.0)/1.00 = 2400 L" },
-
-  { id:13, tag:"Boyle's Law", type:"mcq",
-    q:"At constant temperature, a gas is compressed from 8.0 L to 2.0 L. If the initial pressure was 1.5 atm, which statement is true?",
-    options:["Final pressure = 0.375 atm","Final pressure = 6.0 atm","Volume and pressure are directly proportional","Temperature increases","Final pressure = 3.0 atm"],
-    correct:1, display:"Final pressure = 6.0 atm",
-    explanation:"P₂ = P₁V₁/V₂ = (1.5×8.0)/2.0 = 6.0 atm. P and V are inversely proportional." },
-
-  { id:14, tag:"Dalton's Law", type:"sa",
-    q:"A 10.0 L container holds 0.400 mol He and 0.200 mol Ne at 300 K.\nWhat is the total pressure (in atm)? (R = 0.0821 L·atm/mol·K)",
-    answers:["1.48","1.5","1.477"],
-    display:"1.48 atm",
-    explanation:"n_total=0.600 mol → P=(0.600×0.0821×300)/10.0=1.477≈1.48 atm" },
+  { id:14, tag:"Graham's Law", type:"sa",
+    q:"At the same temperature, N₂ (M = 28 g/mol) effuses in 4.0 min.\nHow long (in min) does CO₂ (M = 44 g/mol) take to effuse the same amount?\n(enter to 1 decimal)",
+    answers:["5.0","5.01","5.0"],
+    display:"5.0 min",
+    explanation:"t_CO₂/t_N₂ = √(44/28) = 1.253 → t_CO₂ = 4.0×1.253 = 5.0 min" },
 
   { id:15, tag:"Graham's Law", type:"mcq",
-    q:"If He effuses through a pinhole in 1.00 min, how long does it take Xe (M = 131 g/mol) to effuse the same amount? (M_He = 4 g/mol)",
-    options:["0.17 min","1.74 min","3.22 min","5.72 min","0.55 min"],
-    correct:3, display:"5.72 min",
-    explanation:"rate_He/rate_Xe = √(131/4) = √32.75 = 5.72 → Xe takes 5.72× longer = 5.72 min" },
+    q:"Which statement about Graham's Law is correct?",
+    options:["Heavier gases effuse faster at high pressure","All gases effuse at the same rate at STP","Effusion rate is proportional to 1/√M","Effusion rate is proportional to molar mass","Temperature has no effect on effusion rate"],
+    correct:2, display:"Effusion rate is proportional to 1/√M",
+    explanation:"Graham's Law: rate ∝ 1/√M. Lower M → faster effusion." },
 ];
 
 let timerInterval, seconds=0, submitted=false;
@@ -293,7 +290,7 @@ function buildQuiz(){
         q.options.map((opt,i)=>`<label class="mcq-option" id="opt-${q.id}-${i}"><input type="radio" name="q${q.id}" value="${i}" onchange="updateProgress()"> ${opt}</label>`).join('') +
         `</div>`;
     } else {
-      answerHTML=`<input class="answer-input" type="text" id="ans-${q.id}" placeholder="Your answer..." autocomplete="off" autocorrect="off" spellcheck="false" oninput="updateProgress()">
+      answerHTML=`<input class="answer-input" type="text" id="ans-${q.id}" placeholder="Your answer..." autocomplete="off" autocorrect="off" spellcheck="false" oninput="updateProgress()">`;
     }
     card.innerHTML=`<div class="q-header"><div class="q-num" id="num-${q.id}">${q.id}</div><div class="q-meta" style="flex:1"><div class="q-tag">${q.tag} ${typeBadge}</div><div class="q-text">${q.q.replace(/\n/g,'<br>')}</div></div></div>${answerHTML}<div class="feedback" id="fb-${q.id}"></div>`;
     form.appendChild(card);
@@ -311,7 +308,7 @@ function updateProgress(){
   document.getElementById('progress-bar').style.width=`${(filled/15)*100}%`;
 }
 
-function normalizeNum(str){ return str.trim().toLowerCase().replace(/\s/g,'').replace(/×10\^?/,'e').replace(/x10\^?/,'e'); }
+function normalizeNum(str){ return str.trim().toLowerCase().replace(/\s/g,''); }
 
 function submitQuiz(){
   if(submitted)return;
@@ -342,8 +339,8 @@ function submitQuiz(){
       input.classList.add(isOK?'correct':'incorrect');
     }
 
-    if(isOK){ correct++; card.classList.add('correct'); numEl.classList.add('correct'); fb.className='feedback correct'; fb.innerHTML=`✓ Correct! ${q.explanation?'<br><small>'+q.explanation+'</small>':''}`; }
-    else { card.classList.add('incorrect'); numEl.classList.add('incorrect'); fb.className='feedback incorrect'; fb.innerHTML=`✗ Incorrect — Answer: <strong>${q.display}</strong>${q.explanation?'<br><small>'+q.explanation+'</small>':''}`; }
+    if(isOK){ correct++; card.classList.add('correct'); numEl.classList.add('correct'); fb.className='feedback correct'; fb.innerHTML=`✓ Correct! <small>${q.explanation}</small>`; }
+    else { card.classList.add('incorrect'); numEl.classList.add('incorrect'); fb.className='feedback incorrect'; fb.innerHTML=`✗ Incorrect — Answer: <strong>${q.display}</strong> <small>${q.explanation}</small>`; }
     details.push({ qNum:q.id, tag:q.tag, type:q.type, studentAns, correctAns:q.display, result:isOK?'O':'X' });
   });
 
@@ -351,7 +348,6 @@ function submitQuiz(){
   const passed=correct>=PASS_SCORE;
   const mm=String(Math.floor(seconds/60)).padStart(2,'0'), ss=String(seconds%60).padStart(2,'0');
   const timeStr=`${mm}:${ss}`;
-
   document.getElementById('submit-btn').style.display='none';
   const rs=document.getElementById('results-section'); rs.style.display='block';
   document.getElementById('res-score').textContent=correct;

@@ -48,20 +48,16 @@
   .q-num.incorrect { background:var(--red); }
   .q-tag { font-size:10px; font-weight:600; color:var(--gold); text-transform:uppercase; letter-spacing:0.6px; margin-bottom:4px; }
   .q-type-badge { display:inline-block; font-size:9px; font-weight:700; padding:2px 7px; border-radius:10px; margin-left:6px; vertical-align:middle; }
-  .q-type-badge.mcq  { background:#EEF2FF; color:#3B5BDB; }
-  .q-type-badge.sa   { background:#FFF3CD; color:#856404; }
+  .q-type-badge.mcq { background:#EEF2FF; color:#3B5BDB; }
+  .q-type-badge.sa  { background:#FFF3CD; color:#856404; }
   .q-text { font-size:14.5px; line-height:1.7; }
-  .formula { font-family:'JetBrains Mono',monospace; font-size:13px; }
-  /* MCQ options */
   .mcq-options { display:flex; flex-direction:column; gap:8px; margin-top:4px; }
   .mcq-option { display:flex; align-items:center; gap:10px; padding:9px 14px; border:1.5px solid var(--gray1); border-radius:7px; cursor:pointer; transition:all 0.15s; font-size:14px; }
   .mcq-option:hover { border-color:var(--gold); background:#FFFBF0; }
-  .mcq-option.selected { border-color:var(--navy); background:#EEF2FF; }
-  .mcq-option.correct-ans  { border-color:var(--green); background:var(--green-bg); color:var(--green); font-weight:600; }
-  .mcq-option.wrong-ans    { border-color:var(--red);   background:var(--red-bg);   color:var(--red); }
+  .mcq-option.correct-ans { border-color:var(--green); background:var(--green-bg); color:var(--green); font-weight:600; }
+  .mcq-option.wrong-ans   { border-color:var(--red);   background:var(--red-bg);   color:var(--red); }
   .mcq-option input[type=radio] { accent-color:var(--navy); width:15px; height:15px; flex-shrink:0; }
   .mcq-option.disabled { cursor:not-allowed; }
-  /* SA input */
   .answer-input { width:100%; padding:10px 14px; border:1.5px solid var(--gray1); border-radius:7px; font-size:14px; font-family:'JetBrains Mono',monospace; color:var(--navy); background:var(--off); outline:none; transition:border-color 0.2s; margin-top:4px; }
   .answer-input:focus    { border-color:var(--navy); background:var(--white); }
   .answer-input.correct  { border-color:var(--green); background:var(--green-bg); }
@@ -139,10 +135,8 @@
   </div>
 
   <div class="instructions">
-    <strong>Directions:</strong>
-    This quiz contains <strong>MCQ</strong> (multiple choice) and <strong>Short Answer</strong> questions.
-    For MCQ, select the best answer. For short answer calculation problems, use
-    <strong>E-notation</strong> (e.g. <code>3.08e-4</code> for 3.08 × 10⁻⁴).
+    <strong>Directions:</strong> This quiz contains <strong>MCQ</strong> and <strong>Short Answer</strong> questions.
+    For short answer calculations, use <strong>E-notation</strong> if needed (e.g. <code>3.08e-4</code> for 3.08 × 10⁻⁴).
     Pass standard: <strong>12/15 (80%) or above</strong>.
   </div>
 
@@ -181,105 +175,104 @@ const SHEET_URL  = "https://script.google.com/macros/s/AKfycbwzUL_9uD-ts9ao9rUvR
 const QUIZ_ID    = "A";
 const PASS_SCORE = 12;
 
-// Question types: mcq or sa (short answer)
+// MCQ 5문제, SA 10문제
 const questions = [
-  // ── Boyle's Law ──────────────────────────────
-  { id:1, tag:"Boyle's Law", type:"mcq",
-    q:"A gas occupies 4.0 L at 2.0 atm. What is the volume at 1.0 atm (temperature constant)?",
-    options:["2.0 L","4.0 L","8.0 L","16.0 L","1.0 L"],
-    correct:2, display:"8.0 L",
+  // ── Boyle's Law ──────────────────────────
+  { id:1, tag:"Boyle's Law", type:"sa",
+    q:"A gas occupies 4.0 L at 2.0 atm. What is the volume (in L) at 1.0 atm? (temperature constant)",
+    answers:["8.0","8"],
+    display:"8.0 L",
     explanation:"P₁V₁ = P₂V₂ → (2.0)(4.0) = (1.0)(V₂) → V₂ = 8.0 L" },
 
-  // ── Charles's Law ────────────────────────────
-  { id:2, tag:"Charles's Law", type:"mcq",
-    q:"A gas occupies 3.0 L at 300 K. What volume does it occupy at 600 K (pressure constant)?",
-    options:["1.5 L","3.0 L","6.0 L","9.0 L","12.0 L"],
-    correct:2, display:"6.0 L",
+  { id:2, tag:"Boyle's Law", type:"sa",
+    q:"A gas at 1.5 atm occupies 6.0 L. What pressure (in atm) is needed to compress it to 2.0 L? (temperature constant)",
+    answers:["4.5","4.50"],
+    display:"4.5 atm",
+    explanation:"P₂ = P₁V₁/V₂ = (1.5×6.0)/2.0 = 4.5 atm" },
+
+  // ── Charles's Law ────────────────────────
+  { id:3, tag:"Charles's Law", type:"sa",
+    q:"A gas occupies 3.0 L at 300 K. What volume (in L) does it occupy at 600 K? (pressure constant)",
+    answers:["6.0","6"],
+    display:"6.0 L",
     explanation:"V₁/T₁ = V₂/T₂ → 3.0/300 = V₂/600 → V₂ = 6.0 L" },
 
-  // ── Gay-Lussac's Law ─────────────────────────
-  { id:3, tag:"Gay-Lussac's Law", type:"mcq",
-    q:"A gas has a pressure of 1.5 atm at 300 K. What is the pressure at 450 K (volume constant)?",
-    options:["1.0 atm","2.25 atm","3.0 atm","0.75 atm","4.5 atm"],
-    correct:1, display:"2.25 atm",
+  { id:4, tag:"Charles's Law", type:"mcq",
+    q:"A gas is cooled at constant pressure. According to Charles's Law, what happens to the volume?",
+    options:["Increases","Stays the same","Decreases","Doubles","Cannot be determined"],
+    correct:2, display:"Decreases",
+    explanation:"Charles's Law: V ∝ T (Kelvin). Lower T → smaller V." },
+
+  // ── Gay-Lussac's Law ─────────────────────
+  { id:5, tag:"Gay-Lussac's Law", type:"sa",
+    q:"A gas has a pressure of 1.5 atm at 300 K. What is the pressure (in atm) at 450 K? (volume constant)",
+    answers:["2.25","2.3"],
+    display:"2.25 atm",
     explanation:"P₁/T₁ = P₂/T₂ → 1.5/300 = P₂/450 → P₂ = 2.25 atm" },
 
-  // ── Combined Gas Law ─────────────────────────
-  { id:4, tag:"Combined Gas Law", type:"mcq",
-    q:"A gas at 2.0 atm, 5.0 L, 300 K is changed to 1.0 atm and 400 K. What is the new volume?",
-    options:["6.7 L","13.3 L","3.75 L","10.0 L","5.0 L"],
-    correct:1, display:"13.3 L",
+  // ── Combined Gas Law ─────────────────────
+  { id:6, tag:"Combined Gas Law", type:"sa",
+    q:"A gas at 2.0 atm, 5.0 L, 300 K is changed to 1.0 atm and 400 K.\nWhat is the new volume (in L)?",
+    answers:["13.3","13.33"],
+    display:"13.3 L",
     explanation:"P₁V₁/T₁ = P₂V₂/T₂ → (2.0×5.0)/300 = (1.0×V₂)/400 → V₂ = 13.3 L" },
 
-  // ── Ideal Gas Law ────────────────────────────
-  { id:5, tag:"Ideal Gas Law", type:"mcq",
-    q:"How many moles of gas occupy 22.4 L at 1.00 atm and 273 K? (R = 0.0821 L·atm/mol·K)",
-    options:["0.50 mol","1.00 mol","2.00 mol","0.25 mol","1.50 mol"],
-    correct:1, display:"1.00 mol",
-    explanation:"PV = nRT → n = PV/RT = (1.00×22.4)/(0.0821×273) = 1.00 mol" },
+  { id:7, tag:"Combined Gas Law", type:"sa",
+    q:"A gas sample at STP (1.00 atm, 273 K) has a volume of 2.24 L.\nWhat is its volume (in L) at 25°C (298 K) and 0.500 atm?",
+    answers:["4.88","4.9","4.878"],
+    display:"4.88 L",
+    explanation:"V₂ = P₁V₁T₂/(T₁P₂) = (1.00×2.24×298)/(273×0.500) = 4.88 L" },
 
-  { id:6, tag:"Ideal Gas Law", type:"sa",
-    q:"Calculate the pressure (in atm) of 2.00 mol of an ideal gas in a 10.0 L container at 300 K.\n(R = 0.0821 L·atm/mol·K)\n\nEnter answer in E-notation if needed (e.g. 4.93e0 or 4.93)",
+  // ── Ideal Gas Law ────────────────────────
+  { id:8, tag:"Ideal Gas Law", type:"sa",
+    q:"Calculate the pressure (in atm) of 2.00 mol of an ideal gas in a 10.0 L container at 300 K.\n(R = 0.0821 L·atm/mol·K)",
     answers:["4.93","4.926","4.9"],
     display:"4.93 atm",
-    explanation:"P = nRT/V = (2.00 × 0.0821 × 300) / 10.0 = 4.93 atm" },
+    explanation:"P = nRT/V = (2.00×0.0821×300)/10.0 = 4.93 atm" },
 
-  // ── Dalton's Law ─────────────────────────────
-  { id:7, tag:"Dalton's Law", type:"mcq",
-    q:"A mixture of gases has partial pressures: N₂ = 0.60 atm, O₂ = 0.25 atm, Ar = 0.15 atm. What is the total pressure?",
-    options:["0.85 atm","0.75 atm","1.00 atm","1.25 atm","0.60 atm"],
-    correct:2, display:"1.00 atm",
-    explanation:"P_total = P_N₂ + P_O₂ + P_Ar = 0.60 + 0.25 + 0.15 = 1.00 atm" },
+  { id:9, tag:"Ideal Gas Law", type:"mcq",
+    q:"Which conditions are assumed for an ideal gas?",
+    options:["Large molecular volume, strong attractions","No molecular volume, no intermolecular forces","Small molecular volume, weak attractions","Large molecular volume, no attractions","No molecular volume, strong attractions"],
+    correct:1, display:"No molecular volume, no intermolecular forces",
+    explanation:"Ideal gas: point masses (no volume), no intermolecular forces." },
 
-  { id:8, tag:"Dalton's Law", type:"sa",
+  // ── Dalton's Law ─────────────────────────
+  { id:10, tag:"Dalton's Law", type:"sa",
+    q:"A mixture of gases has partial pressures: N₂ = 0.60 atm, O₂ = 0.25 atm, Ar = 0.15 atm.\nWhat is the total pressure (in atm)?",
+    answers:["1.0","1.00"],
+    display:"1.00 atm",
+    explanation:"P_total = 0.60 + 0.25 + 0.15 = 1.00 atm" },
+
+  { id:11, tag:"Dalton's Law", type:"sa",
     q:"A gas collected over water at 25°C has a total pressure of 0.980 atm.\nVapor pressure of water at 25°C = 0.0313 atm.\nWhat is the partial pressure of the dry gas (in atm)?",
     answers:["0.949","0.9487","0.95"],
     display:"0.949 atm",
     explanation:"P_gas = 0.980 − 0.0313 = 0.9487 ≈ 0.949 atm" },
 
-  // ── Graham's Law ─────────────────────────────
-  { id:9, tag:"Graham's Law", type:"mcq",
+  { id:12, tag:"Dalton's Law", type:"mcq",
+    q:"In a mixture, the mole fraction of N₂ is 0.78 and total pressure is 1.00 atm. What is P_N₂?",
+    options:["0.22 atm","0.78 atm","1.00 atm","0.50 atm","1.56 atm"],
+    correct:1, display:"0.78 atm",
+    explanation:"P_N₂ = χ_N₂ × P_total = 0.78 × 1.00 = 0.78 atm" },
+
+  // ── Graham's Law ─────────────────────────
+  { id:13, tag:"Graham's Law", type:"sa",
+    q:"Calculate the ratio of effusion rates of H₂ (M = 2 g/mol) to O₂ (M = 32 g/mol).\n(Enter as a decimal, e.g. 4.0)",
+    answers:["4.0","4","4.00"],
+    display:"4.0",
+    explanation:"rate_H₂/rate_O₂ = √(32/2) = √16 = 4.0" },
+
+  { id:14, tag:"Graham's Law", type:"mcq",
     q:"Which gas effuses fastest at the same temperature and pressure?",
     options:["CO₂ (M = 44 g/mol)","O₂ (M = 32 g/mol)","N₂ (M = 28 g/mol)","He (M = 4 g/mol)","Cl₂ (M = 71 g/mol)"],
     correct:3, display:"He (M = 4 g/mol)",
     explanation:"Graham's Law: rate ∝ 1/√M. Lowest molar mass = fastest effusion → He" },
 
-  { id:10, tag:"Graham's Law", type:"sa",
-    q:"Calculate the ratio of effusion rates of H₂ (M = 2 g/mol) to O₂ (M = 32 g/mol).\n\nEnter as a decimal (e.g. 4.0)",
-    answers:["4.0","4","4.00"],
-    display:"4.0",
-    explanation:"rate_H₂/rate_O₂ = √(32/2) = √16 = 4.0" },
-
-  // ── Concept MCQ ──────────────────────────────
-  { id:11, tag:"Boyle's Law", type:"mcq",
-    q:"Which graph correctly represents Boyle's Law (at constant temperature)?",
-    options:["P vs V — straight line through origin","P vs V — hyperbola (inverse)","P vs T — straight line","V vs T — straight line","P vs 1/V — hyperbola"],
-    correct:1, display:"P vs V — hyperbola (inverse)",
-    explanation:"Boyle's Law: PV = constant → P and V are inversely proportional → hyperbola" },
-
-  { id:12, tag:"Charles's Law", type:"mcq",
-    q:"A gas is cooled at constant pressure. According to Charles's Law, what happens to the volume?",
-    options:["Increases","Stays the same","Decreases","Doubles","Cannot be determined"],
-    correct:2, display:"Decreases",
-    explanation:"Charles's Law: V ∝ T (in Kelvin). Lower T → smaller V." },
-
-  { id:13, tag:"Ideal Gas Law", type:"mcq",
-    q:"Which conditions are assumed for an ideal gas? (Select the best answer)",
-    options:["Large molecular volume, strong attractions","No molecular volume, no intermolecular forces","Small molecular volume, weak attractions","Large molecular volume, no attractions","No molecular volume, strong attractions"],
-    correct:1, display:"No molecular volume, no intermolecular forces",
-    explanation:"Ideal gas assumptions: point masses (no volume), no intermolecular forces." },
-
-  { id:14, tag:"Combined Gas Law", type:"sa",
-    q:"A gas sample at STP (1.00 atm, 273 K) has a volume of 2.24 L.\nWhat is its volume at 25°C (298 K) and 0.500 atm?\n\nEnter answer in liters (e.g. 4.88)",
-    answers:["4.88","4.9","4.878"],
-    display:"4.88 L",
-    explanation:"V₂ = P₁V₁T₂/(T₁P₂) = (1.00×2.24×298)/(273×0.500) = 4.88 L" },
-
-  { id:15, tag:"Dalton's Law", type:"mcq",
-    q:"In a mixture, the mole fraction of N₂ is 0.78 and total pressure is 1.00 atm. What is P_N₂?",
-    options:["0.22 atm","0.78 atm","1.00 atm","0.50 atm","1.56 atm"],
-    correct:1, display:"0.78 atm",
-    explanation:"P_N₂ = χ_N₂ × P_total = 0.78 × 1.00 = 0.78 atm" },
+  { id:15, tag:"Graham's Law", type:"sa",
+    q:"A gas effuses at half the rate of O₂ (M = 32 g/mol).\nWhat is the molar mass (in g/mol) of this gas?",
+    answers:["128","128.0"],
+    display:"128 g/mol",
+    explanation:"(1/2)² = 32/M → M = 32×4 = 128 g/mol" },
 ];
 
 let timerInterval, seconds=0, submitted=false;
@@ -297,7 +290,7 @@ function buildQuiz(){
         q.options.map((opt,i)=>`<label class="mcq-option" id="opt-${q.id}-${i}"><input type="radio" name="q${q.id}" value="${i}" onchange="updateProgress()"> ${opt}</label>`).join('') +
         `</div>`;
     } else {
-      answerHTML=`<input class="answer-input" type="text" id="ans-${q.id}" placeholder="Your answer..." autocomplete="off" autocorrect="off" spellcheck="false" oninput="updateProgress()">
+      answerHTML=`<input class="answer-input" type="text" id="ans-${q.id}" placeholder="Your answer..." autocomplete="off" autocorrect="off" spellcheck="false" oninput="updateProgress()">`;
     }
     card.innerHTML=`<div class="q-header"><div class="q-num" id="num-${q.id}">${q.id}</div><div class="q-meta" style="flex:1"><div class="q-tag">${q.tag} ${typeBadge}</div><div class="q-text">${q.q.replace(/\n/g,'<br>')}</div></div></div>${answerHTML}<div class="feedback" id="fb-${q.id}"></div>`;
     form.appendChild(card);
@@ -315,7 +308,7 @@ function updateProgress(){
   document.getElementById('progress-bar').style.width=`${(filled/15)*100}%`;
 }
 
-function normalizeNum(str){ return str.trim().toLowerCase().replace(/\s/g,'').replace(/×10\^?/,'e').replace(/x10\^?/,'e'); }
+function normalizeNum(str){ return str.trim().toLowerCase().replace(/\s/g,''); }
 
 function submitQuiz(){
   if(submitted)return;
@@ -334,7 +327,6 @@ function submitQuiz(){
     if(q.type==='mcq'){
       const sel=document.querySelector(`input[name="q${q.id}"]:checked`);
       if(sel){ studentAns=q.options[parseInt(sel.value)]; isOK=parseInt(sel.value)===q.correct; }
-      // Color options
       document.querySelectorAll(`[id^="opt-${q.id}-"]`).forEach(el=>{ el.classList.add('disabled'); el.querySelector('input').disabled=true; });
       document.getElementById(`opt-${q.id}-${q.correct}`).classList.add('correct-ans');
       if(sel && parseInt(sel.value)!==q.correct) document.getElementById(`opt-${q.id}-${parseInt(sel.value)}`).classList.add('wrong-ans');
@@ -347,9 +339,8 @@ function submitQuiz(){
       input.classList.add(isOK?'correct':'incorrect');
     }
 
-    if(isOK){ correct++; card.classList.add('correct'); numEl.classList.add('correct'); fb.className='feedback correct'; fb.innerHTML=`✓ Correct! ${q.explanation?'<br><small>'+q.explanation+'</small>':''}`; }
-    else { card.classList.add('incorrect'); numEl.classList.add('incorrect'); fb.className='feedback incorrect'; fb.innerHTML=`✗ Incorrect — Answer: <strong>${q.display}</strong>${q.explanation?'<br><small>'+q.explanation+'</small>':''}`; }
-
+    if(isOK){ correct++; card.classList.add('correct'); numEl.classList.add('correct'); fb.className='feedback correct'; fb.innerHTML=`✓ Correct! <small>${q.explanation}</small>`; }
+    else { card.classList.add('incorrect'); numEl.classList.add('incorrect'); fb.className='feedback incorrect'; fb.innerHTML=`✗ Incorrect — Answer: <strong>${q.display}</strong> <small>${q.explanation}</small>`; }
     details.push({ qNum:q.id, tag:q.tag, type:q.type, studentAns, correctAns:q.display, result:isOK?'O':'X' });
   });
 
@@ -357,7 +348,6 @@ function submitQuiz(){
   const passed=correct>=PASS_SCORE;
   const mm=String(Math.floor(seconds/60)).padStart(2,'0'), ss=String(seconds%60).padStart(2,'0');
   const timeStr=`${mm}:${ss}`;
-
   document.getElementById('submit-btn').style.display='none';
   const rs=document.getElementById('results-section'); rs.style.display='block';
   document.getElementById('res-score').textContent=correct;
