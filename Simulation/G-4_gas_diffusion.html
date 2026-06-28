@@ -1,0 +1,472 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>G-4 · Gas Diffusion & Graham's Law | Nobel Prep AP Chemistry</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --navy:#1a2744; --navy-mid:#1e3060;
+  --gold:#c9a84c; --gold-light:#d4b86a; --gold-bg:#f5e9c8;
+  --bg-page:#f0f2f5; --bg-card:#ffffff; --bg-card-alt:#f8f9fb;
+  --text-primary:#1a2744; --text-body:#2c3e50; --text-muted:#6b7c93; --text-micro:#8a99ad;
+  --border:#dde3ee; --border-light:#eaeff8;
+  --nh3:#2979C8; --nh3-light:#d0e4f8;
+  --hcl:#C0335A; --hcl-light:#f5d0da;
+  --font-ui:'Inter',sans-serif; --font-mono:'JetBrains Mono',monospace;
+  --radius-sm:6px; --radius-md:10px; --radius-lg:14px;
+  --shadow-card:0 2px 8px rgba(26,39,68,0.08),0 1px 2px rgba(26,39,68,0.04);
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--font-ui);background:var(--bg-page);color:var(--text-body);min-height:100vh;-webkit-font-smoothing:antialiased}
+
+/* HEADER */
+.sim-header{background:var(--navy);padding:20px 32px;position:relative}
+.sim-header-eyebrow{font-size:10px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--gold);margin-bottom:6px;opacity:.9}
+.sim-header-title{font-size:26px;font-weight:700;color:#fff;letter-spacing:-.02em;line-height:1.2;margin-bottom:5px}
+.sim-header-subtitle{font-size:13.5px;color:rgba(255,255,255,.6);font-weight:400;max-width:580px}
+.sim-badge{position:absolute;top:20px;right:32px;background:var(--gold-bg);color:var(--navy);font-size:11px;font-weight:700;font-family:var(--font-mono);letter-spacing:.04em;padding:5px 12px;border-radius:20px;border:1.5px solid var(--gold-light)}
+
+/* BODY */
+.sim-body{max-width:820px;margin:0 auto;padding:28px 20px}
+
+/* CONCEPT CARD */
+.card-info{background:var(--bg-card);border:1px solid var(--border-light);border-radius:var(--radius-lg);padding:20px 28px;margin-bottom:20px;font-size:14px;line-height:1.75;color:var(--text-body);box-shadow:var(--shadow-card)}
+.card-info strong{color:var(--text-primary)}
+
+/* CARD */
+.card{background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius-lg);padding:20px 28px;margin-bottom:20px;box-shadow:var(--shadow-card)}
+.card-title{font-size:15px;font-weight:700;color:var(--text-primary);margin-bottom:4px}
+.card-subtitle{font-size:12.5px;color:var(--text-muted);margin-bottom:18px}
+
+/* TUBE */
+.tube-label-row{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;font-size:13px;font-weight:600}
+.lbl-nh3{color:var(--nh3)}
+.lbl-air{color:var(--text-muted)}
+.lbl-hcl{color:var(--hcl)}
+.tube-wrap{position:relative;width:100%;height:160px;margin-bottom:10px;border-radius:var(--radius-md);overflow:hidden;background:var(--bg-card-alt);border:1px solid var(--border-light)}
+canvas#sim{width:100%;height:100%;display:block}
+
+/* RING STATUS */
+.ring-status{font-size:13px;font-weight:500;color:var(--text-muted);min-height:22px;margin-bottom:14px;padding:8px 14px;background:var(--bg-card-alt);border-radius:var(--radius-sm);border:1px solid var(--border-light)}
+.ring-status.formed{color:#1b5e20;background:#e8f5e9;border-color:#4caf50}
+
+/* CONTROLS */
+.controls-row{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;font-family:var(--font-ui);font-size:13px;font-weight:600;border-radius:var(--radius-sm);border:1.5px solid transparent;cursor:pointer;transition:background .15s,border-color .15s,color .15s;padding:8px 18px;line-height:1}
+.btn:active{transform:scale(.97)}
+.btn-primary{background:var(--navy);color:#fff;border-color:var(--navy)}
+.btn-primary:hover{background:#253560}
+.btn-secondary{background:transparent;color:var(--text-primary);border-color:var(--border)}
+.btn-secondary:hover{background:var(--bg-page)}
+.speed-wrap{display:flex;align-items:center;gap:8px;font-size:12.5px;color:var(--text-muted);margin-left:auto}
+input[type=range]{-webkit-appearance:none;appearance:none;width:90px;height:5px;border-radius:3px;background:var(--border);outline:none;cursor:pointer}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;height:16px;border-radius:50%;background:var(--navy);border:2px solid #fff;box-shadow:0 1px 3px rgba(0,0,0,.2)}
+.spd-val{font-family:var(--font-mono);font-size:12px;font-weight:600;color:var(--text-primary);min-width:28px}
+
+/* INFO CARDS */
+.info-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-top:18px}
+@media(max-width:600px){.info-grid{grid-template-columns:repeat(2,1fr)}}
+.info-card{background:var(--bg-card-alt);border:1px solid var(--border-light);border-radius:var(--radius-md);padding:14px 16px}
+.ic-label{font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--text-micro);margin-bottom:6px}
+.ic-val{font-family:var(--font-mono);font-size:18px;font-weight:700;color:var(--navy);line-height:1}
+.ic-sub{font-size:11.5px;color:var(--text-muted);margin-top:4px}
+
+/* FORMULA */
+.formula-box{background:var(--bg-card-alt);border:1px solid var(--border-light);border-left:3px solid var(--gold);border-radius:0 var(--radius-md) var(--radius-md) 0;padding:14px 18px;font-size:13.5px;color:var(--text-body);line-height:1.75}
+.formula-box strong{color:var(--text-primary)}
+.formula-eq{font-family:var(--font-mono);font-size:14px;font-weight:600;color:var(--navy);background:#eef2fa;border-radius:var(--radius-sm);padding:10px 16px;margin-top:10px;display:inline-block}
+
+@media(max-width:580px){
+  .sim-header{padding:14px 18px}
+  .sim-header-title{font-size:20px}
+  .sim-badge{top:14px;right:18px}
+  .sim-body{padding:18px 12px}
+  .card{padding:16px 18px}
+}
+</style>
+</head>
+<body>
+
+<header class="sim-header">
+  <div class="sim-header-eyebrow">Nobel Prep · AP Chemistry · Chapter 5</div>
+  <h1 class="sim-header-title">Gas Diffusion & Graham's Law</h1>
+  <p class="sim-header-subtitle">NH₃ and HCl diffuse from opposite ends — where do they meet?</p>
+  <span class="sim-badge">G-4</span>
+</header>
+
+<main class="sim-body">
+
+  <!-- Concept card -->
+  <div class="card-info">
+    <strong>Graham's Law:</strong> lighter gas molecules move faster.
+    NH₃ (M = 17.0 g/mol) diffuses <strong>~1.47× faster</strong> than HCl (M = 36.5 g/mol).
+    When they meet, they react to form a white NH₄Cl ring —
+    always <strong>closer to the HCl end</strong> because NH₃ travels farther in the same time.
+  </div>
+
+  <!-- Simulation card -->
+  <div class="card">
+    <div class="card-title">Diffusion Tube</div>
+    <div class="card-subtitle">Cotton soaked in NH₃ (left) and HCl (right) — gases diffuse toward each other</div>
+
+    <div class="tube-label-row">
+      <span class="lbl-nh3">← NH₃ (M = 17.0)</span>
+      <span class="lbl-air">Air</span>
+      <span class="lbl-hcl">(M = 36.5) HCl →</span>
+    </div>
+
+    <div class="tube-wrap">
+      <canvas id="sim"></canvas>
+    </div>
+
+    <div class="ring-status" id="ringStatus">Press Play to start diffusion…</div>
+
+    <div class="controls-row">
+      <button class="btn btn-primary" id="btnPlay">▶ Play</button>
+      <button class="btn btn-secondary" id="btnReset">⟲ Reset</button>
+      <div class="speed-wrap">
+        Speed:
+        <input type="range" id="spdSlider" min="0.5" max="4" step="0.5" value="1">
+        <span class="spd-val" id="spdVal">1×</span>
+      </div>
+    </div>
+
+    <!-- Info cards -->
+    <div class="info-grid">
+      <div class="info-card">
+        <div class="ic-label">NH₃ Molar Mass</div>
+        <div class="ic-val">17.0</div>
+        <div class="ic-sub">g/mol — lighter</div>
+      </div>
+      <div class="info-card">
+        <div class="ic-label">HCl Molar Mass</div>
+        <div class="ic-val">36.5</div>
+        <div class="ic-sub">g/mol — heavier</div>
+      </div>
+      <div class="info-card">
+        <div class="ic-label">Speed Ratio</div>
+        <div class="ic-val">1.47×</div>
+        <div class="ic-sub">NH₃ moves faster</div>
+      </div>
+      <div class="info-card">
+        <div class="ic-label">Ring Position</div>
+        <div class="ic-val" id="ringPct">—</div>
+        <div class="ic-sub">from HCl end</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Formula card -->
+  <div class="card">
+    <div class="card-title">Graham's Law of Effusion / Diffusion</div>
+    <div class="card-subtitle">Rate is inversely proportional to the square root of molar mass</div>
+    <div class="formula-box">
+      <strong>Graham's Law:</strong> at the same temperature and pressure,
+      lighter molecules move faster because KE_avg is the same for all gases.
+      <br><br>
+      The meeting point divides the tube in the ratio of their speeds:
+      <br>
+      <div class="formula-eq">r₁/r₂ = √(M₂/M₁) &nbsp;→&nbsp; d_NH₃ : d_HCl = √(36.5/17.0) ≈ 1.47 : 1</div>
+    </div>
+  </div>
+
+</main>
+
+<script>
+/* ═══════════════════════════════════════
+   G-4  Gas Diffusion & Graham's Law
+   Ported to Nobel Prep master design system
+═══════════════════════════════════════ */
+const canvas  = document.getElementById('sim');
+const ctx     = canvas.getContext('2d');
+const btnPlay = document.getElementById('btnPlay');
+const btnReset= document.getElementById('btnReset');
+const spdSlider=document.getElementById('spdSlider');
+const spdVal  = document.getElementById('spdVal');
+const ringStatus=document.getElementById('ringStatus');
+const ringPctEl =document.getElementById('ringPct');
+
+/* ── PHYSICS ── */
+const M_NH3 = 17.0, M_HCl = 36.5;
+const RATIO  = Math.sqrt(M_HCl / M_NH3);   // ≈ 1.466
+const TUBE_PAD = 0.10;
+const RING_FROM_RIGHT = 1 / (1 + RATIO);    // ≈ 0.405
+const RING_TIME = 6; // sim-seconds to full ring
+
+let playing = false, speed = 1, raf = null;
+let lastTs = null, simTime = 0, ringFormed = false;
+let particles = [];
+
+function W(){ return canvas.width  / (window.devicePixelRatio||1); }
+function H(){ return canvas.height / (window.devicePixelRatio||1); }
+
+function geom(){
+  const w=W(), h=H();
+  const ty=h*0.12, th=h*0.58;
+  const le=w*TUBE_PAD, re=w*(1-TUBE_PAD);
+  const rx=re-(re-le)*RING_FROM_RIGHT;
+  return {w,h,ty,th,le,re,rx};
+}
+
+/* ── PARTICLES ── */
+function initParticles(){
+  particles=[];
+  const g=geom();
+  const py0=g.ty+8, py1=g.ty+g.th-8;
+  const spNH3=55, spHCl=spNH3/RATIO;
+  const N_NH3=12, N_HCl=8;
+  for(let i=0;i<N_NH3;i++){
+    const x=g.le+8+Math.random()*(g.w*0.32);
+    const y=py0+Math.random()*(py1-py0);
+    const a=(Math.random()-0.5)*0.6;
+    particles.push({type:'nh3',x,y,vx:spNH3*Math.cos(a),vy:spNH3*Math.sin(a)*(Math.random()>.5?1:-1),stopped:false});
+  }
+  for(let i=0;i<N_HCl;i++){
+    const x=g.re-8-Math.random()*(g.w*0.22);
+    const y=py0+Math.random()*(py1-py0);
+    const a=(Math.random()-0.5)*0.6;
+    particles.push({type:'hcl',x,y,vx:-spHCl*Math.cos(a),vy:spHCl*Math.sin(a)*(Math.random()>.5?1:-1),stopped:false});
+  }
+}
+
+function updateParticles(dt){
+  const g=geom();
+  const py0=g.ty+6, py1=g.ty+g.th-6;
+  const rp=Math.min(simTime/RING_TIME,1);
+  for(const p of particles){
+    if(p.stopped) continue;
+    p.x+=p.vx*dt*speed;
+    p.y+=p.vy*dt*speed;
+    if(p.y<py0){p.y=py0;p.vy=Math.abs(p.vy);}
+    if(p.y>py1){p.y=py1;p.vy=-Math.abs(p.vy);}
+    if(rp>0.1){
+      if(p.type==='nh3'&&p.vx>0&&p.x>=g.rx-6){p.x=g.rx-6;p.vx=0;p.vy=0;p.stopped=true;}
+      if(p.type==='hcl'&&p.vx<0&&p.x<=g.rx+6){p.x=g.rx+6;p.vx=0;p.vy=0;p.stopped=true;}
+    }
+    if(p.x<g.le+4){p.x=g.le+4;p.vx=Math.abs(p.vx);}
+    if(p.x>g.re-4){p.x=g.re-4;p.vx=-Math.abs(p.vx);}
+  }
+}
+
+/* ── DRAWING ── */
+function drawFrame(){
+  const g=geom();
+  ctx.clearRect(0,0,g.w,g.h);
+
+  // Tube pill background
+  ctx.save();
+  pillPath(g.le-g.th/2, g.ty, g.re-g.le+g.th, g.th);
+  ctx.fillStyle='#eef2fb';
+  ctx.fill();
+  ctx.strokeStyle='#c8d0e8';
+  ctx.lineWidth=2;
+  ctx.stroke();
+  ctx.restore();
+
+  // Tinted zones
+  ctx.save();
+  pillPath(g.le-g.th/2, g.ty, g.re-g.le+g.th, g.th);
+  ctx.clip();
+  // NH3 zone
+  const gr1=ctx.createLinearGradient(g.le,0,g.rx,0);
+  gr1.addColorStop(0,'rgba(41,121,200,0.22)');
+  gr1.addColorStop(1,'rgba(41,121,200,0.03)');
+  ctx.fillStyle=gr1;
+  ctx.fillRect(g.le,g.ty,g.rx-g.le,g.th);
+  // HCl zone
+  const gr2=ctx.createLinearGradient(g.rx,0,g.re,0);
+  gr2.addColorStop(0,'rgba(192,51,90,0.03)');
+  gr2.addColorStop(1,'rgba(192,51,90,0.22)');
+  ctx.fillStyle=gr2;
+  ctx.fillRect(g.rx,g.ty,g.re-g.rx,g.th);
+  ctx.restore();
+
+  // Cotton plugs
+  drawCotton(0, g.ty, g.le+g.th/2, g.th, 'left');
+  drawCotton(g.re-g.th/2, g.ty, g.le+g.th/2, g.th, 'right');
+
+  // Particles
+  for(const p of particles){
+    const col=p.type==='nh3'?'#2979C8':'#C0335A';
+    ctx.beginPath();
+    ctx.arc(p.x,p.y,5,0,Math.PI*2);
+    ctx.fillStyle=col;
+    ctx.globalAlpha=0.85;
+    ctx.fill();
+    ctx.globalAlpha=1;
+    ctx.font='bold 7.5px Inter,sans-serif';
+    ctx.fillStyle=p.type==='nh3'?'#1254a0':'#8c1c38';
+    ctx.textAlign='center';
+    ctx.fillText(p.type==='nh3'?'NH₃':'HCl',p.x,p.y+15);
+  }
+
+  // NH4Cl ring
+  const rp=Math.min(simTime/RING_TIME,1);
+  const ra=Math.max(0,(rp-0.5)/0.5);
+  if(ra>0){
+    ctx.save();
+    ctx.globalAlpha=ra;
+    ctx.beginPath();
+    ctx.ellipse(g.rx,g.ty+g.th/2,9,g.th/2-5,0,0,Math.PI*2);
+    ctx.fillStyle='#ffffff';
+    ctx.fill();
+    ctx.strokeStyle='#aab0cc';
+    ctx.lineWidth=1.5;
+    ctx.stroke();
+    ctx.restore();
+    if(ra>0.6){
+      ctx.font='500 11px Inter,sans-serif';
+      ctx.fillStyle=`rgba(26,39,68,${ra})`;
+      ctx.textAlign='center';
+      ctx.fillText('NH₄Cl(s)',g.rx,g.ty+g.th+20);
+    }
+  }
+
+  // Distance braces
+  drawBraces(g);
+
+  // Gas labels above tube
+  ctx.font='600 11.5px Inter,sans-serif';
+  ctx.textAlign='center';
+  ctx.fillStyle='#2979C8';
+  ctx.fillText('NH₃',g.le/2+8,g.ty-8);
+  ctx.fillStyle='#C0335A';
+  ctx.fillText('HCl',g.re+(g.w-g.re)/2-8,g.ty-8);
+  ctx.fillStyle=getComputedStyle(document.documentElement).getPropertyValue('--text-muted').trim()||'#6b7c93';
+  ctx.font='400 11px Inter,sans-serif';
+  ctx.fillText('Air',(g.le+g.re)/2,g.ty-8);
+}
+
+function drawBraces(g){
+  const by=g.ty+g.th+28, tick=6;
+  ctx.strokeStyle='#8a99ad';
+  ctx.lineWidth=1.2;
+  ctx.font='italic 500 11px JetBrains Mono,monospace';
+  ctx.fillStyle='#6b7c93';
+  // d_NH3
+  ctx.beginPath();
+  ctx.moveTo(g.le,by-tick);ctx.lineTo(g.le,by);ctx.lineTo(g.rx,by);ctx.lineTo(g.rx,by-tick);
+  ctx.stroke();
+  ctx.textAlign='center';
+  ctx.fillText('d_NH₃',(g.le+g.rx)/2,by+14);
+  // d_HCl
+  ctx.beginPath();
+  ctx.moveTo(g.rx,by-tick);ctx.lineTo(g.rx,by);ctx.lineTo(g.re,by);ctx.lineTo(g.re,by-tick);
+  ctx.stroke();
+  ctx.fillText('d_HCl',(g.rx+g.re)/2,by+14);
+}
+
+function pillPath(x,y,w,h){
+  const r=h/2;
+  ctx.beginPath();
+  ctx.moveTo(x+r,y);
+  ctx.lineTo(x+w-r,y);
+  ctx.arcTo(x+w,y,x+w,y+r,r);
+  ctx.lineTo(x+w,y+h-r);
+  ctx.arcTo(x+w,y+h,x+w-r,y+h,r);
+  ctx.lineTo(x+r,y+h);
+  ctx.arcTo(x,y+h,x,y+h-r,r);
+  ctx.lineTo(x,y+r);
+  ctx.arcTo(x,y,x+r,y,r);
+  ctx.closePath();
+}
+
+function drawCotton(x,y,w,h,side){
+  ctx.save();
+  ctx.beginPath();
+  const r=h/2;
+  if(side==='left'){
+    ctx.arc(x+r,y+r,r,Math.PI/2,-Math.PI/2,true);
+    ctx.lineTo(x+w,y);ctx.lineTo(x+w,y+h);ctx.closePath();
+  } else {
+    ctx.arc(x+w-r,y+r,r,-Math.PI/2,Math.PI/2,false);
+    ctx.lineTo(x,y+h);ctx.lineTo(x,y);ctx.closePath();
+  }
+  ctx.fillStyle='#e2ddd8';
+  ctx.fill();
+  ctx.strokeStyle='#b0aba6';
+  ctx.lineWidth=1;
+  ctx.stroke();
+  // cotton texture lines
+  ctx.strokeStyle='#ccc8c5';
+  ctx.lineWidth=0.7;
+  for(let i=0;i<6;i++){
+    const bx=x+w*0.35+Math.sin(i*1.5)*w*0.22;
+    const by=y+h*0.18+i*h*0.12;
+    ctx.beginPath();ctx.arc(bx,by,w*0.13,0,Math.PI*2);ctx.stroke();
+  }
+  ctx.restore();
+}
+
+/* ── ANIMATION ── */
+function animate(ts){
+  if(!lastTs) lastTs=ts;
+  const dt=Math.min((ts-lastTs)/1000,0.05);
+  lastTs=ts;
+  simTime+=dt*speed;
+  updateParticles(dt);
+  drawFrame();
+
+  const prog=simTime/RING_TIME;
+  if(prog>=1&&!ringFormed){
+    ringFormed=true;
+    playing=false;
+    btnPlay.textContent='▶ Play';
+    ringStatus.textContent='✓ NH₄Cl ring formed — closer to the HCl end!';
+    ringStatus.className='ring-status formed';
+    ringPctEl.textContent=(RING_FROM_RIGHT*100).toFixed(1)+'%';
+  }
+  if(playing) raf=requestAnimationFrame(animate);
+}
+
+/* ── RESET ── */
+function resetSim(){
+  playing=false;
+  btnPlay.textContent='▶ Play';
+  cancelAnimationFrame(raf);
+  raf=null;lastTs=null;simTime=0;ringFormed=false;
+  ringStatus.textContent='Press Play to start diffusion…';
+  ringStatus.className='ring-status';
+  ringPctEl.textContent='—';
+  initParticles();
+  drawFrame();
+}
+
+/* ── EVENTS ── */
+btnPlay.addEventListener('click',()=>{
+  if(ringFormed) resetSim();
+  playing=!playing;
+  btnPlay.textContent=playing?'⏸ Pause':'▶ Play';
+  if(playing){lastTs=null;raf=requestAnimationFrame(animate);}
+});
+
+btnReset.addEventListener('click',resetSim);
+
+spdSlider.addEventListener('input',()=>{
+  speed=parseFloat(spdSlider.value);
+  spdVal.textContent=speed.toFixed(1)+'×';
+});
+
+/* ── RESIZE ── */
+function resizeCanvas(){
+  const wrap=document.querySelector('.tube-wrap');
+  const dpr=window.devicePixelRatio||1;
+  canvas.width=wrap.clientWidth*dpr;
+  canvas.height=wrap.clientHeight*dpr;
+  canvas.style.width=wrap.clientWidth+'px';
+  canvas.style.height=wrap.clientHeight+'px';
+  ctx.setTransform(dpr,0,0,dpr,0,0);
+  initParticles();
+  drawFrame();
+}
+
+new ResizeObserver(resizeCanvas).observe(document.querySelector('.tube-wrap'));
+
+resizeCanvas();
+</script>
+</body>
+</html>
