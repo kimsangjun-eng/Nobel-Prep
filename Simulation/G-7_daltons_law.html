@@ -1,0 +1,425 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>G-7 · Dalton's Law of Partial Pressures | Nobel Prep AP Chemistry</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --navy:#1a2744; --navy-mid:#1e3060; --navy-light:#2a4080;
+  --gold:#c9a84c; --gold-light:#d4b86a; --gold-bg:#f5e9c8;
+  --bg-page:#f0f2f5; --bg-card:#ffffff; --bg-card-alt:#f8f9fb;
+  --text-primary:#1a2744; --text-body:#2c3e50;
+  --text-muted:#6b7c93; --text-micro:#8a99ad;
+  --border:#dde3ee; --border-light:#eaeff8;
+  --gas-a:#5aaad0; --gas-a-dark:#2e7aaa;
+  --gas-b:#3a5fc0; --gas-b-dark:#1a3a8a;
+  --gold-dark:#b07010;
+  --font-ui:'Inter',sans-serif; --font-mono:'JetBrains Mono',monospace;
+  --radius-sm:6px; --radius-md:10px; --radius-lg:14px;
+  --shadow-card:0 2px 8px rgba(26,39,68,0.08),0 1px 2px rgba(26,39,68,0.04);
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--font-ui);background:var(--bg-page);color:var(--text-body);min-height:100vh;-webkit-font-smoothing:antialiased}
+
+/* ── HEADER ── */
+.sim-header{background:var(--navy);padding:20px 32px;position:relative}
+.sim-header-eyebrow{font-size:10px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--gold);margin-bottom:6px;opacity:.9}
+.sim-header-title{font-size:26px;font-weight:700;color:#fff;letter-spacing:-.02em;line-height:1.2;margin-bottom:5px}
+.sim-header-subtitle{font-size:13.5px;color:rgba(255,255,255,.6);font-weight:400;max-width:580px}
+.sim-badge{position:absolute;top:20px;right:32px;background:var(--gold-bg);color:var(--navy);font-size:11px;font-weight:700;font-family:var(--font-mono);letter-spacing:.04em;padding:5px 12px;border-radius:20px;border:1.5px solid var(--gold-light)}
+
+/* ── BODY ── */
+.sim-body{max-width:860px;margin:0 auto;padding:28px 20px}
+
+/* ── CONCEPT CARD ── */
+.card-info{background:var(--bg-card);border:1px solid var(--border-light);border-radius:var(--radius-lg);padding:20px 28px;margin-bottom:20px;font-size:14px;line-height:1.75;color:var(--text-body);box-shadow:var(--shadow-card)}
+.card-info strong{color:var(--text-primary)}
+
+/* ── CARD ── */
+.card{background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius-lg);padding:20px 28px;margin-bottom:20px;box-shadow:var(--shadow-card)}
+.card-title{font-size:15px;font-weight:700;color:var(--text-primary);margin-bottom:4px}
+.card-subtitle{font-size:12.5px;color:var(--text-muted);margin-bottom:18px}
+
+/* ── CYLINDER ROW ── */
+.cyl-row{display:grid;grid-template-columns:1fr 36px 1fr 48px 1fr;gap:0;align-items:center;margin-bottom:20px}
+.cyl-card{background:var(--bg-card-alt);border:1px solid var(--border);border-radius:var(--radius-md);padding:16px 12px;display:flex;flex-direction:column;align-items:center;gap:10px}
+.cyl-card.mixture{border-color:var(--gold);background:var(--gold-bg)}
+.gas-label{font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase}
+.gas-a-label{color:var(--gas-a-dark)}
+.gas-b-label{color:var(--gas-b-dark)}
+.mix-label{color:var(--gold-dark)}
+.sym{text-align:center;font-size:22px;color:var(--text-muted);font-weight:300}
+.sym.arrow{font-size:26px;color:var(--gold-dark)}
+canvas.cyl-canvas{display:block;border-radius:6px}
+
+/* ── GAUGE (SVG) ── */
+svg.gauge{display:block}
+
+/* ── FORMULA BOX ── */
+.formula-strip{background:var(--navy);color:#fff;border-radius:var(--radius-md);padding:14px 24px;font-family:var(--font-mono);font-size:14px;text-align:center;margin-bottom:20px;letter-spacing:.03em;display:flex;align-items:center;justify-content:center;gap:24px;flex-wrap:wrap}
+.formula-strip .eq{color:var(--gold);font-size:15px;font-weight:600}
+.formula-strip .sep{color:rgba(255,255,255,.3);font-size:18px}
+
+/* ── READOUT CARDS ── */
+.readout-row{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:20px}
+.readout-card{background:var(--bg-card-alt);border:1px solid var(--border-light);border-radius:var(--radius-md);padding:16px;text-align:center}
+.readout-card.total{border-color:var(--gold);background:var(--gold-bg)}
+.r-title{font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--text-micro);margin-bottom:8px}
+.r-value{font-family:var(--font-mono);font-size:20px;font-weight:700;color:var(--navy)}
+.r-value.gas-a-val{color:var(--gas-a-dark)}
+.r-value.gas-b-val{color:var(--gas-b-dark)}
+.r-value.total-val{color:var(--gold-dark);font-size:24px}
+.r-sub{font-size:12px;color:var(--text-muted);margin-top:5px;font-family:var(--font-mono)}
+
+/* ── CONTROLS ── */
+.controls-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:0}
+.ctrl-card{background:var(--bg-card-alt);border:1px solid var(--border-light);border-radius:var(--radius-md);padding:16px 20px}
+.ctrl-title{font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--text-micro);margin-bottom:14px}
+.slider-row{display:flex;align-items:center;gap:10px;margin-bottom:10px}
+.slider-row label{font-size:13px;font-weight:500;width:100px;flex-shrink:0;font-family:var(--font-mono);color:var(--text-primary)}
+.slider-row input[type=range]{flex:1;-webkit-appearance:none;appearance:none;height:5px;border-radius:3px;background:var(--border);outline:none;cursor:pointer}
+.slider-row input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;height:16px;border-radius:50%;background:var(--navy);border:2px solid #fff;box-shadow:0 1px 3px rgba(0,0,0,.2)}
+.slider-val{font-family:var(--font-mono);font-size:13px;font-weight:600;color:var(--text-primary);width:50px;text-align:right}
+
+@media(max-width:680px){
+  .cyl-row{grid-template-columns:1fr;gap:8px}
+  .sym{transform:rotate(90deg)}
+  .controls-grid{grid-template-columns:1fr}
+  .readout-row{grid-template-columns:1fr}
+  .sim-header{padding:14px 18px}
+  .sim-header-title{font-size:20px}
+  .sim-badge{top:14px;right:18px}
+  .sim-body{padding:18px 12px}
+  .formula-strip{gap:12px;font-size:12px}
+}
+</style>
+</head>
+<body>
+
+<!-- ══ HEADER ══ -->
+<header class="sim-header">
+  <div class="sim-header-eyebrow">Nobel Prep · AP Chemistry · Chapter 5</div>
+  <h1 class="sim-header-title">Dalton's Law of Partial Pressures</h1>
+  <p class="sim-header-subtitle">Each gas contributes independently — total pressure is the sum of all partial pressures</p>
+  <span class="sim-badge">G-7</span>
+</header>
+
+<!-- ══ BODY ══ -->
+<main class="sim-body">
+
+  <!-- Concept card -->
+  <div class="card-info">
+    <strong>Dalton's Law:</strong> in a mixture of gases, each gas exerts pressure independently as if it were alone.
+    The total pressure equals the sum of partial pressures:
+    <strong>P<sub>total</sub> = P<sub>A</sub> + P<sub>B</sub> + …</strong>
+    Each partial pressure is found by: <strong>P<sub>i</sub> = χ<sub>i</sub> · P<sub>total</sub></strong>,
+    where χ<sub>i</sub> = n<sub>i</sub> / n<sub>total</sub> is the mole fraction.
+  </div>
+
+  <!-- Cylinder visualisation -->
+  <div class="card">
+    <div class="card-title">Gas Mixture Visualizer</div>
+    <div class="card-subtitle">Adjust moles, temperature, and volume — watch how partial pressures change</div>
+
+    <div class="cyl-row">
+      <!-- Gas A -->
+      <div class="cyl-card">
+        <span class="gas-label gas-a-label">Gas A</span>
+        <svg id="gauge-a" class="gauge" width="80" height="80" viewBox="0 0 90 90"></svg>
+        <canvas id="canvas-a" class="cyl-canvas" width="140" height="200"></canvas>
+      </div>
+
+      <div class="sym">+</div>
+
+      <!-- Gas B -->
+      <div class="cyl-card">
+        <span class="gas-label gas-b-label">Gas B</span>
+        <svg id="gauge-b" class="gauge" width="80" height="80" viewBox="0 0 90 90"></svg>
+        <canvas id="canvas-b" class="cyl-canvas" width="140" height="200"></canvas>
+      </div>
+
+      <div class="sym arrow">→</div>
+
+      <!-- Mixture -->
+      <div class="cyl-card mixture">
+        <span class="gas-label mix-label">Mixture</span>
+        <svg id="gauge-m" class="gauge" width="80" height="80" viewBox="0 0 90 90"></svg>
+        <canvas id="canvas-m" class="cyl-canvas" width="140" height="200"></canvas>
+      </div>
+    </div>
+
+    <!-- Formula strip -->
+    <div class="formula-strip">
+      <span class="eq">P<sub>total</sub> = P<sub>A</sub> + P<sub>B</sub></span>
+      <span class="sep">|</span>
+      <span>P<sub>i</sub> = χ<sub>i</sub> · P<sub>total</sub></span>
+      <span class="sep">|</span>
+      <span>χ<sub>i</sub> = n<sub>i</sub> / n<sub>total</sub></span>
+    </div>
+
+    <!-- Readouts -->
+    <div class="readout-row">
+      <div class="readout-card">
+        <div class="r-title">Gas A — P<sub>A</sub></div>
+        <div class="r-value gas-a-val" id="pa-val">—</div>
+        <div class="r-sub" id="xa-val">χ<sub>A</sub> = —</div>
+      </div>
+      <div class="readout-card">
+        <div class="r-title">Gas B — P<sub>B</sub></div>
+        <div class="r-value gas-b-val" id="pb-val">—</div>
+        <div class="r-sub" id="xb-val">χ<sub>B</sub> = —</div>
+      </div>
+      <div class="readout-card total">
+        <div class="r-title">P<sub>total</sub></div>
+        <div class="r-value total-val" id="pt-val">—</div>
+        <div class="r-sub" id="nt-val">n<sub>total</sub> = —</div>
+      </div>
+    </div>
+
+    <!-- Controls -->
+    <div class="controls-grid">
+      <div class="ctrl-card">
+        <div class="ctrl-title">Gas Parameters</div>
+        <div class="slider-row">
+          <label>n<sub>A</sub> (mol)</label>
+          <input type="range" id="sld-na" min="0.5" max="3" step="0.1" value="1.0">
+          <span class="slider-val" id="val-na">1.0</span>
+        </div>
+        <div class="slider-row">
+          <label>n<sub>B</sub> (mol)</label>
+          <input type="range" id="sld-nb" min="0.5" max="3" step="0.1" value="2.0">
+          <span class="slider-val" id="val-nb">2.0</span>
+        </div>
+      </div>
+      <div class="ctrl-card">
+        <div class="ctrl-title">Conditions</div>
+        <div class="slider-row">
+          <label>T (K)</label>
+          <input type="range" id="sld-T" min="200" max="500" step="10" value="300">
+          <span class="slider-val" id="val-T">300</span>
+        </div>
+        <div class="slider-row">
+          <label>V (L)</label>
+          <input type="range" id="sld-V" min="1" max="10" step="0.5" value="5.0">
+          <span class="slider-val" id="val-V">5.0</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</main>
+
+<script>
+/* ═══════════════════════════════════════════════════
+   G-7  Dalton's Law of Partial Pressures
+   Explore-only version — master template design
+═══════════════════════════════════════════════════ */
+
+const R = 0.08206; // L·atm/(mol·K)
+
+let state = { na:1.0, nb:2.0, T:300, V:5.0, PA:0, PB:0, Pt:0, xA:0, xB:0 };
+
+/* ── MOLECULE CLASS ── */
+class Molecule {
+  constructor(x, y, r, vx, vy, type) {
+    this.x=x; this.y=y; this.r=r; this.vx=vx; this.vy=vy; this.type=type;
+  }
+  update(W, H, spd) {
+    this.x+=this.vx*spd; this.y+=this.vy*spd;
+    if(this.x<this.r){this.x=this.r;this.vx=Math.abs(this.vx);}
+    if(this.x>W-this.r){this.x=W-this.r;this.vx=-Math.abs(this.vx);}
+    if(this.y<this.r){this.y=this.r;this.vy=Math.abs(this.vy);}
+    if(this.y>H-this.r){this.y=H-this.r;this.vy=-Math.abs(this.vy);}
+  }
+}
+
+function makeMols(n, W, H, type) {
+  const mols=[], count=Math.round(n*5);
+  for(let i=0;i<count;i++){
+    const r=type==='A'?7:10;
+    const x=r+Math.random()*(W-2*r), y=r+Math.random()*(H-2*r);
+    const a=Math.random()*Math.PI*2, sp=0.8+Math.random()*0.4;
+    mols.push(new Molecule(x,y,r,Math.cos(a)*sp,Math.sin(a)*sp,type));
+  }
+  return mols;
+}
+
+/* ── CYLINDER CANVAS ── */
+const CW=140, CH=200;
+
+function drawCylinder(ctx, mols, bgCol, spd) {
+  ctx.clearRect(0,0,CW,CH);
+  const x0=10, y0=10, cw=CW-20, ch=CH-20;
+
+  const grad=ctx.createLinearGradient(x0,0,x0+cw,0);
+  grad.addColorStop(0,'rgba(180,205,235,0.5)');
+  grad.addColorStop(0.3,bgCol);
+  grad.addColorStop(0.7,bgCol);
+  grad.addColorStop(1,'rgba(180,205,235,0.5)');
+
+  ctx.beginPath();
+  ctx.roundRect(x0,y0,cw,ch,[6,6,16,16]);
+  ctx.fillStyle=grad; ctx.fill();
+  ctx.strokeStyle='#8fa8c8'; ctx.lineWidth=2; ctx.stroke();
+
+  ctx.save();
+  ctx.beginPath();
+  ctx.roundRect(x0+1,y0+1,cw-2,ch-2,[5,5,15,15]);
+  ctx.clip();
+  for(const m of mols){ m.update(CW,CH,spd); drawMol(ctx,m); }
+  ctx.restore();
+
+  // Neck
+  const cx=CW/2;
+  ctx.beginPath(); ctx.rect(cx-10,0,20,14);
+  ctx.fillStyle='#b0bcd8'; ctx.fill();
+  ctx.strokeStyle='#8fa8c8'; ctx.lineWidth=1.5; ctx.stroke();
+}
+
+/* roundRect built-in used above */
+
+/* ── roundRect polyfill for older browsers ── */
+if (!CanvasRenderingContext2D.prototype.roundRect) {
+  CanvasRenderingContext2D.prototype.roundRect = function(x,y,w,h,r){
+    if(typeof r==='number') r=[r,r,r,r];
+    else if(r.length===1) r=[r[0],r[0],r[0],r[0]];
+    else if(r.length===2) r=[r[0],r[1],r[0],r[1]];
+    else if(r.length===3) r=[r[0],r[1],r[2],r[1]];
+    this.moveTo(x+r[0],y);
+    this.lineTo(x+w-r[1],y); this.arcTo(x+w,y,x+w,y+r[1],r[1]);
+    this.lineTo(x+w,y+h-r[2]); this.arcTo(x+w,y+h,x+w-r[2],y+h,r[2]);
+    this.lineTo(x+r[3],y+h); this.arcTo(x,y+h,x,y+h-r[3],r[3]);
+    this.lineTo(x,y+r[0]); this.arcTo(x,y,x+r[0],y,r[0]);
+    this.closePath();
+    return this;
+  };
+}
+
+function drawMol(ctx, m) {
+  if(m.type==='A'){
+    const a=Math.atan2(m.vy,m.vx), dx=Math.cos(a)*5, dy=Math.sin(a)*5;
+    [[m.x-dx,m.y-dy,'#7dc4e8','#4a9ab8'],[m.x+dx,m.y+dy,'#5aaad0','#4a9ab8']].forEach(([cx,cy,f,s])=>{
+      ctx.beginPath(); ctx.arc(cx,cy,m.r*.75,0,Math.PI*2);
+      ctx.fillStyle=f; ctx.fill(); ctx.strokeStyle=s; ctx.lineWidth=1; ctx.stroke();
+    });
+    ctx.beginPath(); ctx.moveTo(m.x-dx,m.y-dy); ctx.lineTo(m.x+dx,m.y+dy);
+    ctx.strokeStyle='#4a9ab8'; ctx.lineWidth=1.5; ctx.stroke();
+  } else {
+    const g=ctx.createRadialGradient(m.x-m.r*.3,m.y-m.r*.3,m.r*.1,m.x,m.y,m.r);
+    g.addColorStop(0,'#7090e8'); g.addColorStop(1,'#1e3a8a');
+    ctx.beginPath(); ctx.arc(m.x,m.y,m.r,0,Math.PI*2);
+    ctx.fillStyle=g; ctx.fill();
+    ctx.strokeStyle='#1a2a70'; ctx.lineWidth=1; ctx.stroke();
+  }
+}
+
+/* ── GAUGE ── */
+function drawGauge(svgEl, pressure, maxP) {
+  const cx=45,cy=48,r=34;
+  const minA=Math.PI*.75, maxA=Math.PI*2.25;
+  const frac=Math.min(pressure/maxP,1);
+  const angle=minA+frac*(maxA-minA);
+  const col=frac<.5?'#27ae60':frac<.8?'#c9a84c':'#e05252';
+  svgEl.innerHTML=`
+    <circle cx="${cx}" cy="${cy}" r="${r}" fill="#f0f3fa" stroke="#c5cfe0" stroke-width="2"/>
+    <path d="${arc(cx,cy,r-4,minA,maxA)}" fill="none" stroke="#dde3f0" stroke-width="6" stroke-linecap="round"/>
+    <path d="${arc(cx,cy,r-4,minA,angle)}" fill="none" stroke="${col}" stroke-width="6" stroke-linecap="round"/>
+    ${ticks(cx,cy,r)}
+    <line x1="${cx}" y1="${cy}" x2="${cx+(r-10)*Math.cos(angle)}" y2="${cy+(r-10)*Math.sin(angle)}"
+          stroke="#e05252" stroke-width="2.5" stroke-linecap="round"/>
+    <circle cx="${cx}" cy="${cy}" r="4" fill="#1a2744"/>
+    <text x="${cx}" y="${cy+20}" text-anchor="middle" font-size="9"
+          font-family="JetBrains Mono,monospace" fill="#6b7c93">${pressure.toFixed(2)} atm</text>`;
+}
+
+function arc(cx,cy,r,a1,a2){
+  const x1=cx+r*Math.cos(a1),y1=cy+r*Math.sin(a1);
+  const x2=cx+r*Math.cos(a2),y2=cy+r*Math.sin(a2);
+  return `M ${x1} ${y1} A ${r} ${r} 0 ${a2-a1>Math.PI?1:0} 1 ${x2} ${y2}`;
+}
+function ticks(cx,cy,r){
+  let s='';
+  for(let i=0;i<=8;i++){
+    const a=Math.PI*.75+i*(Math.PI*1.5/8);
+    const inn=r-8, out=r-3;
+    s+=`<line x1="${cx+inn*Math.cos(a)}" y1="${cy+inn*Math.sin(a)}"
+              x2="${cx+out*Math.cos(a)}" y2="${cy+out*Math.sin(a)}"
+              stroke="#8fa8c8" stroke-width="${i%4===0?2:1}"/>`;
+  }
+  return s;
+}
+
+/* ── MOLECULES STATE ── */
+let molsA=[], molsB=[], molsM=[];
+
+function rebuildMols(){
+  molsA=makeMols(state.na,CW,CH,'A');
+  molsB=makeMols(state.nb,CW,CH,'B');
+  molsM=[...makeMols(state.na,CW,CH,'A'),...makeMols(state.nb,CW,CH,'B')];
+}
+
+/* ── PHYSICS ── */
+function calcPressures(){
+  state.PA=(state.na*R*state.T)/state.V;
+  state.PB=(state.nb*R*state.T)/state.V;
+  state.Pt=state.PA+state.PB;
+  const nt=state.na+state.nb;
+  state.xA=state.na/nt;
+  state.xB=state.nb/nt;
+}
+
+/* ── UPDATE UI ── */
+function updateReadouts(){
+  document.getElementById('pa-val').textContent=state.PA.toFixed(3)+' atm';
+  document.getElementById('pb-val').textContent=state.PB.toFixed(3)+' atm';
+  document.getElementById('pt-val').textContent=state.Pt.toFixed(3)+' atm';
+  document.getElementById('xa-val').innerHTML=`χ<sub>A</sub> = ${state.xA.toFixed(3)}`;
+  document.getElementById('xb-val').innerHTML=`χ<sub>B</sub> = ${state.xB.toFixed(3)}`;
+  document.getElementById('nt-val').innerHTML=`n<sub>total</sub> = ${(state.na+state.nb).toFixed(1)} mol`;
+  const maxP=Math.max(3,state.Pt*1.2);
+  drawGauge(document.getElementById('gauge-a'),state.PA,maxP);
+  drawGauge(document.getElementById('gauge-b'),state.PB,maxP);
+  drawGauge(document.getElementById('gauge-m'),state.Pt,maxP);
+}
+
+/* ── SLIDERS ── */
+function wireSlider(id,valId,key,rebuild){
+  document.getElementById(id).addEventListener('input',e=>{
+    state[key]=parseFloat(e.target.value);
+    document.getElementById(valId).textContent=e.target.value;
+    calcPressures(); updateReadouts();
+    if(rebuild) rebuildMols();
+  });
+}
+wireSlider('sld-na','val-na','na',true);
+wireSlider('sld-nb','val-nb','nb',true);
+wireSlider('sld-T','val-T','T',false);
+wireSlider('sld-V','val-V','V',false);
+
+/* ── ANIMATION ── */
+const ctxA=document.getElementById('canvas-a').getContext('2d');
+const ctxB=document.getElementById('canvas-b').getContext('2d');
+const ctxM=document.getElementById('canvas-m').getContext('2d');
+
+function getSpd(){ return 0.5+(state.T-200)/300*1.5; }
+
+function animate(){
+  const sp=getSpd();
+  drawCylinder(ctxA,molsA,'rgba(220,238,252,0.7)',sp);
+  drawCylinder(ctxB,molsB,'rgba(200,215,248,0.7)',sp);
+  drawCylinder(ctxM,molsM,'rgba(230,240,255,0.7)',sp);
+  requestAnimationFrame(animate);
+}
+
+/* ── INIT ── */
+calcPressures();
+updateReadouts();
+rebuildMols();
+animate();
+</script>
+</body>
+</html>
