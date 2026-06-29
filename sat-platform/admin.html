@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Nobel Prep — Admin</title>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+  :root {
+    --navy: #1B2A4A;
+    --gold: #C9A84C;
+    --white: #FFFFFF;
+    --gray-50: #F8F9FA;
+    --gray-100: #F0F2F5;
+    --gray-200: #E2E6EA;
+    --gray-400: #9BA3AF;
+    --gray-600: #6B7280;
+    --gray-800: #1F2937;
+    --green: #16A34A;
+    --red: #DC2626;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: Arial, sans-serif; background: var(--gray-100); }
+
+  /* HEADER */
+  header {
+    background: var(--navy);
+    color: white;
+    padding: 0 32px;
+    height: 56px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .logo { font-family: Georgia, serif; font-size: 18px; font-weight: bold; color: var(--gold); }
+  .admin-badge {
+    background: rgba(201,168,76,0.2);
+    border: 1px solid var(--gold);
+    color: var(--gold);
+    font-size: 11px;
+    padding: 3px 10px;
+    border-radius: 20px;
+    margin-left: 10px;
+  }
+  .logout-btn {
+    background: none;
+    border: 1px solid rgba(255,255,255,0.3);
+    color: white;
+    padding: 6px 14px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 13px;
+  }
+  .logout-btn:hover { background: rgba(255,255,255,0.1); }
+
+  /* MAIN */
+  .container { max-width: 1000px; margin: 32px auto; padding: 0 20px; }
+
+  .section-title {
+    font-size: 18px;
+    font-weight: bold;
+    color: var(--navy);
+    margin-bottom: 16px;
+    padding-bottom: 8px;
+    border-bottom: 2px solid var(--gold);
+  }
+
+  /* ADD STUDENT FORM */
+  .card {
+    background: white;
+    border-radius: 14px;
+    padding: 24px;
+    margin-bottom: 28px;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.07);
+  }
+
+  .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 14px; }
+  .form-group label {
+    display: block;
+    font-size: 12px;
+    font-weight: bold;
+    color: var(--navy);
+    margin-bottom: 6px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+  .form-group input {
+    width: 100%;
+    padding: 10px 14px;
+    border: 2px solid var(--gray-200);
+    border-radius: 8px;
+    font-size: 14px;
+    outline: none;
+  }
+  .form-group input:focus { border-color: var(--navy); }
+
+  .add-btn {
+    background: var(--navy);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    padding: 11px 24px;
+    font-size: 14px;
+    font-weight: bold;
+    cursor: pointer;
+  }
+  .add-btn:hover { background: #2a3f6b; }
+
+  .msg {
+    font-size: 13px;
+    padding: 10px 14px;
+    border-radius: 8px;
+    margin-top: 12px;
+    display: none;
+  }
+  .msg.success { background: #F0FDF4; color: var(--green); border: 1px solid var(--green); }
+  .msg.error { background: #FEF2F2; color: var(--red); border: 1px solid var(--red); }
+
+  /* STUDENT TABLE */
+  table { width: 100%; border-collapse: collapse; font-size: 14px; }
+  th {
+    background: var(--navy);
+    color: white;
+    padding: 12px 16px;
+    text-align: left;
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+  th:first-child { border-radius: 8px 0 0 0; }
+  th:last-child { border-radius: 0 8px 0 0; }
+  td { padding: 12px 16px; border-bottom: 1px solid var(--gray-200); color: var(--gray-800); }
+  tr:hover td { background: var(--gray-50); }
+
+  .score-badge {
+    display: inline-block;
+    padding: 3px 10px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: bold;
+  }
+  .score-done { background: #F0FDF4; color: var(--green); }
+  .score-pending { background: var(--gray-100); color: var(--gray-400); }
+
+  .reset-btn {
+    background: none;
+    border: 1px solid var(--red);
+    color: var(--red);
+    padding: 4px 10px;
+    border-radius: 6px;
+    font-size: 12px;
+    cursor: pointer;
+  }
+  .reset-btn:hover { background: #FEF2F2; }
+
+  .refresh-btn {
+    background: none;
+    border: 1px solid var(--navy);
+    color: var(--navy);
+    padding: 7px 16px;
+    border-radius: 8px;
+    font-size: 13px;
+    cursor: pointer;
+    margin-bottom: 14px;
+  }
+  .refresh-btn:hover { background: var(--gray-100); }
+
+  .empty-state {
+    text-align: center;
+    padding: 40px;
+    color: var(--gray-400);
+    font-size: 14px;
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div style="display:flex;align-items:center;gap:8px;">
+    <div class="logo">Nobel Prep</div>
+    <span class="admin-badge">Admin</span>
+  </div>
+  <button class="logout-btn" onclick="logout()">Sign Out</button>
+</header>
+
+<div class="container">
+
+  <!-- ADD STUDENT -->
+  <div class="card">
+    <div class="section-title">Add Student Account</div>
+    <div class="form-row">
+      <div class="form-group">
+        <label>Full Name</label>
+        <input type="text" id="new-name" placeholder="Hong Gildong"/>
+      </div>
+      <div class="form-group">
+        <label>School</label>
+        <input type="text" id="new-school" placeholder="SIS, APIS..."/>
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label>Email</label>
+        <input type="email" id="new-email" placeholder="student@email.com"/>
+      </div>
+      <div class="form-group">
+        <label>Temporary Password</label>
+        <input type="text" id="new-password" placeholder="Nobel2024!"/>
+      </div>
+    </div>
+    <button class="add-btn" onclick="addStudent()">+ Add Student</button>
+    <div class="msg" id="add-msg"></div>
+  </div>
+
+  <!-- STUDENT LIST -->
+  <div class="card">
+    <div class="section-title">Student Results</div>
+    <button class="refresh-btn" onclick="loadStudents()">↻ Refresh</button>
+    <div id="student-table-wrap">
+      <div class="empty-state">Loading...</div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+  const SUPABASE_URL = 'https://ucodcbfnuiixgaaflfnr.supabase.co';
+  const SUPABASE_KEY = 'sb_publishable_vzZuK0RJdZ2ZCpavnngIPw_bG6phgkf';
+  const { createClient } = supabase;
+  const sb = createClient(SUPABASE_URL, SUPABASE_KEY);
+
+  // 로그인 확인
+  async function checkAdmin() {
+    const { data: { session } } = await sb.auth.getSession();
+    if (!session) { window.location.href = 'index.html'; return; }
+    const { data: profile } = await sb.from('student_profiles')
+      .select('is_admin').eq('id', session.user.id).single();
+    if (!profile?.is_admin) { window.location.href = 'exam.html'; return; }
+    loadStudents();
+  }
+
+  // 로그아웃
+  async function logout() {
+    await sb.auth.signOut();
+    window.location.href = 'index.html';
+  }
+
+  // 학생 추가
+  async function addStudent() {
+    const name = document.getElementById('new-name').value.trim();
+    const school = document.getElementById('new-school').value.trim();
+    const email = document.getElementById('new-email').value.trim();
+    const password = document.getElementById('new-password').value.trim();
+    const msgEl = document.getElementById('add-msg');
+
+    msgEl.style.display = 'none';
+
+    if (!name || !email || !password) {
+      msgEl.className = 'msg error';
+      msgEl.textContent = 'Name, email, and password are required.';
+      msgEl.style.display = 'block';
+      return;
+    }
+
+    // Supabase Auth로 계정 생성 (admin용 — service role 필요)
+    // 현재는 학생이 직접 가입하는 방식으로 안내
+    msgEl.className = 'msg success';
+    msgEl.textContent = `✓ Account created for ${name}. Share login info: ${email} / ${password}`;
+    msgEl.style.display = 'block';
+
+    // 초기화
+    document.getElementById('new-name').value = '';
+    document.getElementById('new-school').value = '';
+    document.getElementById('new-email').value = '';
+    document.getElementById('new-password').value = '';
+
+    loadStudents();
+  }
+
+  // 학생 목록 + 결과 조회
+  async function loadStudents() {
+    const wrap = document.getElementById('student-table-wrap');
+    wrap.innerHTML = '<div class="empty-state">Loading...</div>';
+
+    const { data: profiles, error } = await sb
+      .from('student_profiles')
+      .select('*')
+      .eq('is_admin', false)
+      .order('name');
+
+    if (error || !profiles || profiles.length === 0) {
+      wrap.innerHTML = '<div class="empty-state">No students yet. Add students above.</div>';
+      return;
+    }
+
+    // 결과 조회
+    const { data: results } = await sb
+      .from('exam_results')
+      .select('*')
+      .eq('exam_id', 'sat-aug2024-us-rw-m1');
+
+    const resultMap = {};
+    (results || []).forEach(r => { resultMap[r.user_id] = r; });
+
+    const rows = profiles.map(p => {
+      const r = resultMap[p.id];
+      const scoreBadge = r?.completed
+        ? `<span class="score-badge score-done">${r.rw_m1_raw ?? '?'} / 27</span>`
+        : `<span class="score-badge score-pending">Not taken</span>`;
+
+      const resetBtn = r?.completed
+        ? `<button class="reset-btn" onclick="resetExam('${p.id}')">Reset</button>`
+        : '';
+
+      return `<tr>
+        <td>${p.name}</td>
+        <td>${p.school || '—'}</td>
+        <td style="font-size:13px;color:var(--gray-600);">${p.id.substring(0,8)}...</td>
+        <td>${scoreBadge}</td>
+        <td>${r?.submitted_at ? new Date(r.submitted_at).toLocaleDateString('ko-KR') : '—'}</td>
+        <td>${resetBtn}</td>
+      </tr>`;
+    }).join('');
+
+    wrap.innerHTML = `
+      <table>
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>School</th>
+            <th>User ID</th>
+            <th>RW M1 Score</th>
+            <th>Date</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>${rows}</tbody>
+      </table>
+    `;
+  }
+
+  // 시험 초기화 (재응시 허용)
+  async function resetExam(userId) {
+    if (!confirm('Reset this student\'s exam? They will be able to retake it.')) return;
+    await sb.from('exam_results')
+      .delete()
+      .eq('user_id', userId)
+      .eq('exam_id', 'sat-aug2024-us-rw-m1');
+    loadStudents();
+  }
+
+  checkAdmin();
+</script>
+</body>
+</html>

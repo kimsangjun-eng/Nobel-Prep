@@ -1,0 +1,1182 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Nobel Prep — SAT RW Module 1</title>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+  :root {
+    --navy: #1B2A4A;
+    --gold: #C9A84C;
+    --gold-light: #E8C96A;
+    --white: #FFFFFF;
+    --gray-50: #F8F9FA;
+    --gray-100: #F0F2F5;
+    --gray-200: #E2E6EA;
+    --gray-400: #9BA3AF;
+    --gray-600: #6B7280;
+    --gray-800: #1F2937;
+    --green: #16A34A;
+    --red: #DC2626;
+    --orange: #EA580C;
+    --blue: #2563EB;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Georgia', serif;
+    background: var(--gray-100);
+    color: var(--gray-800);
+    min-height: 100vh;
+  }
+
+  /* ── HEADER ── */
+  #header {
+    background: var(--navy);
+    color: var(--white);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 24px;
+    height: 56px;
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 100;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+  }
+
+  .header-left {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .logo {
+    font-family: 'Georgia', serif;
+    font-size: 18px;
+    font-weight: bold;
+    color: var(--gold);
+    letter-spacing: 0.5px;
+  }
+
+  .module-badge {
+    background: rgba(201,168,76,0.2);
+    border: 1px solid var(--gold);
+    color: var(--gold-light);
+    font-size: 12px;
+    font-family: Arial, sans-serif;
+    padding: 3px 10px;
+    border-radius: 20px;
+    letter-spacing: 0.5px;
+  }
+
+  /* ── TIMER ── */
+  #timer-wrap {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  #timer-label {
+    font-family: Arial, sans-serif;
+    font-size: 10px;
+    color: var(--gray-400);
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+  }
+
+  #timer-display {
+    font-family: 'Courier New', monospace;
+    font-size: 22px;
+    font-weight: bold;
+    color: var(--white);
+    letter-spacing: 2px;
+    transition: color 0.3s;
+  }
+
+  #timer-display.warn { color: #FFA500; }
+  #timer-display.danger { color: #FF4444; animation: blink 1s infinite; }
+
+  @keyframes blink {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.4; }
+  }
+
+  .header-right {
+    font-family: Arial, sans-serif;
+    font-size: 13px;
+    color: var(--gray-400);
+  }
+
+  /* ── MAIN LAYOUT ── */
+  #main {
+    margin-top: 56px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    height: calc(100vh - 56px - 70px);
+    overflow: hidden;
+  }
+
+  /* ── PASSAGE PANEL ── */
+  #passage-panel {
+    background: var(--white);
+    border-right: 2px solid var(--gray-200);
+    overflow-y: auto;
+    padding: 32px 28px;
+  }
+
+  .passage-source {
+    font-family: Arial, sans-serif;
+    font-size: 12px;
+    color: var(--gray-600);
+    font-style: italic;
+    margin-bottom: 14px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid var(--gray-200);
+  }
+
+  .passage-text {
+    font-size: 15px;
+    line-height: 1.85;
+    color: var(--gray-800);
+  }
+
+  .passage-text p { margin-bottom: 14px; }
+
+  .blank {
+    display: inline-block;
+    width: 80px;
+    border-bottom: 2px solid var(--navy);
+    margin: 0 4px;
+    vertical-align: bottom;
+  }
+
+  /* Table in passage */
+  .passage-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 16px 0;
+    font-family: 'Courier New', monospace;
+    font-size: 13px;
+  }
+  .passage-table th, .passage-table td {
+    border: 1px solid var(--gray-400);
+    padding: 7px 12px;
+    text-align: center;
+  }
+  .passage-table th {
+    background: var(--gray-100);
+    font-weight: bold;
+    color: var(--navy);
+  }
+
+  /* Notes format */
+  .notes-list {
+    margin: 10px 0;
+    padding-left: 0;
+    list-style: none;
+  }
+  .notes-list li {
+    font-size: 15px;
+    line-height: 1.7;
+    padding: 2px 0;
+    color: var(--gray-800);
+  }
+  .notes-list li::before {
+    content: "• ";
+    color: var(--navy);
+    font-weight: bold;
+  }
+
+  /* Graph placeholder */
+  .graph-placeholder {
+    background: var(--gray-50);
+    border: 2px solid var(--gray-200);
+    border-radius: 8px;
+    padding: 20px;
+    margin: 12px 0;
+    text-align: center;
+  }
+  .graph-svg { width: 100%; max-width: 340px; }
+
+  /* ── QUESTION PANEL ── */
+  #question-panel {
+    background: var(--gray-50);
+    overflow-y: auto;
+    padding: 28px 28px 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+
+  .q-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 4px;
+  }
+
+  .q-number {
+    background: var(--navy);
+    color: var(--white);
+    font-family: Arial, sans-serif;
+    font-size: 13px;
+    font-weight: bold;
+    width: 32px; height: 32px;
+    border-radius: 6px;
+    display: flex; align-items: center; justify-content: center;
+  }
+
+  .q-flag-btn {
+    background: none;
+    border: 1.5px solid var(--gray-400);
+    border-radius: 6px;
+    padding: 5px 10px;
+    font-family: Arial, sans-serif;
+    font-size: 12px;
+    color: var(--gray-600);
+    cursor: pointer;
+    display: flex; align-items: center; gap: 5px;
+    transition: all 0.2s;
+  }
+  .q-flag-btn:hover { border-color: var(--gold); color: var(--gold); }
+  .q-flag-btn.flagged {
+    background: #FFF8E6;
+    border-color: var(--gold);
+    color: var(--gold);
+  }
+
+  .q-stem {
+    font-size: 15px;
+    line-height: 1.6;
+    color: var(--gray-800);
+    margin-bottom: 16px;
+  }
+
+  .choice-list { display: flex; flex-direction: column; gap: 10px; }
+
+  .choice-btn {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    background: var(--white);
+    border: 2px solid var(--gray-200);
+    border-radius: 10px;
+    padding: 12px 16px;
+    cursor: pointer;
+    font-family: 'Georgia', serif;
+    font-size: 14.5px;
+    line-height: 1.55;
+    text-align: left;
+    transition: all 0.15s;
+    color: var(--gray-800);
+  }
+  .choice-btn:hover { border-color: var(--navy); background: #F0F4FF; }
+  .choice-btn.selected { border-color: var(--navy); background: #EEF2FF; }
+  .choice-btn.correct { border-color: var(--green); background: #F0FDF4; }
+  .choice-btn.wrong { border-color: var(--red); background: #FEF2F2; }
+
+  .choice-label {
+    min-width: 26px; height: 26px;
+    border-radius: 50%;
+    background: var(--gray-200);
+    color: var(--gray-600);
+    font-family: Arial, sans-serif;
+    font-size: 13px;
+    font-weight: bold;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+    transition: all 0.15s;
+  }
+  .selected .choice-label { background: var(--navy); color: var(--white); }
+  .correct .choice-label { background: var(--green); color: var(--white); }
+  .wrong .choice-label { background: var(--red); color: var(--white); }
+
+  /* ── BOTTOM NAV ── */
+  #bottom-nav {
+    position: fixed;
+    bottom: 0; left: 0; right: 0;
+    height: 70px;
+    background: var(--white);
+    border-top: 2px solid var(--gray-200);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 24px;
+    z-index: 100;
+  }
+
+  .nav-btn {
+    background: var(--navy);
+    color: var(--white);
+    border: none;
+    border-radius: 8px;
+    padding: 10px 22px;
+    font-family: Arial, sans-serif;
+    font-size: 14px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background 0.2s;
+  }
+  .nav-btn:hover { background: #2a3f6b; }
+  .nav-btn:disabled { background: var(--gray-200); color: var(--gray-400); cursor: not-allowed; }
+
+  /* Question number dots */
+  #q-dots {
+    display: flex;
+    gap: 5px;
+    flex-wrap: wrap;
+    justify-content: center;
+    max-width: 600px;
+  }
+
+  .q-dot {
+    width: 30px; height: 30px;
+    border-radius: 6px;
+    border: 2px solid var(--gray-200);
+    background: var(--white);
+    font-family: Arial, sans-serif;
+    font-size: 12px;
+    font-weight: bold;
+    color: var(--gray-600);
+    cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    transition: all 0.15s;
+  }
+  .q-dot:hover { border-color: var(--navy); }
+  .q-dot.current { border-color: var(--navy); background: var(--navy); color: var(--white); }
+  .q-dot.answered { border-color: var(--navy); background: #EEF2FF; color: var(--navy); }
+  .q-dot.flagged-dot { border-color: var(--gold); background: #FFF8E6; color: var(--gold); }
+
+  /* Submit button */
+  #submit-btn {
+    background: var(--gold);
+    color: var(--navy);
+    border: none;
+    border-radius: 8px;
+    padding: 10px 22px;
+    font-family: Arial, sans-serif;
+    font-size: 14px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background 0.2s;
+  }
+  #submit-btn:hover { background: var(--gold-light); }
+
+  /* ── RESULT SCREEN ── */
+  #result-screen {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: var(--gray-100);
+    overflow-y: auto;
+    z-index: 200;
+  }
+
+  .result-inner {
+    max-width: 700px;
+    margin: 40px auto;
+    padding: 0 20px 60px;
+  }
+
+  .result-header {
+    background: var(--navy);
+    color: var(--white);
+    border-radius: 16px;
+    padding: 32px;
+    text-align: center;
+    margin-bottom: 24px;
+  }
+
+  .result-logo {
+    font-family: 'Georgia', serif;
+    font-size: 22px;
+    color: var(--gold);
+    font-weight: bold;
+    margin-bottom: 6px;
+  }
+
+  .result-module {
+    font-family: Arial, sans-serif;
+    font-size: 13px;
+    color: var(--gray-400);
+    margin-bottom: 24px;
+  }
+
+  .score-row {
+    display: flex;
+    justify-content: center;
+    gap: 40px;
+    margin-bottom: 8px;
+  }
+
+  .score-box {
+    text-align: center;
+  }
+
+  .score-num {
+    font-family: 'Georgia', serif;
+    font-size: 48px;
+    font-weight: bold;
+    color: var(--gold);
+    line-height: 1;
+  }
+
+  .score-label {
+    font-family: Arial, sans-serif;
+    font-size: 12px;
+    color: var(--gray-400);
+    margin-top: 4px;
+  }
+
+  .disclaimer {
+    font-family: Arial, sans-serif;
+    font-size: 11px;
+    color: var(--gray-400);
+    margin-top: 16px;
+    font-style: italic;
+  }
+
+  /* Answer review */
+  .review-title {
+    font-family: Arial, sans-serif;
+    font-size: 14px;
+    font-weight: bold;
+    color: var(--navy);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 12px;
+  }
+
+  .review-item {
+    background: var(--white);
+    border-radius: 10px;
+    border: 2px solid var(--gray-200);
+    padding: 16px 20px;
+    margin-bottom: 10px;
+  }
+
+  .review-item.correct { border-color: var(--green); }
+  .review-item.wrong { border-color: var(--red); }
+  .review-item.unanswered { border-color: var(--gray-400); }
+
+  .review-q-num {
+    font-family: Arial, sans-serif;
+    font-size: 12px;
+    font-weight: bold;
+    color: var(--gray-600);
+    margin-bottom: 6px;
+  }
+
+  .review-verdict {
+    font-family: Arial, sans-serif;
+    font-size: 13px;
+    font-weight: bold;
+    margin-bottom: 4px;
+  }
+
+  .correct .review-verdict { color: var(--green); }
+  .wrong .review-verdict { color: var(--red); }
+  .unanswered .review-verdict { color: var(--gray-600); }
+
+  .review-answer {
+    font-family: Arial, sans-serif;
+    font-size: 13px;
+    color: var(--gray-600);
+  }
+
+  #print-btn {
+    display: block;
+    width: 100%;
+    margin-top: 24px;
+    padding: 14px;
+    background: var(--navy);
+    color: var(--white);
+    border: none;
+    border-radius: 10px;
+    font-family: Arial, sans-serif;
+    font-size: 15px;
+    font-weight: bold;
+    cursor: pointer;
+  }
+  #print-btn:hover { background: #2a3f6b; }
+
+  @media print {
+    #print-btn { display: none; }
+  }
+
+  /* Progress bar */
+  #progress-bar {
+    height: 3px;
+    background: var(--gray-200);
+    position: fixed;
+    top: 56px; left: 0; right: 0;
+    z-index: 99;
+  }
+  #progress-fill {
+    height: 100%;
+    background: var(--gold);
+    transition: width 0.3s;
+  }
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<div id="header">
+  <div class="header-left">
+    <div class="logo">Nobel Prep</div>
+    <div class="module-badge">Reading & Writing · Module 1</div>
+  </div>
+  <div id="timer-wrap">
+    <div id="timer-label">Time Remaining</div>
+    <div id="timer-display">32:00</div>
+  </div>
+  <div class="header-right" id="q-counter">Question 1 of 27</div>
+</div>
+
+<!-- PROGRESS BAR -->
+<div id="progress-bar"><div id="progress-fill" style="width:3.7%"></div></div>
+
+<!-- MAIN CONTENT -->
+<div id="main">
+  <div id="passage-panel"></div>
+  <div id="question-panel"></div>
+</div>
+
+<!-- BOTTOM NAV -->
+<div id="bottom-nav">
+  <button class="nav-btn" id="prev-btn" onclick="navigate(-1)" disabled>← Back</button>
+  <div id="q-dots"></div>
+  <div style="display:flex;gap:10px;align-items:center;">
+    <button class="nav-btn" id="next-btn" onclick="navigate(1)">Next →</button>
+    <button id="submit-btn" onclick="confirmSubmit()">Submit Module</button>
+  </div>
+</div>
+
+<!-- RESULT SCREEN -->
+<div id="result-screen">
+  <div class="result-inner">
+    <div class="result-header">
+      <div class="result-logo">Nobel Prep</div>
+      <div class="result-module">SAT Practice · Reading & Writing Module 1</div>
+      <div class="score-row">
+        <div class="score-box">
+          <div class="score-num" id="res-raw">—</div>
+          <div class="score-label">Raw Score (out of 27)</div>
+        </div>
+        <div class="score-box">
+          <div class="score-num" id="res-pct">—</div>
+          <div class="score-label">Accuracy</div>
+        </div>
+      </div>
+      <div class="disclaimer">※ This is Module 1 only. Full RW score calculated after completing Module 2.</div>
+    </div>
+
+    <div class="review-title">Answer Review</div>
+    <div id="review-list"></div>
+    <button id="print-btn" onclick="window.print()">🖨 Print Result / Save as PDF</button>
+  </div>
+</div>
+
+<script>
+// ── SUPABASE 초기화 ──
+const SUPABASE_URL = 'https://ucodcbfnuiixgaaflfnr.supabase.co';
+const SUPABASE_KEY = 'sb_publishable_vzZuK0RJdZ2ZCpavnngIPw_bG6phgkf';
+const { createClient } = supabase;
+const sb = createClient(SUPABASE_URL, SUPABASE_KEY);
+const EXAM_ID = 'sat-aug2024-us-rw-m1';
+let currentUser = null;
+
+// 로그인 확인 + 재풀기 차단
+async function initExam() {
+  const { data: { session } } = await sb.auth.getSession();
+  if (!session) {
+    window.location.href = 'index.html';
+    return;
+  }
+  currentUser = session.user;
+
+  // 이미 제출한 경우 결과 페이지로
+  const { data: existing } = await sb
+    .from('exam_results')
+    .select('completed, rw_m1_raw, answers, submitted_at')
+    .eq('user_id', currentUser.id)
+    .eq('exam_id', EXAM_ID)
+    .single();
+
+  if (existing?.completed) {
+    // 이미 완료 → 결과만 보여주기
+    userAnswers = existing.answers || {};
+    submitted = true;
+    showResultFromDB(existing);
+    return;
+  }
+
+  // 정상 시작
+  renderQuestion(0);
+  startTimer();
+}
+
+function showResultFromDB(data) {
+  submitted = true;
+  clearInterval(timerInterval);
+  const correct = data.rw_m1_raw ?? 0;
+  const pct = Math.round(correct / 27 * 100);
+  document.getElementById('res-raw').textContent = `${correct}/27`;
+  document.getElementById('res-pct').textContent = `${pct}%`;
+  const reviewHTML = QUESTIONS.map(q => {
+    const ua = (data.answers || {})[q.id];
+    const ca = ANSWER_KEY[q.id];
+    let cls, verdict, detail;
+    if (!ua) { cls='unanswered'; verdict='— Not Answered'; detail=`Correct Answer: ${ca}`; }
+    else if (ua===ca) { cls='correct'; verdict='✓ Correct'; detail=`Your Answer: ${ua}`; }
+    else { cls='wrong'; verdict='✗ Incorrect'; detail=`Your Answer: ${ua} | Correct Answer: ${ca}`; }
+    return `<div class="review-item ${cls}">
+      <div class="review-q-num">Question ${q.id}</div>
+      <div class="review-verdict">${verdict}</div>
+      <div class="review-answer">${detail}</div>
+    </div>`;
+  }).join('');
+  document.getElementById('review-list').innerHTML = reviewHTML;
+  document.getElementById('result-screen').style.display = 'block';
+
+  const d = new Date(data.submitted_at);
+  document.getElementById('res-raw').closest('.result-header').insertAdjacentHTML('beforeend',
+    `<p style="font-size:12px;color:var(--gray-400);margin-top:8px;">
+      ※ Already submitted on ${d.toLocaleDateString('ko-KR')}. Retaking is not allowed.
+    </p>`
+  );
+}
+
+// ── ANSWER KEY (SHA-256 will be used in production; plain for demo) ──
+const ANSWER_KEY = {
+  1:'B', 2:'B', 3:'A', 4:'B', 5:'D',
+  6:'B', 7:'B', 8:'D', 9:'C', 10:'B',
+  11:'C', 12:'C', 13:'C', 14:'A', 15:'D',
+  16:'B', 17:'A', 18:'D', 19:'C', 20:'A',
+  21:'B', 22:'D', 23:'D', 24:'D', 25:'A',
+  26:'A', 27:'A'
+};
+
+// ── QUESTION DATA ──
+const QUESTIONS = [
+  {
+    id: 1,
+    passage: `<p class="passage-source">The following text is adapted from Mary Seacole's 1857 autobiography <em>Wonderful Adventures of Mrs. Seacole in Many Lands</em>.</p>
+    <p class="passage-text">That journey across the Isthmus [of Panama], insignificant in distance as it was, was by no means an easy one. It seemed as if nature had determined to throw every <strong>conceivable</strong> obstacle in the way of those who should seek to join the two great oceans of the world.</p>`,
+    stem: `As used in the text, what does the word "conceivable" most nearly mean?`,
+    choices: { A:'Visible', B:'Possible', C:'Regular', D:'Open' }
+  },
+  {
+    id: 2,
+    passage: `<p class="passage-text">In a 2018 article celebrating films depicting the Black experience, critics for the <em>New York Times</em> __________ William Greaves's 1968 film <em>Symbiopsychotaxiplasm, Take One</em> and Spike Lee's 1992 film <em>Malcolm X</em>, praising the former as "a vital artifact of its time" and the latter as "electrifying."</p>`,
+    stem: `Which choice completes the text with the most logical and precise word or phrase?`,
+    choices: { A:'overlooked', B:'commended', C:'satirized', D:'inspired' }
+  },
+  {
+    id: 3,
+    passage: `<p class="passage-text">Louise Arner Boyd, who led several scientific expeditions off the coast of Greenland in the 1930s, undoubtedly accomplished much, but to gain a lasting place in our historical memory, there is little that can __________ being the first to do something. For example, people will always remember that Enid Gordon-Gallien led the expedition that first mapped the area around Kalambo Falls between Zambia and Tanzania.</p>`,
+    stem: `Which choice completes the text with the most logical and precise word or phrase?`,
+    choices: { A:'prevail over', B:'constrain within', C:'overreach by', D:'fluctuate with' }
+  },
+  {
+    id: 4,
+    passage: `<p class="passage-text"><em>The Last of England</em>, painted in the realist style by Ford Madox Brown, depicts a working-class family immigrating to Australia to start a new life. The realists' emphasis on accurately portraying the experiences of average working people was largely a rejection of the romantic style evident in many paintings by Leon Belly, which instead __________ their subjects' beauty or heroism while hiding all imperfection.</p>`,
+    stem: `Which choice completes the text with the most logical and precise word or phrase?`,
+    choices: { A:'undermine', B:'exaggerate', C:'correct', D:'mock' }
+  },
+  {
+    id: 5,
+    passage: `<p class="passage-text">When people think of dinosaurs with feathers, they typically think of winged dinosaurs, such as the bat-like Yi qi. However, many dinosaurs that didn't have wings also had feathers on their bodies. For instance, research indicates that the wingless, predatory Juravenator likely had feathers.</p>`,
+    stem: `Which choice best states the main purpose of the text?`,
+    choices: {
+      A:'To argue that only one species of dinosaur had feathers',
+      B:'To explain why feathered dinosaurs went extinct',
+      C:'To point out the differences between dinosaur feathers and bird feathers',
+      D:'To discuss the presence of feathers on certain types of dinosaurs'
+    }
+  },
+  {
+    id: 6,
+    passage: `<p class="passage-text">Can field mustard plants grow on Mars? Can pea plants? You might think the answer to these questions is obviously no, but researchers in the Netherlands recently showed that the seeds of many common plant species can germinate in soil designed to simulate Martian conditions, as long as water is supplied. In fact, some species actually did better in Martian soil than in Earth soil: 30 percent of field mustard seeds sprouted when planted in simulated Martian soil, compared with 4 percent that did when planted in soil from their home planet.</p>`,
+    stem: `Which choice best states the main purpose of the text?`,
+    choices: {
+      A:'To explain an important study of differences in the composition of Martian soil and the composition of Earth soil',
+      B:'To present a surprising finding about plants grown in soil intended to be similar to Martian soil',
+      C:'To answer long-standing questions about how Martian soil conditions can be replicated on Earth',
+      D:'To discuss an unexpected result about the role of water in plants grown in simulated Martian conditions'
+    }
+  },
+  {
+    id: 7,
+    passage: `<p class="passage-text">Researchers César A. Hidalgo, Elisa Castaner, and Andres Sevtsuk created a computer model to predict the mix of gyms, beauty salons, and other businesses found in a given neighborhood. How we define a neighborhood and its boundaries is subjective, so the team used a clustering algorithm to locate dense groupings of amenities that represent human-identified neighborhoods like Boston's Central Square. The predictive model, which incorporates this algorithm, is sure to be invaluable in determining the optimal mix of a city's amenities.</p>`,
+    stem: `Which choice best describes the overall structure of the text?`,
+    choices: {
+      A:'It describes how an algorithm can predict the success of certain businesses, discusses an example of a use of that algorithm, and suggests potential uses of the algorithm in other fields.',
+      B:'It introduces a research team\'s study of urban neighborhoods, describes an aspect of the study\'s methodology, and suggests a potential application of the team\'s research.',
+      C:'It summarizes trends in recent urban development, describes a potential problem for urban planners, and suggests a computational tool that can be used to solve that problem.',
+      D:'It explains why urban planners are interested in understanding the locations of certain businesses, details a study that has addressed this question, and identifies one key finding.'
+    }
+  },
+  {
+    id: 8,
+    passage: `<p class="passage-source">The following text is adapted from Adib Khorram's 2018 novel <em>Darius the Great Is Not Okay</em>. The narrator, Darius, is a teenager visiting family in Iran. He and his friend Sohrab are at the entrance of the ruins of the ancient city of Persepolis.</p>
+    <p class="passage-text">"The Gate of All Nations," Sohrab said. He gestured to the lamassus [sculptures] and pillars surrounding us. "That's the name in English."</p>
+    <p class="passage-text">It wasn't much of a gate anymore, since anyone of any nation could have easily stepped around it instead of walking through. But it was still amazing.</p>
+    <p class="passage-text">Behind the lamassu, more columns sprouted from the ground like ancient trees in a petrified forest, forty feet tall, spindly but still miraculously upright. Giant stone slabs formed the remains of what must once have been a breathtaking structure.</p>
+    <p class="passage-text"><em>©2018 by Adib Khorram</em></p>`,
+    stem: `Which choice best states the main idea of the text?`,
+    choices: {
+      A:'Darius has seen the columns before.',
+      B:'Darius is surprised that Sohrab knows so much about the ruins.',
+      C:'Darius wants to learn about the people who built Persepolis.',
+      D:'Darius is impressed by the overall sight of the ruins.'
+    }
+  },
+  {
+    id: 9,
+    passage: `<p class="passage-source"><strong>Average Monetized Productivity Loss at Two Points After Programs Began, in Australian Dollars</strong></p>
+    <table class="passage-table">
+      <tr><th>Type of training</th><th>12 weeks</th><th>12 months</th></tr>
+      <tr><td>EET</td><td>268</td><td>171</td></tr>
+      <tr><td>EHP</td><td>282</td><td>436</td></tr>
+    </table>
+    <p class="passage-text">Michelle Pereira et al. hypothesized that introducing health improvements into workplaces would increase productivity by reducing absenteeism (sick employees not working) and presenteeism (sick workers working less productively due to illness). Pereira's team enrolled groups of Australian workers in two programs: one that gave employees exercise training (EET) and one that enrolled employees in health promotion seminars (EHP). They then calculated the productivity loss of those groups at 12 weeks and 12 months after the programs began. They concluded that exercise training was more effective at restraining productivity loss than health promotion seminars were, though this result took time to become apparent.</p>`,
+    stem: `Which choice best describes data from the table that support Pereira's conclusion?`,
+    choices: {
+      A:'Productivity loss for the EET group barely decreased between 12 weeks and 12 months after the program began, while productivity loss for the EHP group significantly increased during the same time period.',
+      B:'Productivity loss was consistently higher for the EHP group than for the EET group over the twelve months that it was measured, though the size of the difference between the two decreased over that time.',
+      C:'Productivity loss was fairly similar for the EET and EHP groups 12 weeks after each program began, but at 12 months afterward it had significantly increased for the EHP group and significantly decreased for the EET group.',
+      D:'Productivity loss was largely due to absenteeism for the EHP group at 12 months after the program began, while productivity loss was largely due to presenteeism for the EET group at 12 months after the program began.'
+    }
+  },
+  {
+    id: 10,
+    passage: `<p class="passage-text">Many believe that lullabies, characterized by their slow tempos, contain some acoustic features that are universally calming to infants. In a study, Constance M. Bainbridge and colleagues played both a lullaby sung in the Luk Saami language and a non-lullaby sung in the Tundra Nenets language to a group of infants. The researchers also measured the infants' heart rates, as a reduced heart rate is considered a measure of relaxation. They claim that the lullaby did indeed relax the infants.</p>`,
+    stem: `Which finding, if true, would most directly support Bainbridge and colleagues' claim?`,
+    choices: {
+      A:'The heart rates of infants in the study were more irregular during the lullabies than during non-lullabies.',
+      B:'Infants\' heart rates were substantially lower during the lullaby than during the non-lullaby.',
+      C:'Parents of infants in the study chose the lullaby over the non-lullaby when asked which song they would use to calm their child.',
+      D:'Both the song in Luk Saami and the song in Tundra Nenets were sung by a female singer.'
+    }
+  },
+  {
+    id: 11,
+    passage: `<p class="passage-text"><em>Memoirs of Elleanor Eldridge</em> is an 1838 historical account by Elleanor Eldridge and Frances Harriet Whipple Green. In the book, the authors assert that people don't need to be famous to be worthy of memoirs, writing, __________</p>`,
+    stem: `Which quotation from <em>Memoirs of Elleanor Eldridge</em> most effectively illustrates the authors' claim?`,
+    choices: {
+      A:'"Then let no one turn with too much [fussiness] from the simple story of the humble Elleanor, though it may contain few, or none, of the thrilling charms of poetry and passion."',
+      B:'"There is often a kind of [deceptive] light, playing around such [famous] names, calculated to dazzle and mislead, by their false lustre, until the eye can no longer receive the pure light of Truth, or the mind appreciate real excellence, or intrinsic worth."',
+      C:'"It should not be considered essential to the interest and value of biography, that its subject be of exalted rank, or illustrious name."',
+      D:'"How careful ought we to be to speak nothing but the truth, even in regard to the most trifling circumstances; and not only so, but to be well assured that what we suppose to be true, is truth, before we receive it as such."'
+    }
+  },
+  {
+    id: 12,
+    passage: `<div class="graph-placeholder">
+      <svg class="graph-svg" viewBox="0 0 360 260" xmlns="http://www.w3.org/2000/svg">
+        <style>text{font-family:Arial;font-size:11px;fill:#444}</style>
+        <!-- Y axis -->
+        <line x1="60" y1="20" x2="60" y2="220" stroke="#666" stroke-width="1.5"/>
+        <!-- X axis -->
+        <line x1="60" y1="220" x2="340" y2="220" stroke="#666" stroke-width="1.5"/>
+        <!-- Y labels -->
+        <text x="50" y="225" text-anchor="end">0</text>
+        <text x="50" y="195" text-anchor="end">75</text>
+        <text x="50" y="165" text-anchor="end">150</text>
+        <text x="50" y="135" text-anchor="end">225</text>
+        <text x="50" y="105" text-anchor="end">300</text>
+        <text x="50" y="75" text-anchor="end">525</text>
+        <text x="50" y="45" text-anchor="end">975</text>
+        <!-- X labels -->
+        <text x="90" y="238" text-anchor="middle">1960</text>
+        <text x="160" y="238" text-anchor="middle">1979</text>
+        <text x="240" y="238" text-anchor="middle">1986</text>
+        <text x="320" y="238" text-anchor="middle">2000</text>
+        <!-- Class I-IV line (solid square) -->
+        <polyline points="90,45 160,170 240,185 320,45" fill="none" stroke="#1B2A4A" stroke-width="2" stroke-dasharray="none"/>
+        <rect x="86" y="41" width="8" height="8" fill="#1B2A4A"/>
+        <rect x="156" y="166" width="8" height="8" fill="#1B2A4A"/>
+        <rect x="236" y="181" width="8" height="8" fill="#1B2A4A"/>
+        <rect x="316" y="41" width="8" height="8" fill="#1B2A4A"/>
+        <!-- Class VI line (dashed triangle) -->
+        <polyline points="90,75 160,105 240,170 320,135" fill="none" stroke="#C9A84C" stroke-width="2" stroke-dasharray="6,3"/>
+        <polygon points="90,70 86,78 94,78" fill="#C9A84C"/>
+        <polygon points="160,100 156,108 164,108" fill="#C9A84C"/>
+        <polygon points="240,165 236,173 244,173" fill="#C9A84C"/>
+        <polygon points="320,130 316,138 324,138" fill="#C9A84C"/>
+        <!-- Class VIII line (dotted circle) -->
+        <polyline points="90,115 160,175 240,190 320,145" fill="none" stroke="#666" stroke-width="2" stroke-dasharray="2,4"/>
+        <circle cx="90" cy="115" r="4" fill="#666"/>
+        <circle cx="160" cy="175" r="4" fill="#666"/>
+        <circle cx="240" cy="190" r="4" fill="#666"/>
+        <circle cx="320" cy="145" r="4" fill="#666"/>
+        <!-- Legend -->
+        <line x1="65" y1="15" x2="85" y2="15" stroke="#1B2A4A" stroke-width="2"/><rect x="82" y="11" width="6" height="6" fill="#1B2A4A"/>
+        <text x="92" y="19">Class I–IV</text>
+        <line x1="145" y1="15" x2="165" y2="15" stroke="#C9A84C" stroke-width="2" stroke-dasharray="4,2"/>
+        <text x="170" y="19">Class VI</text>
+        <line x1="225" y1="15" x2="245" y2="15" stroke="#666" stroke-width="2" stroke-dasharray="2,3"/>
+        <text x="250" y="19">Class VIII</text>
+      </svg>
+      <p style="font-size:12px;color:#666;margin-top:8px;font-style:italic;">Forest Area for Three Land Use Capability Classes in the Chorotega Region, Costa Rica</p>
+    </div>
+    <p class="passage-text">To understand the extent of deforestation in the Chorotega region of Costa Rica, Juan Pablo Arroyo Mora and colleagues used historical aerial photography and remote sensing data to track changes in the forest cover area across different land use capability classes (categories that indicate possible uses of forest land). Due to the Chorotega region's accessibility, various types of forested areas were converted to cattle pasture as rising international meat prices drove a cattle ranching boom in the 1960s and 1970s. By the mid 1980s, however, increased public awareness and environmental reforms, along with a decline in meat prices, triggered a natural regrowth process, as evident by the __________</p>`,
+    stem: `Which choice most effectively uses data from the graph to complete the assertion?`,
+    choices: {
+      A:'decrease in the forest cover area for all classes from 1960 to 1979.',
+      B:'difference between the forest cover area in Class I–IV and in Class VI in 2000.',
+      C:'increase in the forest cover area for all classes from 1979 to 2000.',
+      D:'similarity in forest cover area in Class I–IV and Class VIII in 1986.'
+    }
+  },
+  {
+    id: 13,
+    passage: `<p class="passage-source"><strong>Peering at Adult Orangutans by Immature Orangutans</strong></p>
+    <table class="passage-table">
+      <tr><th>Individual</th><th>Site</th><th>Sex</th><th>Total number of peering events observed</th><th>Proportion of peering events directed at immigrants to immature individual's home region</th></tr>
+      <tr><td>5</td><td>Suaq</td><td>female</td><td>1</td><td>0.00</td></tr>
+      <tr><td>6</td><td>Tuanan</td><td>female</td><td>6</td><td>0.33</td></tr>
+      <tr><td>10</td><td>Suaq</td><td>male</td><td>33</td><td>0.64</td></tr>
+      <tr><td>8</td><td>Tuanan</td><td>male</td><td>1</td><td>1.00</td></tr>
+    </table>
+    <p class="passage-text">One way that young orangutans acquire foraging skills is through a behavior scientists call peering—closely watching older orangutans as they engage in an activity that the young have not yet mastered. Since male orangutans typically leave the area of their birth upon maturity and females do not, Beatrice Ehmann and her colleagues hypothesized that it is more advantageous for immature males than females to devote attention to orangutans who are immigrants to the home region of the immature individual, and this should be reflected in sex-specific differences in peering behavior.</p>`,
+    stem: `Which choice best describes data from the table that support Ehmann and colleagues' hypothesis?`,
+    choices: {
+      A:'The proportion of peering events directed at immigrants to immature orangutans\' home regions ranged from a low of 0.00 to a high of 1.00.',
+      B:'Individual 5 and individual 6 directed a lower proportion of peering events at immigrants to their home regions than did individual 8 and individual 10.',
+      C:'Individual 8 directed a higher proportion of peering events at immigrants to its home region than did individual 10, and individual 6 directed a higher proportion of peering events at immigrants to its home region than did individual 5.',
+      D:'Individual 10 had the highest total number of peering events observed at 33.'
+    }
+  },
+  {
+    id: 14,
+    passage: `<p class="passage-text">British professional soccer team Arsenal Football Club, whose home uniform color is mainly red, won more than half its home matches between 1947 and 2003. This is a higher proportion than the proportion of home matches won by Watford Football Club, whose home uniform color is not red, during the same period. According to a study by Martin J. Attrill and colleagues, the color red can cause people to respond with fear and hesitation, which the researchers think helps explain Arsenal's success. Nadav Goldschmied and colleagues reanalyzed the published data from this study, however, and found no evidence that red-uniformed teams are more likely than other teams to win, suggesting that Watford's home-match win percentage __________</p>`,
+    stem: `Which choice most logically completes the text?`,
+    choices: {
+      A:'would likely have remained roughly the same if its players had been wearing red uniforms.',
+      B:'may have influenced other teams to change their uniform colors.',
+      C:'was directly tied to its players\' general satisfaction with their uniform color.',
+      D:'was likely influenced by its players\' associations with the color red.'
+    }
+  },
+  {
+    id: 15,
+    passage: `<p class="passage-text">Studies have shown that when we listen to high-tempo music (songs with a high number of beats per minute, or bpm) during endurance exercise, we perceive our effort as lower than it actually is, which leads to an increased pace and a higher heart rate. Researchers recently designed a follow-up study in which participants jogged outdoors for 30 minutes while listening to Aerosmith's "Livin' on the Edge" (169 bpm) continuously. The next day participants performed the same activity while listening to Beyoncé's "Irreplaceable" (88 bpm). As expected, listening to that song resulted in participants __________</p>`,
+    stem: `Which choice most logically completes the text?`,
+    choices: {
+      A:'perceiving their effort as higher while jogging than they had the previous day.',
+      B:'jogging a longer distance in the 30 minutes than they had the previous day.',
+      C:'varying their jogging pace more than they had the previous day.',
+      D:'exhibiting a higher average heart rate while jogging than they had the previous day.'
+    }
+  },
+  {
+    id: 16,
+    passage: `<p class="passage-text">In the 1960s and the 1970s, a loose-knit group of writers including Sonia Sanchez, Gwendolyn Brooks, and James Baldwin __________ monumental works of poetry and fiction exploring the Black American experience and together came to be known as the Black Arts movement.</p>`,
+    stem: `Which choice completes the text so that it conforms to the conventions of Standard English?`,
+    choices: { A:'are publishing', B:'published', C:'will publish', D:'publish' }
+  },
+  {
+    id: 17,
+    passage: `<p class="passage-text">An upcoming exhibition will showcase Vincent van Gogh's drawing <em>Building in Eindhoven</em>, which Van Gogh __________ in the city of Nuenen nearly 150 years ago.</p>`,
+    stem: `Which choice completes the text so that it conforms to the conventions of Standard English?`,
+    choices: { A:'completed', B:'will complete', C:'has been completing', D:'is completing' }
+  },
+  {
+    id: 18,
+    passage: `<p class="passage-text">At 1,666 years old, RCR 1, a foxtail pine (<em>Pinus balfouriana</em>) located in the United States, is one of the oldest known trees in the world. With almost two millennia of climate data in its tree rings, a single tree like __________ claims dendrochronologist Valerie Trouet, can tell the history of the world.</p>`,
+    stem: `Which choice completes the text so that it conforms to the conventions of Standard English?`,
+    choices: { A:'this:', B:'this;', C:'this', D:'this,' }
+  },
+  {
+    id: 19,
+    passage: `<p class="passage-text">In the Silurian hypothesis, astrophysicist Adam Frank and climatologist Gavin Schmidt suggest the geological record may contain evidence of prehuman advanced civilizations. This sensational hypothesis obscures the scientists' practical __________ Frank and Schmidt don't believe such a civilization existed, and their "hypothesis" is a thought experiment exploring the traces our own civilization will leave on the geological record.</p>`,
+    stem: `Which choice completes the text so that it conforms to the conventions of Standard English?`,
+    choices: { A:'aim, however,', B:'aim, however;', C:'aim. However,', D:'aim: however,' }
+  },
+  {
+    id: 20,
+    passage: `<p class="passage-text">A 2012 study led by __________ studied the impact of fertilizers containing nitrogen on grassland arthropod populations. Another study, led by Kimberly J. La Pierre in 2015, looked at fertilizers containing nitrogen and two other macronutrients: phosphorus and potassium.</p>`,
+    stem: `Which choice completes the text so that it conforms to the conventions of Standard English?`,
+    choices: {
+      A:'researcher, Alex D.K. Dittrich,',
+      B:'researcher, Alex D.K. Dittrich',
+      C:'researcher Alex D.K. Dittrich',
+      D:'researcher Alex D.K. Dittrich,'
+    }
+  },
+  {
+    id: 21,
+    passage: `<p class="passage-text">Included among a particular group of mid-twentieth-century artists known as the New York School, French abstract __________ was known for using energetic brushstrokes and for capturing the energy and chaos of modern life.</p>`,
+    stem: `Which choice completes the text so that it conforms to the conventions of Standard English?`,
+    choices: {
+      A:'painter Louise Bourgeois',
+      B:'painter Louise Bourgeois,',
+      C:'painter; Louise Bourgeois',
+      D:'painter Louise Bourgeois,'
+    }
+  },
+  {
+    id: 22,
+    passage: `<p class="passage-text">Scientists were able to isolate a relatively pure sample of cadmium in 1817, the same year they first discovered the element's existence. __________ the isolation process took longer for niobium, which was isolated in its pure form 63 years after scientists first discovered it.</p>`,
+    stem: `Which choice completes the text with the most logical transition?`,
+    choices: { A:'For instance,', B:'Thus,', C:'Similarly,', D:'By contrast,' }
+  },
+  {
+    id: 23,
+    passage: `<p class="passage-text">When ordering the branches of the Colville River system by Hack's method, one begins with the riverway's lowest point, the Colville River. __________ when using Strahler's method, one begins at the top of the river system, with the Okokmilaga River and other tributaries fed by the riverway's source, Alaska's De Long Mountains.</p>`,
+    stem: `Which choice completes the text with the most logical transition?`,
+    choices: { A:'Indeed,', B:'Specifically,', C:'In other words,', D:'Alternatively,' }
+  },
+  {
+    id: 24,
+    passage: `<p class="passage-text"><strong>While researching a topic, a student has taken the following notes:</strong></p>
+    <ul class="notes-list">
+      <li>Buland Darwaza is a historic gateway.</li>
+      <li>It is located in the city of Agra, India.</li>
+      <li>It is one of the many remaining structures built by the Mughal Empire.</li>
+      <li>The Mughal Empire was a South Asian empire.</li>
+      <li>It lasted from the early sixteenth century to the mid-nineteenth century.</li>
+    </ul>
+    <p class="passage-text">The student wants to specify the location of Buland Darwaza. Which choice most effectively uses relevant information from the notes to accomplish this goal?</p>`,
+    stem: `Which choice most effectively uses relevant information from the notes to accomplish the student's goal?`,
+    choices: {
+      A:'Buland Darwaza is a historic gateway built by the Mughal Empire.',
+      B:'Buland Darwaza was built by the Mughal Empire, a South Asian empire that started in the early sixteenth century.',
+      C:'The Mughal Empire, which built Buland Darwaza, lasted from the early sixteenth century to the mid-nineteenth century.',
+      D:'Buland Darwaza can be found in Agra, a city in the country of India.'
+    }
+  },
+  {
+    id: 25,
+    passage: `<p class="passage-text">Antonio Stradivari (1644–1737) made about 1,000 violins in his lifetime. Musicians prize his Stradivarius violins for their famed sound quality. Many of the 500 or so that exist today are named for a previous owner. The ex-Berglund Stradivarius is named for Paavo Berglund, a Finnish violinist.</p>`,
+    stem: `Which choice most effectively uses information from the given sentences to explain how the ex-Berglund Stradivarius got its name?`,
+    choices: {
+      A:'The ex-Berglund Stradivarius is named after its former owner, Paavo Berglund.',
+      B:'Of the 1,000 or so violins Antonio Stradivari made, only about 500 exist today.',
+      C:'Designed by Antonio Stradivari, Stradivarius violins like the ex-Berglund are renowned for their quality.',
+      D:'Paavo Berglund was a Finnish violinist.'
+    }
+  },
+  {
+    id: 26,
+    passage: `<p class="passage-text"><strong>While researching a topic, a student has taken the following notes:</strong></p>
+    <ul class="notes-list">
+      <li>For centuries in Japan, it was common practice for farmers to cultivate terraced rice fields (tanada in Japanese).</li>
+      <li>Tanada were built by carving the steep hillsides into a series of large, flat steps.</li>
+      <li>This agricultural method allowed farmers to increase arable land and prevent landslides.</li>
+      <li>The Sawajiri tanada in Miyagi Prefecture, Japan, was developed during the Sengoku period.</li>
+      <li>The Sengoku period (1467 CE–1615 CE) was characterized by social upheaval and civil war.</li>
+    </ul>
+    <p class="passage-text">The student wants to explain the design of the Sawajiri tanada. Which choice most effectively uses relevant information from the notes to accomplish this goal?</p>`,
+    stem: `Which choice most effectively uses relevant information from the notes to accomplish the student's goal?`,
+    choices: {
+      A:'The Sawajiri terraced rice field, or tanada, was built by carving the steep hillside into a series of large, flat steps, making the land more arable and less prone to landslides.',
+      B:'Developed in the Sengoku period, the Sawajiri tanada was built during a time of Japanese history characterized by social upheaval and civil war.',
+      C:'The agricultural method of carving hillsides into terraced rice fields was common practice in Japan for centuries.',
+      D:'During the Sengoku period, a farming method was used that involved carving large, flat steps out of the steep hillsides.'
+    }
+  },
+  {
+    id: 27,
+    passage: `<p class="passage-text"><strong>While researching a topic, a student has taken the following notes:</strong></p>
+    <ul class="notes-list">
+      <li>Elizabeth Catlett (1915–2012) was a celebrated African American artist.</li>
+      <li>She is best known for creating sculptures and prints that explore the Black experience.</li>
+      <li>Face is a 1973 sculpture by Catlett.</li>
+      <li>It is made of marble.</li>
+    </ul>
+    <p class="passage-text">The student wants to describe a sculpture by Elizabeth Catlett. Which choice most effectively uses relevant information from the notes to accomplish this goal?</p>`,
+    stem: `Which choice most effectively uses relevant information from the notes to accomplish the student's goal?`,
+    choices: {
+      A:'Made of marble, Face is a 1973 sculpture by Elizabeth Catlett.',
+      B:'Artist Elizabeth Catlett is best known for creating sculptures and prints that explore the Black experience.',
+      C:'Elizabeth Catlett was a celebrated artist whose work includes sculptures.',
+      D:'Elizabeth Catlett, a celebrated artist, was born in 1915.'
+    }
+  }
+];
+
+// ── STATE ──
+let currentQ = 0;
+let userAnswers = {};
+let flagged = {};
+let submitted = false;
+let timerSeconds = 32 * 60;
+let timerInterval;
+
+// ── TIMER ──
+function startTimer() {
+  timerInterval = setInterval(() => {
+    timerSeconds--;
+    updateTimerDisplay();
+    if (timerSeconds <= 0) {
+      clearInterval(timerInterval);
+      submitExam(true);
+    }
+  }, 1000);
+}
+
+function updateTimerDisplay() {
+  const m = Math.floor(timerSeconds / 60);
+  const s = timerSeconds % 60;
+  const disp = document.getElementById('timer-display');
+  disp.textContent = `${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
+  disp.className = '';
+  if (timerSeconds <= 60) disp.classList.add('danger');
+  else if (timerSeconds <= 300) disp.classList.add('warn');
+}
+
+// ── RENDER ──
+function renderQuestion(idx) {
+  const q = QUESTIONS[idx];
+
+  // Passage
+  document.getElementById('passage-panel').innerHTML = q.passage;
+
+  // Question panel
+  const flagClass = flagged[q.id] ? 'flagged' : '';
+  let choicesHTML = Object.entries(q.choices).map(([k,v]) => {
+    const selClass = userAnswers[q.id] === k ? 'selected' : '';
+    return `<button class="choice-btn ${selClass}" onclick="selectChoice(${q.id},'${k}')">
+      <span class="choice-label">${k}</span>
+      <span>${v}</span>
+    </button>`;
+  }).join('');
+
+  document.getElementById('question-panel').innerHTML = `
+    <div class="q-header">
+      <div class="q-number">${q.id}</div>
+      <button class="q-flag-btn ${flagClass}" onclick="toggleFlag(${q.id})" id="flag-btn-${q.id}">
+        🚩 ${flagged[q.id] ? 'Flagged' : 'Mark for Review'}
+      </button>
+    </div>
+    <div class="q-stem">${q.stem}</div>
+    <div class="choice-list">${choicesHTML}</div>
+  `;
+
+  // Nav state
+  document.getElementById('prev-btn').disabled = idx === 0;
+  document.getElementById('next-btn').disabled = idx === QUESTIONS.length - 1;
+  document.getElementById('q-counter').textContent = `Question ${idx+1} of ${QUESTIONS.length}`;
+
+  // Progress
+  const pct = ((idx + 1) / QUESTIONS.length * 100).toFixed(1);
+  document.getElementById('progress-fill').style.width = pct + '%';
+
+  // Dots
+  renderDots();
+}
+
+function renderDots() {
+  const container = document.getElementById('q-dots');
+  container.innerHTML = QUESTIONS.map((q,i) => {
+    let cls = 'q-dot';
+    if (i === currentQ) cls += ' current';
+    else if (flagged[q.id]) cls += ' flagged-dot';
+    else if (userAnswers[q.id]) cls += ' answered';
+    return `<button class="${cls}" onclick="goTo(${i})">${q.id}</button>`;
+  }).join('');
+}
+
+function selectChoice(qId, choice) {
+  if (submitted) return;
+  userAnswers[qId] = choice;
+  renderQuestion(currentQ);
+}
+
+function toggleFlag(qId) {
+  flagged[qId] = !flagged[qId];
+  const btn = document.getElementById(`flag-btn-${qId}`);
+  if (btn) {
+    btn.className = `q-flag-btn ${flagged[qId] ? 'flagged' : ''}`;
+    btn.textContent = `🚩 ${flagged[qId] ? 'Flagged' : 'Mark for Review'}`;
+  }
+  renderDots();
+}
+
+function navigate(dir) {
+  const next = currentQ + dir;
+  if (next >= 0 && next < QUESTIONS.length) {
+    currentQ = next;
+    renderQuestion(currentQ);
+    document.getElementById('passage-panel').scrollTop = 0;
+    document.getElementById('question-panel').scrollTop = 0;
+  }
+}
+
+function goTo(idx) {
+  currentQ = idx;
+  renderQuestion(currentQ);
+}
+
+// ── SUBMIT ──
+function confirmSubmit() {
+  const answered = Object.keys(userAnswers).length;
+  const unanswered = QUESTIONS.length - answered;
+  let msg = `Submit Module 1?\n\nAnswered: ${answered} / ${QUESTIONS.length}`;
+  if (unanswered > 0) msg += `\nUnanswered: ${unanswered} questions`;
+  if (confirm(msg)) submitExam(false);
+}
+
+async function submitExam(timeUp) {
+  submitted = true;
+  clearInterval(timerInterval);
+  if (timeUp) alert('⏱ Time is up! Your answers have been submitted.');
+
+  // 점수 계산
+  let correct = 0;
+  QUESTIONS.forEach(q => {
+    if (userAnswers[q.id] === ANSWER_KEY[q.id]) correct++;
+  });
+
+  // Supabase 저장
+  if (currentUser) {
+    await sb.from('exam_results').upsert({
+      user_id: currentUser.id,
+      exam_id: EXAM_ID,
+      completed: true,
+      rw_m1_raw: correct,
+      answers: userAnswers,
+      submitted_at: new Date().toISOString()
+    }, { onConflict: 'user_id,exam_id' });
+  }
+
+  const pct = Math.round(correct / QUESTIONS.length * 100);
+  document.getElementById('res-raw').textContent = `${correct}/27`;
+  document.getElementById('res-pct').textContent = `${pct}%`;
+
+  // Review
+  const reviewHTML = QUESTIONS.map(q => {
+    const ua = userAnswers[q.id];
+    const ca = ANSWER_KEY[q.id];
+    let cls, verdict, detail;
+    if (!ua) {
+      cls = 'unanswered'; verdict = '— Not Answered'; detail = `Correct Answer: ${ca}`;
+    } else if (ua === ca) {
+      cls = 'correct'; verdict = '✓ Correct'; detail = `Your Answer: ${ua}`;
+    } else {
+      cls = 'wrong'; verdict = '✗ Incorrect'; detail = `Your Answer: ${ua} &nbsp;|&nbsp; Correct Answer: ${ca}`;
+    }
+    return `<div class="review-item ${cls}">
+      <div class="review-q-num">Question ${q.id}</div>
+      <div class="review-verdict">${verdict}</div>
+      <div class="review-answer">${detail}</div>
+    </div>`;
+  }).join('');
+
+  document.getElementById('review-list').innerHTML = reviewHTML;
+  document.getElementById('result-screen').style.display = 'block';
+  window.scrollTo(0,0);
+}
+
+// ── INIT ──
+initExam();
+</script>
+</body>
+</html>

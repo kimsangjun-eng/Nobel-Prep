@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Nobel Prep — SAT Login</title>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+  :root {
+    --navy: #1B2A4A;
+    --gold: #C9A84C;
+    --gold-light: #E8C96A;
+    --white: #FFFFFF;
+    --gray-100: #F0F2F5;
+    --gray-200: #E2E6EA;
+    --gray-400: #9BA3AF;
+    --gray-600: #6B7280;
+    --gray-800: #1F2937;
+    --red: #DC2626;
+    --green: #16A34A;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: Arial, sans-serif;
+    background: var(--gray-100);
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+  }
+
+  .login-card {
+    background: var(--white);
+    border-radius: 20px;
+    box-shadow: 0 8px 40px rgba(27,42,74,0.15);
+    padding: 48px 40px;
+    width: 100%;
+    max-width: 420px;
+  }
+
+  .logo-wrap {
+    text-align: center;
+    margin-bottom: 32px;
+  }
+
+  .logo {
+    font-family: Georgia, serif;
+    font-size: 28px;
+    font-weight: bold;
+    color: var(--navy);
+    letter-spacing: 1px;
+  }
+
+  .logo span { color: var(--gold); }
+
+  .subtitle {
+    font-size: 13px;
+    color: var(--gray-600);
+    margin-top: 6px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+  }
+
+  .divider {
+    width: 48px;
+    height: 3px;
+    background: var(--gold);
+    margin: 16px auto 0;
+    border-radius: 2px;
+  }
+
+  .form-group {
+    margin-bottom: 18px;
+  }
+
+  label {
+    display: block;
+    font-size: 13px;
+    font-weight: bold;
+    color: var(--navy);
+    margin-bottom: 7px;
+    letter-spacing: 0.5px;
+  }
+
+  input {
+    width: 100%;
+    padding: 13px 16px;
+    border: 2px solid var(--gray-200);
+    border-radius: 10px;
+    font-size: 15px;
+    font-family: Arial, sans-serif;
+    color: var(--gray-800);
+    transition: border-color 0.2s;
+    outline: none;
+  }
+
+  input:focus { border-color: var(--navy); }
+
+  .login-btn {
+    width: 100%;
+    padding: 14px;
+    background: var(--navy);
+    color: var(--white);
+    border: none;
+    border-radius: 10px;
+    font-size: 16px;
+    font-weight: bold;
+    font-family: Arial, sans-serif;
+    cursor: pointer;
+    margin-top: 8px;
+    transition: background 0.2s;
+    letter-spacing: 0.5px;
+  }
+
+  .login-btn:hover { background: #2a3f6b; }
+  .login-btn:disabled { background: var(--gray-400); cursor: not-allowed; }
+
+  .error-msg {
+    background: #FEF2F2;
+    border: 1.5px solid var(--red);
+    color: var(--red);
+    border-radius: 8px;
+    padding: 11px 14px;
+    font-size: 13px;
+    margin-top: 14px;
+    display: none;
+  }
+
+  .success-msg {
+    background: #F0FDF4;
+    border: 1.5px solid var(--green);
+    color: var(--green);
+    border-radius: 8px;
+    padding: 11px 14px;
+    font-size: 13px;
+    margin-top: 14px;
+    display: none;
+    text-align: center;
+  }
+
+  .footer-note {
+    text-align: center;
+    font-size: 12px;
+    color: var(--gray-400);
+    margin-top: 24px;
+    line-height: 1.6;
+  }
+
+  .spinner {
+    display: inline-block;
+    width: 16px; height: 16px;
+    border: 2px solid rgba(255,255,255,0.4);
+    border-top-color: white;
+    border-radius: 50%;
+    animation: spin 0.7s linear infinite;
+    margin-right: 8px;
+    vertical-align: middle;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+</style>
+</head>
+<body>
+
+<div class="login-card">
+  <div class="logo-wrap">
+    <div class="logo">Nobel <span>Prep</span></div>
+    <div class="subtitle">SAT Practice Exam</div>
+    <div class="divider"></div>
+  </div>
+
+  <div class="form-group">
+    <label>Email</label>
+    <input type="email" id="email" placeholder="your@email.com" autocomplete="email"/>
+  </div>
+
+  <div class="form-group">
+    <label>Password</label>
+    <input type="password" id="password" placeholder="••••••••" autocomplete="current-password"
+      onkeydown="if(event.key==='Enter') login()"/>
+  </div>
+
+  <button class="login-btn" id="login-btn" onclick="login()">Sign In</button>
+
+  <div class="error-msg" id="error-msg"></div>
+  <div class="success-msg" id="success-msg">✓ Signing in... Please wait.</div>
+
+  <div class="footer-note">
+    Your account is provided by Nobel Prep.<br>
+    Contact your instructor if you need help.
+  </div>
+</div>
+
+<script>
+  // ── Supabase 초기화 ──
+  const SUPABASE_URL = 'https://ucodcbfnuiixgaaflfnr.supabase.co';
+  const SUPABASE_KEY = 'sb_publishable_vzZuK0RJdZ2ZCpavnngIPw_bG6phgkf';
+  const { createClient } = supabase;
+  const sb = createClient(SUPABASE_URL, SUPABASE_KEY);
+
+  // 이미 로그인 되어 있으면 시험 페이지로
+  async function checkSession() {
+    const { data: { session } } = await sb.auth.getSession();
+    if (session) {
+      window.location.href = 'exam.html';
+    }
+  }
+  checkSession();
+
+  // ── 로그인 ──
+  async function login() {
+    const email = document.getElementById('email').value.trim();
+    const password = document.getElementById('password').value;
+    const btn = document.getElementById('login-btn');
+    const errEl = document.getElementById('error-msg');
+    const sucEl = document.getElementById('success-msg');
+
+    errEl.style.display = 'none';
+    sucEl.style.display = 'none';
+
+    if (!email || !password) {
+      errEl.textContent = 'Please enter your email and password.';
+      errEl.style.display = 'block';
+      return;
+    }
+
+    btn.disabled = true;
+    btn.innerHTML = '<span class="spinner"></span>Signing in...';
+
+    const { data, error } = await sb.auth.signInWithPassword({ email, password });
+
+    if (error) {
+      errEl.textContent = 'Incorrect email or password. Please try again.';
+      errEl.style.display = 'block';
+      btn.disabled = false;
+      btn.innerHTML = 'Sign In';
+      return;
+    }
+
+    sucEl.style.display = 'block';
+
+    // 관리자 여부 확인
+    const { data: profile } = await sb.from('student_profiles')
+      .select('is_admin, name')
+      .eq('id', data.user.id)
+      .single();
+
+    if (profile?.is_admin) {
+      window.location.href = 'admin.html';
+    } else {
+      window.location.href = 'exam.html';
+    }
+  }
+</script>
+</body>
+</html>
