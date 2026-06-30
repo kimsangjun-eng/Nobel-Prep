@@ -72,6 +72,17 @@
     letter-spacing: 0.5px;
   }
 
+  .mock-test-badge {
+    background: var(--gold);
+    color: var(--navy);
+    font-size: 12px;
+    font-weight: bold;
+    font-family: Arial, sans-serif;
+    padding: 3px 12px;
+    border-radius: 20px;
+    letter-spacing: 0.5px;
+  }
+
   /* ── TIMER ── */
   #timer-wrap {
     display: flex;
@@ -528,6 +539,7 @@
 <div id="header">
   <div class="header-left">
     <div class="logo">Nobel Prep</div>
+    <div class="mock-test-badge">Mock Test 1</div>
     <div class="module-badge">Reading & Writing · Module 2</div>
   </div>
   <div id="timer-wrap">
@@ -599,19 +611,29 @@ async function initExam() {
   }
   currentUser = session.user;
 
-  // 이미 제출한 경우 결과 페이지로
+  // RW Module 1을 먼저 풀었는지 확인
+  const { data: m1 } = await sb
+    .from('exam_results')
+    .select('completed')
+    .eq('user_id', currentUser.id)
+    .eq('exam_id', 'sat-aug2024-us-rw-m1')
+    .single();
+
+  if (!m1?.completed) {
+    showNeedModule1Screen();
+    return;
+  }
+
+  // 이미 Module 2 제출한 경우 → Math로 안내
   const { data: existing } = await sb
     .from('exam_results')
-    .select('completed, rw_m1_raw, answers, submitted_at')
+    .select('completed')
     .eq('user_id', currentUser.id)
     .eq('exam_id', EXAM_ID)
     .single();
 
   if (existing?.completed) {
-    // 이미 완료 → 결과만 보여주기
-    userAnswers = existing.answers || {};
-    submitted = true;
-    showResultFromDB(existing);
+    showAlreadyDoneScreen();
     return;
   }
 
@@ -620,35 +642,28 @@ async function initExam() {
   startTimer();
 }
 
-function showResultFromDB(data) {
-  submitted = true;
-  clearInterval(timerInterval);
-  const correct = data.rw_m1_raw ?? 0;
-  const pct = Math.round(correct / 27 * 100);
-  document.getElementById('res-raw').textContent = `${correct}/27`;
-  document.getElementById('res-pct').textContent = `${pct}%`;
-  const reviewHTML = QUESTIONS.map(q => {
-    const ua = (data.answers || {})[q.id];
-    const ca = ANSWER_KEY[q.id];
-    let cls, verdict, detail;
-    if (!ua) { cls='unanswered'; verdict='— Not Answered'; detail=`Correct Answer: ${ca}`; }
-    else if (ua===ca) { cls='correct'; verdict='✓ Correct'; detail=`Your Answer: ${ua}`; }
-    else { cls='wrong'; verdict='✗ Incorrect'; detail=`Your Answer: ${ua} | Correct Answer: ${ca}`; }
-    return `<div class="review-item ${cls}">
-      <div class="review-q-num">Question ${q.id}</div>
-      <div class="review-verdict">${verdict}</div>
-      <div class="review-answer">${detail}</div>
-    </div>`;
-  }).join('');
-  document.getElementById('review-list').innerHTML = reviewHTML;
-  document.getElementById('result-screen').style.display = 'block';
+function showNeedModule1Screen() {
+  document.body.innerHTML = `
+    <div style="min-height:100vh; display:flex; align-items:center; justify-content:center; background:#F0F2F5; font-family: Arial, sans-serif;">
+      <div style="background:white; border-radius:16px; padding:48px 40px; max-width:420px; text-align:center; box-shadow:0 8px 40px rgba(27,42,74,0.15);">
+        <div style="font-family: Georgia, serif; font-size:22px; font-weight:bold; color:#1B2A4A; margin-bottom:6px;">Module 1 Required</div>
+        <div style="font-size:13px; color:#6B7280; margin-bottom:24px; line-height:1.6;">You must complete Reading and Writing Module 1 before starting Module 2.</div>
+        <button onclick="window.location.href='exam.html'" style="background:#1B2A4A; color:white; border:none; border-radius:10px; padding:13px 28px; font-size:14px; font-weight:bold; cursor:pointer;">Go to Module 1 →</button>
+      </div>
+    </div>
+  `;
+}
 
-  const d = new Date(data.submitted_at);
-  document.getElementById('res-raw').closest('.result-header').insertAdjacentHTML('beforeend',
-    `<p style="font-size:12px;color:var(--gray-400);margin-top:8px;">
-      ※ Already submitted on ${d.toLocaleDateString('ko-KR')}. Retaking is not allowed.
-    </p>`
-  );
+function showAlreadyDoneScreen() {
+  document.body.innerHTML = `
+    <div style="min-height:100vh; display:flex; align-items:center; justify-content:center; background:#F0F2F5; font-family: Arial, sans-serif;">
+      <div style="background:white; border-radius:16px; padding:48px 40px; max-width:420px; text-align:center; box-shadow:0 8px 40px rgba(27,42,74,0.15);">
+        <div style="font-family: Georgia, serif; font-size:22px; font-weight:bold; color:#1B2A4A; margin-bottom:6px;">Reading and Writing Already Complete</div>
+        <div style="font-size:13px; color:#6B7280; margin-bottom:24px; line-height:1.6;">You have already completed both modules.<br>Retaking is not allowed.</div>
+        <button onclick="window.location.href='math1.html'" style="background:#1B2A4A; color:white; border:none; border-radius:10px; padding:13px 28px; font-size:14px; font-weight:bold; cursor:pointer;">Continue to Math →</button>
+      </div>
+    </div>
+  `;
 }
 
 // ── ANSWER KEY (SHA-256 will be used in production; plain for demo) ──
@@ -1120,13 +1135,13 @@ function confirmSubmit() {
   const unanswered = QUESTIONS.length - answered;
   let msg = `Submit Module 2?\n\nAnswered: ${answered} / ${QUESTIONS.length}`;
   if (unanswered > 0) msg += `\nUnanswered: ${unanswered} questions`;
+  msg += `\n\nThis completes the Reading and Writing section. A 10-minute break will follow.`;
   if (confirm(msg)) submitExam(false);
 }
 
 async function submitExam(timeUp) {
   submitted = true;
   clearInterval(timerInterval);
-  if (timeUp) alert('⏱ Time is up! Your answers have been submitted.');
 
   // 점수 계산
   let correct = 0;
@@ -1134,44 +1149,62 @@ async function submitExam(timeUp) {
     if (userAnswers[q.id] === ANSWER_KEY[q.id]) correct++;
   });
 
-  // Supabase 저장
+  // Supabase 저장 (결과는 백그라운드 저장만, 화면에는 표시하지 않음)
   if (currentUser) {
     await sb.from('exam_results').upsert({
       user_id: currentUser.id,
       exam_id: EXAM_ID,
       completed: true,
-      rw_m1_raw: correct,
+      rw_m2_raw: correct,
       answers: userAnswers,
       submitted_at: new Date().toISOString()
     }, { onConflict: 'user_id,exam_id' });
   }
 
-  const pct = Math.round(correct / QUESTIONS.length * 100);
-  document.getElementById('res-raw').textContent = `${correct}/27`;
-  document.getElementById('res-pct').textContent = `${pct}%`;
+  // RW 섹션 완료 → 10분 휴식 화면으로 전환
+  showBreakScreen();
+}
 
-  // Review
-  const reviewHTML = QUESTIONS.map(q => {
-    const ua = userAnswers[q.id];
-    const ca = ANSWER_KEY[q.id];
-    let cls, verdict, detail;
-    if (!ua) {
-      cls = 'unanswered'; verdict = '— Not Answered'; detail = `Correct Answer: ${ca}`;
-    } else if (ua === ca) {
-      cls = 'correct'; verdict = '✓ Correct'; detail = `Your Answer: ${ua}`;
-    } else {
-      cls = 'wrong'; verdict = '✗ Incorrect'; detail = `Your Answer: ${ua} &nbsp;|&nbsp; Correct Answer: ${ca}`;
+function showBreakScreen() {
+  const BREAK_SECONDS = 10 * 60;
+  let remaining = BREAK_SECONDS;
+
+  document.body.innerHTML = `
+    <div style="min-height:100vh; display:flex; align-items:center; justify-content:center; background:#1B2A4A; font-family: Arial, sans-serif;">
+      <div style="background:white; border-radius:16px; padding:48px 44px; max-width:440px; text-align:center; box-shadow:0 8px 40px rgba(0,0,0,0.3);">
+        <div style="font-family: Georgia, serif; font-size:13px; letter-spacing:2px; text-transform:uppercase; color:#C9A84C; font-weight:bold; margin-bottom:10px;">Mock Test 1 · Reading and Writing — Complete</div>
+        <div style="font-family: Georgia, serif; font-size:24px; font-weight:bold; color:#1B2A4A; margin-bottom:20px;">10-Minute Break</div>
+        <div id="break-timer" style="font-family:'Courier New',monospace; font-size:48px; font-weight:bold; color:#1B2A4A; letter-spacing:3px; margin-bottom:20px;">10:00</div>
+        <div style="font-size:13px; color:#6B7280; line-height:1.6; margin-bottom:28px;">
+          You may step away from your screen.<br>
+          The Math section will begin automatically when the break ends.
+        </div>
+        <button id="skip-break-btn" onclick="skipBreak()" style="background:none; border:1.5px solid #1B2A4A; color:#1B2A4A; border-radius:8px; padding:10px 22px; font-size:13px; font-weight:bold; cursor:pointer;">Skip Break & Start Math →</button>
+      </div>
+    </div>
+  `;
+
+  const timerEl = document.getElementById('break-timer');
+  const breakInterval = setInterval(() => {
+    remaining--;
+    const m = Math.floor(remaining / 60);
+    const s = remaining % 60;
+    timerEl.textContent = `${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
+    if (remaining <= 0) {
+      clearInterval(breakInterval);
+      goToMath();
     }
-    return `<div class="review-item ${cls}">
-      <div class="review-q-num">Question ${q.id}</div>
-      <div class="review-verdict">${verdict}</div>
-      <div class="review-answer">${detail}</div>
-    </div>`;
-  }).join('');
+  }, 1000);
 
-  document.getElementById('review-list').innerHTML = reviewHTML;
-  document.getElementById('result-screen').style.display = 'block';
-  window.scrollTo(0,0);
+  window.skipBreak = () => {
+    clearInterval(breakInterval);
+    goToMath();
+  };
+}
+
+function goToMath() {
+  // Math 모듈 준비되면 이 URL을 'math1.html'로 연결
+  window.location.href = 'math1.html';
 }
 
 // ── INIT ──
