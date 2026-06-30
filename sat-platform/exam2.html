@@ -1,0 +1,1181 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Nobel Prep — SAT RW Module 2</title>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+  :root {
+    --navy: #1B2A4A;
+    --gold: #C9A84C;
+    --gold-light: #E8C96A;
+    --white: #FFFFFF;
+    --gray-50: #F8F9FA;
+    --gray-100: #F0F2F5;
+    --gray-200: #E2E6EA;
+    --gray-400: #9BA3AF;
+    --gray-600: #6B7280;
+    --gray-800: #1F2937;
+    --green: #16A34A;
+    --red: #DC2626;
+    --orange: #EA580C;
+    --blue: #2563EB;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Georgia', serif;
+    background: var(--gray-100);
+    color: var(--gray-800);
+    min-height: 100vh;
+  }
+
+  /* ── HEADER ── */
+  #header {
+    background: var(--navy);
+    color: var(--white);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 24px;
+    height: 56px;
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 100;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+  }
+
+  .header-left {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .logo {
+    font-family: 'Georgia', serif;
+    font-size: 18px;
+    font-weight: bold;
+    color: var(--gold);
+    letter-spacing: 0.5px;
+  }
+
+  .module-badge {
+    background: rgba(201,168,76,0.2);
+    border: 1px solid var(--gold);
+    color: var(--gold-light);
+    font-size: 12px;
+    font-family: Arial, sans-serif;
+    padding: 3px 10px;
+    border-radius: 20px;
+    letter-spacing: 0.5px;
+  }
+
+  /* ── TIMER ── */
+  #timer-wrap {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  #timer-label {
+    font-family: Arial, sans-serif;
+    font-size: 10px;
+    color: var(--gray-400);
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+  }
+
+  #timer-display {
+    font-family: 'Courier New', monospace;
+    font-size: 22px;
+    font-weight: bold;
+    color: var(--white);
+    letter-spacing: 2px;
+    transition: color 0.3s;
+  }
+
+  #timer-display.warn { color: #FFA500; }
+  #timer-display.danger { color: #FF4444; animation: blink 1s infinite; }
+
+  @keyframes blink {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.4; }
+  }
+
+  .header-right {
+    font-family: Arial, sans-serif;
+    font-size: 13px;
+    color: var(--gray-400);
+  }
+
+  /* ── MAIN LAYOUT ── */
+  #main {
+    margin-top: 56px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    height: calc(100vh - 56px - 70px);
+    overflow: hidden;
+  }
+
+  /* ── PASSAGE PANEL ── */
+  #passage-panel {
+    background: var(--white);
+    border-right: 2px solid var(--gray-200);
+    overflow-y: auto;
+    padding: 32px 28px;
+  }
+
+  .passage-source {
+    font-family: Arial, sans-serif;
+    font-size: 12px;
+    color: var(--gray-600);
+    font-style: italic;
+    margin-bottom: 14px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid var(--gray-200);
+  }
+
+  .passage-text {
+    font-size: 15px;
+    line-height: 1.85;
+    color: var(--gray-800);
+  }
+
+  .passage-text p { margin-bottom: 14px; }
+
+  .blank {
+    display: inline-block;
+    width: 80px;
+    border-bottom: 2px solid var(--navy);
+    margin: 0 4px;
+    vertical-align: bottom;
+  }
+
+  /* Table in passage */
+  .passage-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 16px 0;
+    font-family: 'Courier New', monospace;
+    font-size: 13px;
+  }
+  .passage-table th, .passage-table td {
+    border: 1px solid var(--gray-400);
+    padding: 7px 12px;
+    text-align: center;
+  }
+  .passage-table th {
+    background: var(--gray-100);
+    font-weight: bold;
+    color: var(--navy);
+  }
+
+  /* Notes format */
+  .notes-list {
+    margin: 10px 0;
+    padding-left: 0;
+    list-style: none;
+  }
+  .notes-list li {
+    font-size: 15px;
+    line-height: 1.7;
+    padding: 2px 0;
+    color: var(--gray-800);
+  }
+  .notes-list li::before {
+    content: "• ";
+    color: var(--navy);
+    font-weight: bold;
+  }
+
+  /* Graph placeholder */
+  .graph-placeholder {
+    background: var(--gray-50);
+    border: 2px solid var(--gray-200);
+    border-radius: 8px;
+    padding: 20px;
+    margin: 12px 0;
+    text-align: center;
+  }
+  .graph-svg { width: 100%; max-width: 340px; }
+
+  /* ── QUESTION PANEL ── */
+  #question-panel {
+    background: var(--gray-50);
+    overflow-y: auto;
+    padding: 28px 28px 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+
+  .q-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 4px;
+  }
+
+  .q-number {
+    background: var(--navy);
+    color: var(--white);
+    font-family: Arial, sans-serif;
+    font-size: 13px;
+    font-weight: bold;
+    width: 32px; height: 32px;
+    border-radius: 6px;
+    display: flex; align-items: center; justify-content: center;
+  }
+
+  .q-flag-btn {
+    background: none;
+    border: 1.5px solid var(--gray-400);
+    border-radius: 6px;
+    padding: 5px 10px;
+    font-family: Arial, sans-serif;
+    font-size: 12px;
+    color: var(--gray-600);
+    cursor: pointer;
+    display: flex; align-items: center; gap: 5px;
+    transition: all 0.2s;
+  }
+  .q-flag-btn:hover { border-color: var(--gold); color: var(--gold); }
+  .q-flag-btn.flagged {
+    background: #FFF8E6;
+    border-color: var(--gold);
+    color: var(--gold);
+  }
+
+  .q-stem {
+    font-size: 15px;
+    line-height: 1.6;
+    color: var(--gray-800);
+    margin-bottom: 16px;
+  }
+
+  .choice-list { display: flex; flex-direction: column; gap: 10px; }
+
+  .choice-btn {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    background: var(--white);
+    border: 2px solid var(--gray-200);
+    border-radius: 10px;
+    padding: 12px 16px;
+    cursor: pointer;
+    font-family: 'Georgia', serif;
+    font-size: 14.5px;
+    line-height: 1.55;
+    text-align: left;
+    transition: all 0.15s;
+    color: var(--gray-800);
+  }
+  .choice-btn:hover { border-color: var(--navy); background: #F0F4FF; }
+  .choice-btn.selected { border-color: var(--navy); background: #EEF2FF; }
+  .choice-btn.correct { border-color: var(--green); background: #F0FDF4; }
+  .choice-btn.wrong { border-color: var(--red); background: #FEF2F2; }
+
+  .choice-label {
+    min-width: 26px; height: 26px;
+    border-radius: 50%;
+    background: var(--gray-200);
+    color: var(--gray-600);
+    font-family: Arial, sans-serif;
+    font-size: 13px;
+    font-weight: bold;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+    transition: all 0.15s;
+  }
+  .selected .choice-label { background: var(--navy); color: var(--white); }
+  .correct .choice-label { background: var(--green); color: var(--white); }
+  .wrong .choice-label { background: var(--red); color: var(--white); }
+
+  /* ── BOTTOM NAV ── */
+  #bottom-nav {
+    position: fixed;
+    bottom: 0; left: 0; right: 0;
+    height: 70px;
+    background: var(--white);
+    border-top: 2px solid var(--gray-200);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 24px;
+    z-index: 100;
+  }
+
+  .nav-btn {
+    background: var(--navy);
+    color: var(--white);
+    border: none;
+    border-radius: 8px;
+    padding: 10px 22px;
+    font-family: Arial, sans-serif;
+    font-size: 14px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background 0.2s;
+  }
+  .nav-btn:hover { background: #2a3f6b; }
+  .nav-btn:disabled { background: var(--gray-200); color: var(--gray-400); cursor: not-allowed; }
+
+  /* Question number dots */
+  #q-dots {
+    display: flex;
+    gap: 5px;
+    flex-wrap: wrap;
+    justify-content: center;
+    max-width: 600px;
+  }
+
+  .q-dot {
+    width: 30px; height: 30px;
+    border-radius: 6px;
+    border: 2px solid var(--gray-200);
+    background: var(--white);
+    font-family: Arial, sans-serif;
+    font-size: 12px;
+    font-weight: bold;
+    color: var(--gray-600);
+    cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    transition: all 0.15s;
+  }
+  .q-dot:hover { border-color: var(--navy); }
+  .q-dot.current { border-color: var(--navy); background: var(--navy); color: var(--white); }
+  .q-dot.answered { border-color: var(--navy); background: #EEF2FF; color: var(--navy); }
+  .q-dot.flagged-dot { border-color: var(--gold); background: #FFF8E6; color: var(--gold); }
+
+  /* Submit button */
+  #submit-btn {
+    background: var(--gold);
+    color: var(--navy);
+    border: none;
+    border-radius: 8px;
+    padding: 10px 22px;
+    font-family: Arial, sans-serif;
+    font-size: 14px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background 0.2s;
+  }
+  #submit-btn:hover { background: var(--gold-light); }
+
+  /* ── RESULT SCREEN ── */
+  #result-screen {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: var(--gray-100);
+    overflow-y: auto;
+    z-index: 200;
+  }
+
+  .result-inner {
+    max-width: 700px;
+    margin: 40px auto;
+    padding: 0 20px 60px;
+  }
+
+  .result-header {
+    background: var(--navy);
+    color: var(--white);
+    border-radius: 16px;
+    padding: 32px;
+    text-align: center;
+    margin-bottom: 24px;
+  }
+
+  .result-logo {
+    font-family: 'Georgia', serif;
+    font-size: 22px;
+    color: var(--gold);
+    font-weight: bold;
+    margin-bottom: 6px;
+  }
+
+  .result-module {
+    font-family: Arial, sans-serif;
+    font-size: 13px;
+    color: var(--gray-400);
+    margin-bottom: 24px;
+  }
+
+  .score-row {
+    display: flex;
+    justify-content: center;
+    gap: 40px;
+    margin-bottom: 8px;
+  }
+
+  .score-box {
+    text-align: center;
+  }
+
+  .score-num {
+    font-family: 'Georgia', serif;
+    font-size: 48px;
+    font-weight: bold;
+    color: var(--gold);
+    line-height: 1;
+  }
+
+  .score-label {
+    font-family: Arial, sans-serif;
+    font-size: 12px;
+    color: var(--gray-400);
+    margin-top: 4px;
+  }
+
+  .disclaimer {
+    font-family: Arial, sans-serif;
+    font-size: 11px;
+    color: var(--gray-400);
+    margin-top: 16px;
+    font-style: italic;
+  }
+
+  /* Answer review */
+  .review-title {
+    font-family: Arial, sans-serif;
+    font-size: 14px;
+    font-weight: bold;
+    color: var(--navy);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 12px;
+  }
+
+  .review-item {
+    background: var(--white);
+    border-radius: 10px;
+    border: 2px solid var(--gray-200);
+    padding: 16px 20px;
+    margin-bottom: 10px;
+  }
+
+  .review-item.correct { border-color: var(--green); }
+  .review-item.wrong { border-color: var(--red); }
+  .review-item.unanswered { border-color: var(--gray-400); }
+
+  .review-q-num {
+    font-family: Arial, sans-serif;
+    font-size: 12px;
+    font-weight: bold;
+    color: var(--gray-600);
+    margin-bottom: 6px;
+  }
+
+  .review-verdict {
+    font-family: Arial, sans-serif;
+    font-size: 13px;
+    font-weight: bold;
+    margin-bottom: 4px;
+  }
+
+  .correct .review-verdict { color: var(--green); }
+  .wrong .review-verdict { color: var(--red); }
+  .unanswered .review-verdict { color: var(--gray-600); }
+
+  .review-answer {
+    font-family: Arial, sans-serif;
+    font-size: 13px;
+    color: var(--gray-600);
+  }
+
+  #print-btn {
+    display: block;
+    width: 100%;
+    margin-top: 24px;
+    padding: 14px;
+    background: var(--navy);
+    color: var(--white);
+    border: none;
+    border-radius: 10px;
+    font-family: Arial, sans-serif;
+    font-size: 15px;
+    font-weight: bold;
+    cursor: pointer;
+  }
+  #print-btn:hover { background: #2a3f6b; }
+
+  @media print {
+    #print-btn { display: none; }
+  }
+
+  /* Progress bar */
+  #progress-bar {
+    height: 3px;
+    background: var(--gray-200);
+    position: fixed;
+    top: 56px; left: 0; right: 0;
+    z-index: 99;
+  }
+  #progress-fill {
+    height: 100%;
+    background: var(--gold);
+    transition: width 0.3s;
+  }
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<div id="header">
+  <div class="header-left">
+    <div class="logo">Nobel Prep</div>
+    <div class="module-badge">Reading & Writing · Module 2</div>
+  </div>
+  <div id="timer-wrap">
+    <div id="timer-label">Time Remaining</div>
+    <div id="timer-display">32:00</div>
+  </div>
+  <div class="header-right" id="q-counter">Question 1 of 27</div>
+</div>
+
+<!-- PROGRESS BAR -->
+<div id="progress-bar"><div id="progress-fill" style="width:3.7%"></div></div>
+
+<!-- MAIN CONTENT -->
+<div id="main">
+  <div id="passage-panel"></div>
+  <div id="question-panel"></div>
+</div>
+
+<!-- BOTTOM NAV -->
+<div id="bottom-nav">
+  <button class="nav-btn" id="prev-btn" onclick="navigate(-1)" disabled>← Back</button>
+  <div id="q-dots"></div>
+  <div style="display:flex;gap:10px;align-items:center;">
+    <button class="nav-btn" id="next-btn" onclick="navigate(1)">Next →</button>
+    <button id="submit-btn" onclick="confirmSubmit()">Submit Module</button>
+  </div>
+</div>
+
+<!-- RESULT SCREEN -->
+<div id="result-screen">
+  <div class="result-inner">
+    <div class="result-header">
+      <div class="result-logo">Nobel Prep</div>
+      <div class="result-module">SAT Practice · Reading & Writing Module 2</div>
+      <div class="score-row">
+        <div class="score-box">
+          <div class="score-num" id="res-raw">—</div>
+          <div class="score-label">Raw Score (out of 27)</div>
+        </div>
+        <div class="score-box">
+          <div class="score-num" id="res-pct">—</div>
+          <div class="score-label">Accuracy</div>
+        </div>
+      </div>
+      <div class="disclaimer">※ This is Module 2. Combine with Module 1 score for full RW section score.</div>
+    </div>
+
+    <div class="review-title">Answer Review</div>
+    <div id="review-list"></div>
+    <button id="print-btn" onclick="window.print()">🖨 Print Result / Save as PDF</button>
+  </div>
+</div>
+
+<script>
+// ── SUPABASE 초기화 ──
+const SUPABASE_URL = 'https://ucodcbfnuiixgaaflfnr.supabase.co';
+const SUPABASE_KEY = 'sb_publishable_vzZuK0RJdZ2ZCpavnngIPw_bG6phgkf';
+const { createClient } = supabase;
+const sb = createClient(SUPABASE_URL, SUPABASE_KEY);
+const EXAM_ID = 'sat-aug2024-us-rw-m2';
+let currentUser = null;
+
+// 로그인 확인 + 재풀기 차단
+async function initExam() {
+  const { data: { session } } = await sb.auth.getSession();
+  if (!session) {
+    window.location.href = 'index.html';
+    return;
+  }
+  currentUser = session.user;
+
+  // 이미 제출한 경우 결과 페이지로
+  const { data: existing } = await sb
+    .from('exam_results')
+    .select('completed, rw_m1_raw, answers, submitted_at')
+    .eq('user_id', currentUser.id)
+    .eq('exam_id', EXAM_ID)
+    .single();
+
+  if (existing?.completed) {
+    // 이미 완료 → 결과만 보여주기
+    userAnswers = existing.answers || {};
+    submitted = true;
+    showResultFromDB(existing);
+    return;
+  }
+
+  // 정상 시작
+  renderQuestion(0);
+  startTimer();
+}
+
+function showResultFromDB(data) {
+  submitted = true;
+  clearInterval(timerInterval);
+  const correct = data.rw_m1_raw ?? 0;
+  const pct = Math.round(correct / 27 * 100);
+  document.getElementById('res-raw').textContent = `${correct}/27`;
+  document.getElementById('res-pct').textContent = `${pct}%`;
+  const reviewHTML = QUESTIONS.map(q => {
+    const ua = (data.answers || {})[q.id];
+    const ca = ANSWER_KEY[q.id];
+    let cls, verdict, detail;
+    if (!ua) { cls='unanswered'; verdict='— Not Answered'; detail=`Correct Answer: ${ca}`; }
+    else if (ua===ca) { cls='correct'; verdict='✓ Correct'; detail=`Your Answer: ${ua}`; }
+    else { cls='wrong'; verdict='✗ Incorrect'; detail=`Your Answer: ${ua} | Correct Answer: ${ca}`; }
+    return `<div class="review-item ${cls}">
+      <div class="review-q-num">Question ${q.id}</div>
+      <div class="review-verdict">${verdict}</div>
+      <div class="review-answer">${detail}</div>
+    </div>`;
+  }).join('');
+  document.getElementById('review-list').innerHTML = reviewHTML;
+  document.getElementById('result-screen').style.display = 'block';
+
+  const d = new Date(data.submitted_at);
+  document.getElementById('res-raw').closest('.result-header').insertAdjacentHTML('beforeend',
+    `<p style="font-size:12px;color:var(--gray-400);margin-top:8px;">
+      ※ Already submitted on ${d.toLocaleDateString('ko-KR')}. Retaking is not allowed.
+    </p>`
+  );
+}
+
+// ── ANSWER KEY (SHA-256 will be used in production; plain for demo) ──
+const ANSWER_KEY = {
+  1:'C', 2:'B', 3:'D', 4:'A', 5:'C',
+  6:'C', 7:'D', 8:'A', 9:'A', 10:'C',
+  11:'B', 12:'A', 13:'D', 14:'A', 15:'D',
+  16:'B', 17:'B', 18:'A', 19:'A', 20:'C',
+  21:'C', 22:'A', 23:'B', 24:'C', 25:'B',
+  26:'A', 27:'A'
+};
+
+// ── QUESTION DATA ──
+const QUESTIONS = [
+  {
+    id: 1,
+    passage: `<p class="passage-text">Writer Lydia Davis observed that while traditional literary forms, such as the novel, are recognizable as such even as they evolve, there are more __________ forms that might, for example, borrow elements from both fables and realist narratives to make something unconventional. The late-period pieces of James Tate arguably fit in this category, since they straddle the line between prose and poetry.</p>`,
+    stem: `Which choice completes the text with the most logical and precise word or phrase?`,
+    choices: { A:'dispersed', B:'customary', C:'amorphous', D:'neutral' }
+  },
+  {
+    id: 2,
+    passage: `<p class="passage-text">A speaker at a recent children's book publishing conference noted that, while many illustrators do excellent work, in her mind, no one has ever __________ Amos Ferguson's work as the illustrator of <em>Under the Sunday Tree</em>: there is no better example of the form, according to the speaker.</p>`,
+    stem: `Which choice completes the text with the most logical and precise word or phrase?`,
+    choices: { A:'convened', B:'eclipsed', C:'cited', D:'augmented' }
+  },
+  {
+    id: 3,
+    passage: `<p class="passage-text">Some robots such as Justin (developed in 2008) and TALOS (developed in 2017) feature humanoid characteristics like the ability to respond to voice commands so that people will find it easier to interact with them. While these features can help to __________ feelings of comfort in people, a robot that looks too human can fall into the "uncanny valley," meaning that its appearance unintentionally unsettles those who encounter it.</p>`,
+    stem: `Which choice completes the text with the most logical and precise word or phrase?`,
+    choices: { A:'counterbalance', B:'repudiate', C:'constrict', D:'engender' }
+  },
+  {
+    id: 4,
+    passage: `<p class="passage-text">Though most hoaxes perpetrated as jokes by mischievous users of Wikipedia, an online encyclopedia that almost anyone can freely edit, have quickly been detected and removed, a few entries that knowledgeable readers should have realized were __________, such as those for the country singer-songwriter Joseph G. Williams and the television miniseries <em>Sheer Perfection</em>, persisted on the site for many years before they were finally recognized as falsehoods and deleted.</p>`,
+    stem: `Which choice completes the text with the most logical and precise word or phrase?`,
+    choices: { A:'spurious', B:'scrupulous', C:'palpable', D:'compulsory' }
+  },
+  {
+    id: 5,
+    passage: `<p class="passage-text">In 2015 Filipa Faleiro and colleagues published a study concluding that ocean acidification has a strong effect on the behavior of <em>Hippocampus guttulatus</em>, a species of fish. However, Faleiro and colleagues' study relied on a mean sample size of only 6 fish. In a 2022 review of various scientists' conclusions about the impacts of ocean acidification on fish behavior, Timothy D. Clark and colleagues caution that relying on such a relatively small sample size can increase the potential for biased analysis. Such analysis, in turn, can contribute to reports of exaggerated effects.</p>`,
+    stem: `Which choice best describes the overall structure of the text?`,
+    choices: {
+      A:'It summarizes a problem that scientists are investigating, then provides a possible solution to that problem.',
+      B:'It describes a characteristic of a fish species, then explains why that characteristic is noteworthy.',
+      C:'It presents the result of a study, then raises a potential concern related to that result.',
+      D:'It states a similarity between two scientific studies, then notes a difference between them.'
+    }
+  },
+  {
+    id: 6,
+    passage: `<p class="passage-text"><strong>Text 1</strong></p>
+    <p class="passage-text">According to a study by a conservation group representing 11 tribal nations in the Great Lakes region, the firefly (waawaatesi in the Ojibwe language) will have significantly worse outcomes over the next 50 years if temperatures increase as much as some models suggest. By contrast, the white-tailed deer (waawaashkeshi in Ojibwe) should be able to withstand the highest predicted warming without much harm and so likely won't require the conservation efforts that the firefly will.</p>
+    <p class="passage-text"><strong>Text 2</strong></p>
+    <p class="passage-text">US government agencies involved in conservation are unfortunately not able to address every possible threat to natural resources. They must use the best information available to decide which species are most threatened and therefore most in need of conservation efforts.</p>`,
+    stem: `Based on the texts, both authors would most likely agree with which statement?`,
+    choices: {
+      A:'A collaborative approach is necessary to keep temperatures in the Great Lakes region from increasing to the highest predicted levels.',
+      B:'Agencies involved in natural-resource management in the Great Lakes region should focus their conservation efforts more on the firefly than on the white-tailed deer.',
+      C:'Conservation efforts focused on the firefly are more likely to be successful if they incorporate state and federal agency resources with the knowledge of tribal groups in those efforts.',
+      D:'State, federal, and tribal groups involved in natural-resource management in the Great Lakes region should immediately begin conservation programs for both the firefly and white-tailed deer.'
+    }
+  },
+  {
+    id: 7,
+    passage: `<p class="passage-text">According to historical documents, Marietta Strozzi—a young woman who was prominent in fifteenth century Florentine culture—inspired several artworks, including a portrait bust sculpted by Desiderio da Settignano. Multiple sculptures dating to the period have been alleged to be the reported bust, but none have been authenticated as Desiderio's depiction of Strozzi. Given the historical importance of both Strozzi and Desiderio's sculpture of her, positively identifying the bust would be a notable accomplishment for art historians.</p>`,
+    stem: `Which choice best states the main idea of the text?`,
+    choices: {
+      A:"Although there is documentation that Desiderio was commissioned to sculpt the portrait bust of Strozzi, numerous instances of false identification have made art historians skeptical that the sculpture will be uncovered.",
+      B:"Although successfully finding and authenticating Desiderio's portrait bust of Strozzi remains a challenge, the historical importance of the work justifies the continued pursuit of this goal.",
+      C:"Although numerous fifteenth-century Florentine portrait busts have been recovered over time, evidence has led art historians to conclude that Desiderio's bust of Strozzi is likely no longer extant.",
+      D:"Although historians strongly suspect that a particular sculpture is Desiderio's portrait bust of Strozzi, they do not currently have a method for conclusively verifying the artist or subject."
+    }
+  },
+  {
+    id: 8,
+    passage: `<p class="passage-text">Optimal foraging theory (OFT) holds that animals' foraging behaviors reflect cost-benefit trade-offs that vary by species and with dynamic ecological circumstances. One such circumstance is lunar intensity, which Alexander Lang and colleagues found to be negatively associated with foraging by white-throated round-eared bats but Patricia C. Wright found to be positively associated with foraging by three-striped night monkeys. This discrepancy is explicable in terms of OFT: the monkeys' greater reliance on vision means that higher lunar intensity benefits them more than it benefits the bats.</p>`,
+    stem: `According to the text, the difference between Lang and colleagues' findings and Wright's findings can be attributed to which difference between white-throated round-eared bats and three-striped night monkeys?`,
+    choices: {
+      A:'The bats are less reliant on vision than the monkeys are.',
+      B:'The bats decrease their foraging activity as lunar intensity increases, whereas the monkeys increase their foraging activity.',
+      C:'The bats are more vulnerable to predators than the monkeys are.',
+      D:'The bats encounter different levels of lunar intensity than the monkeys do.'
+    }
+  },
+  {
+    id: 9,
+    passage: `<p class="passage-source">The following text is adapted from Guy de Maupassant's 1884 short story "A Recollection," from the collection <em>Guy de Maupassant Short Stories</em> (translated by Albert M. C. McMaster et al. in 1903). The narrator is taking a boat down the Seine river from Paris, France, to the surrounding countryside.</p>
+    <p class="passage-text">I took up a position in the bows [front of the boat], standing up and looking at the quays, the trees, the houses and the bridges disappearing behind us. And suddenly I perceived the great viaduct of Point du Jour which blocked the river. It was the end of Paris, the beginning of the country, and behind the double row of arches the Seine, suddenly spreading out as though it had regained space and liberty, became all at once the peaceful river which flows through the plains, alongside the wooded hills, amid the meadows, along the edge of the forests.</p>`,
+    stem: `Based on the text, which choice best expresses the narrator's characterization of the Seine?`,
+    choices: {
+      A:'The journey along the Seine is mostly peaceful, but the current intensifies briefly under the Point du Jour.',
+      B:'The waters of the Seine are more confined and rough in Paris than they are in the countryside.',
+      C:'The Seine is similar to Paris in that it is beautiful and slow to change.',
+      D:'As the journey progressed from Paris to the countryside, the waters of the Seine gradually cleared.'
+    }
+  },
+  {
+    id: 10,
+    passage: `<p class="passage-text">Water flowing around an obstruction creates vortices (patterns of swirls) of varying size; by detecting the vortices, fish can determine the size and position of the obstruction. Testing by Yuzo R. Yanagisuru, Otar Akanyeti, and James C. Liao using models of three head shapes—narrow (low ratio of width to length), intermediate, and wide (high ratio of width to length)—showed that for large vortices, fish with intermediate heads would be better able than narrow-headed fish to distinguish between vortices and general turbulence in the water. A second research team has therefore hypothesized that in low-visibility conditions, intermediate-headed fish will be more likely than narrow-headed fish to detect obstructions that create large vortices.</p>`,
+    stem: `Which finding, if true, would most directly support the second research team's hypothesis?`,
+    choices: {
+      A:'A study using obstructions that created large vortices in low-visibility conditions found that some specimens of the intermediate-headed black sea bass (Centropristis striates) bumped into the obstructions more often than other specimens of the same fish did.',
+      B:'A study using obstructions that created large vortices in low-visibility conditions found that the narrow-headed flat needlefish (Ablennes hians) bumped into obstructions more often than the intermediate-headed black sea bass (Centropristis striates) did.',
+      C:'A study using obstructions that created large vortices in low-visibility conditions found that the intermediate-headed black sea bass (Centropristis striates) bumped into the obstructions just as often as the narrow-headed flat needlefish (Ablennes hians) did.',
+      D:'A study using obstructions that created large vortices in low-visibility conditions found that the flat needlefish (Ablennes hians), which has a relatively narrow head, bumped into more than half of the obstructions.'
+    }
+  },
+  {
+    id: 11,
+    passage: `<div class="graph-placeholder">
+      <p style="font-size:12px;color:#666;margin-bottom:6px;">Women Judges and Magistrates on High Courts, 2009–2013</p>
+      <svg class="graph-svg" viewBox="0 0 360 280" xmlns="http://www.w3.org/2000/svg">
+        <style>text{font-family:Arial;font-size:11px;fill:#444}</style>
+        <line x1="60" y1="20" x2="60" y2="220" stroke="#666" stroke-width="1.5"/>
+        <line x1="60" y1="220" x2="320" y2="220" stroke="#666" stroke-width="1.5"/>
+        <line x1="60" y1="220" x2="320" y2="220" stroke="#ccc" stroke-width="0.6"/>
+        <line x1="60" y1="180" x2="320" y2="180" stroke="#ccc" stroke-width="0.6"/>
+        <line x1="60" y1="140" x2="320" y2="140" stroke="#ccc" stroke-width="0.6"/>
+        <line x1="60" y1="100" x2="320" y2="100" stroke="#ccc" stroke-width="0.6"/>
+        <line x1="60" y1="60" x2="320" y2="60" stroke="#ccc" stroke-width="0.6"/>
+        <line x1="60" y1="20" x2="320" y2="20" stroke="#ccc" stroke-width="0.6"/>
+        <line x1="90" y1="20" x2="90" y2="220" stroke="#999" stroke-width="0.6"/>
+        <line x1="142" y1="20" x2="142" y2="220" stroke="#999" stroke-width="0.6"/>
+        <line x1="194" y1="20" x2="194" y2="220" stroke="#999" stroke-width="0.6"/>
+        <line x1="246" y1="20" x2="246" y2="220" stroke="#999" stroke-width="0.6"/>
+        <line x1="298" y1="20" x2="298" y2="220" stroke="#999" stroke-width="0.6"/>
+        <text x="50" y="224" text-anchor="end">0</text>
+        <text x="50" y="184" text-anchor="end">2</text>
+        <text x="50" y="144" text-anchor="end">4</text>
+        <text x="50" y="104" text-anchor="end">6</text>
+        <text x="50" y="64" text-anchor="end">8</text>
+        <text x="50" y="24" text-anchor="end">10</text>
+        <text x="15" y="125" text-anchor="middle" transform="rotate(-90 15 125)">Number</text>
+        <text x="90" y="236" text-anchor="middle">2009</text>
+        <text x="142" y="236" text-anchor="middle">2010</text>
+        <text x="194" y="236" text-anchor="middle">2011</text>
+        <text x="246" y="236" text-anchor="middle">2012</text>
+        <text x="298" y="236" text-anchor="middle">2013</text>
+        <text x="190" y="252" text-anchor="middle" font-style="italic">Year</text>
+        <!-- Honduras: square, dashed -->
+        <polyline points="90,60 142,160 194,160 246,160 298,160" fill="none" stroke="#333" stroke-width="2" stroke-dasharray="6,4"/>
+        <rect x="84" y="54" width="12" height="12" fill="#999" stroke="#000" stroke-width="1"/>
+        <rect x="136" y="154" width="12" height="12" fill="#999" stroke="#000" stroke-width="1"/>
+        <rect x="188" y="154" width="12" height="12" fill="#999" stroke="#000" stroke-width="1"/>
+        <rect x="240" y="154" width="12" height="12" fill="#999" stroke="#000" stroke-width="1"/>
+        <rect x="292" y="154" width="12" height="12" fill="#999" stroke="#000" stroke-width="1"/>
+        <!-- Sweden: circle, dotted -->
+        <polyline points="90,100 142,80 194,100 246,100 298,100" fill="none" stroke="#333" stroke-width="2" stroke-dasharray="1,4" stroke-linecap="round"/>
+        <circle cx="90" cy="100" r="6" fill="white" stroke="#000" stroke-width="1.5"/>
+        <circle cx="142" cy="80" r="6" fill="white" stroke="#000" stroke-width="1.5"/>
+        <circle cx="194" cy="100" r="6" fill="white" stroke="#000" stroke-width="1.5"/>
+        <circle cx="246" cy="100" r="6" fill="white" stroke="#000" stroke-width="1.5"/>
+        <circle cx="298" cy="100" r="6" fill="white" stroke="#000" stroke-width="1.5"/>
+        <!-- Kenya: triangle, solid -->
+        <polyline points="90,220 142,220 194,180 246,180 298,180" fill="none" stroke="#000" stroke-width="2"/>
+        <polygon points="90,212 83,225 97,225" fill="#000"/>
+        <polygon points="142,212 135,225 149,225" fill="#000"/>
+        <polygon points="194,172 187,185 201,185" fill="#000"/>
+        <polygon points="246,172 239,185 253,185" fill="#000"/>
+        <polygon points="298,172 291,185 305,185" fill="#000"/>
+        <!-- Legend -->
+        <line x1="80" y1="258" x2="105" y2="258" stroke="#000" stroke-width="2"/>
+        <polygon points="92,255 87,263 97,263" fill="#000"/>
+        <text x="112" y="262">Kenya</text>
+        <line x1="170" y1="258" x2="195" y2="258" stroke="#333" stroke-width="2" stroke-dasharray="5,3"/>
+        <rect x="177" y="252" width="10" height="10" fill="#999" stroke="#000" stroke-width="1"/>
+        <text x="202" y="262">Honduras</text>
+        <line x1="265" y1="258" x2="290" y2="258" stroke="#333" stroke-width="2" stroke-dasharray="1,3"/>
+        <circle cx="277" cy="258" r="5" fill="white" stroke="#000" stroke-width="1.5"/>
+        <text x="297" y="262">Sweden</text>
+      </svg>
+    </div>
+    <p class="passage-text">A report from an international organization that monitors the numbers of women serving as judges or magistrates on various nations' highest courts, such as the Supreme Court in Sweden and the Supreme Court in Honduras, indicates that among the countries that had a different number of women on these courts in 2013 than they had in 2009, the number increased in some countries but decreased in others. For instance, the number of women judges and magistrates on high courts in __________</p>`,
+    stem: `Which choice most effectively uses data from the graph to complete the example?`,
+    choices: {
+      A:'Honduras was lower in 2013 than in 2009, whereas the number in Sweden was the same in 2013 as in 2009.',
+      B:'Kenya was greater in 2013 than in 2009, whereas the number in Honduras was lower in 2013 than in 2009.',
+      C:'Kenya was greater in 2013 than in 2009, whereas the number in Sweden was the same in 2013 as in 2009.',
+      D:'Sweden was the same in 2013 as in 2009, but it had more women on its high courts than either Kenya or Honduras did in 2013.'
+    }
+  },
+  {
+    id: 12,
+    passage: `<p class="passage-text">Psychologists Gregory Bryant, Dorsa Amir, and colleagues investigated cross-cultural perceptions of spontaneous (real) laughter and volitional (fake or forced) laughter. Study participants from 21 societies, including those in Austria and Turkey, listened to randomized recordings of 18 spontaneous laughs taken from natural conversations between pairs of women and 18 volitional laughs produced separately by 18 different women in response to an experimenter's instruction to laugh. Analysis of the participants' evaluations of the laughs prompted the team to conclude that the ability to distinguish between spontaneous and volitional laughter appears to be universal across cultures.</p>`,
+    stem: `Which quotation from a psychologist not involved in the team's study would most directly weaken the team's conclusion?`,
+    choices: {
+      A:'"When an individual chooses to produce volitional laughter in a natural social context, the laughter often shares certain acoustic qualities, such as pitch and fluctuation of intensity, with spontaneous laughter."',
+      B:'"Although the team considered the average size of communities in each society in the study, that demographic factor was found to have no effect on listeners\' identifications of laughter as spontaneous or volitional."',
+      C:'"Judgments of spontaneous laughter are often associated with acoustic features such as greater intensity variability and higher pitch."',
+      D:'"Recent studies in communications have shown that certain acoustic features of spontaneous laughter, such as pitch and intensity, are consistent both within and across societies."'
+    }
+  },
+  {
+    id: 13,
+    passage: `<p class="passage-text">Arthurian legends (tales related to the character of King Arthur) derive from many sources, such as <em>Annales Cambriae</em>, composed around 970, and <em>Perceval, the Story of the Grail</em> from around 1181. One of the most significant sources, Geoffrey of Monmouth's <em>History of the Kings of Britain</em>, was written in Latin in the 1130s; some material from it was later adapted by the Norman poet Wace into the <em>Roman de Brut</em> in 1155. But while no source before 1155 includes references to the famous Round Table at which Arthur's knights assembled, both the <em>Roman de Brut</em> and Sir Thomas Malory's 15th-century compilation of Arthurian legends, <em>Le Morte d'Arthur</em>, do. It can therefore be inferred that __________</p>`,
+    stem: `Which choice most logically completes the text?`,
+    choices: {
+      A:'Geoffrey of Monmouth was unaware of stories of the Round Table when composing his History, though historians know that works containing such stories were available to him.',
+      B:"Le Morte d'Arthur is more historically accurate than History, because Perceval, the",
+      C:'Malory did not use Annales Cambriae as a source for information he presented',
+      D:"Geoffrey of Monmouth's accounts of Arthurian legends in his History are more similar overall in content to the accounts in Perceval, the Story of the Grail than they are to the accounts in Roman de Brut."
+    }
+  },
+  {
+    id: 14,
+    passage: `<p class="passage-text">Exclusively inhabiting tropical countries such as Tanzania, wild chimpanzees lack adaptations to seasonal variations in ultraviolet B (UVB) irradiance from sunlight, since UVB exposure enables vertebrates to synthesize vitamin D, this raises questions about how chimpanzees in mid-latitude zoos are affected by the lower and more variable UVB irradiance in those locations. In a study of zoo chimpanzees in France and other mid-latitude countries, Sophie Moittie and colleagues found not only that chimpanzees' vitamin D levels correlate with UVB irradiance but also that vitamin D levels show no evidence of plateauing as UVB irradiance reaches its highest local levels, suggesting that __________</p>`,
+    stem: `Which choice most logically completes the text?`,
+    choices: {
+      A:'adaptations to seasonal variations in UVB irradiance may be emerging in zoo chimpanzees in France and other mid-latitude countries.',
+      B:'averaged across seasons, vitamin D levels in zoo chimpanzees in mid-latitude countries such as France tend to be comparable to those in wild chimpanzees in tropical countries such as Tanzania.',
+      C:'providing supplemental vitamin D to chimpanzees in zoos in France and other mid-latitude countries would likely not be beneficial.',
+      D:'zoo chimpanzees in France and other mid-latitude countries tend to synthesize less vitamin D than they are inherently capable of synthesizing.'
+    }
+  },
+  {
+    id: 15,
+    passage: `<p class="passage-text">Writer Silvia Moreno-Garcia's love of short fiction began when she read a collection of Edgar Allan Poe stories as a child, and she would develop into a prolific short story writer herself, publishing pieces like "In the Details" (2015) and "Shade of the Ceiba Tree" (2011). Yet she's best known as a novelist, in part due to her __________ Gothic novel <em>Mexican Gothic</em> (2020) earning a spot on the New York Times Best Sellers list.</p>`,
+    stem: `Which choice completes the text so that it conforms to the conventions of Standard English?`,
+    choices: { A:'novel(Mexican', B:'novel  Mexican', C:'novel:Mexican', D:'novel, Mexican' }
+  },
+  {
+    id: 16,
+    passage: `<p class="passage-text">Within Earth's biomes, there are four main types of desert: arid, semiarid, coastal, and cold. The Australian Desert in Australasia is an arid __________ it is one of the largest such deserts in the world, with a total area of about 2,700,000 km².</p>`,
+    stem: `Which choice completes the text so that it conforms to the conventions of Standard English?`,
+    choices: { A:'desert, for example', B:'desert, for example,', C:'desert, for example;', D:'desert; for example,' }
+  },
+  {
+    id: 17,
+    passage: `<p class="passage-text">The Quadrantid meteor shower has a zenithal hourly rate (ZHR) of 110, meaning that at the shower's peak 110 meteors per hour could potentially be seen by a hypothetical observer. A calculation that assumes ideal viewing conditions, __________</p>`,
+    stem: `Which choice completes the text so that it conforms to the conventions of Standard English?`,
+    choices: {
+      A:'the number of meteors an actual viewer observes in an hour may differ',
+      B:'there may be a considerable difference between the number of meteors an actual viewer observes in an hour and the ZHR.',
+      C:"an actual viewer's observed number of meteors in an hour and the ZHR may differ considerably",
+      D:'the ZHR may differ considerably from the number of meteors an actual viewer observes in an hour.'
+    }
+  },
+  {
+    id: 18,
+    passage: `<p class="passage-text">Though he's performed on many respected albums, including <em>DBIII: Live at the Cotton Club Tokyo</em> by Dean Brown, drummer Dennis Chambers may be best known for his time as house drummer for the hip-hop label Sugar Hill Records. He did not play drums on the label's classic song "Rapper's Delight," __________ joined the label after the song's release.</p>`,
+    stem: `Which choice completes the text so that it conforms to the conventions of Standard English?`,
+    choices: { A:'however, he', B:'however  he', C:'however  and  he', D:'however. He' }
+  },
+  {
+    id: 19,
+    passage: `<p class="passage-text">With one in Finland and another in Japan, the observatory sites that form the Super Dual Auroral Radar __________ or SuperDARN, as space physicists like Tadahiko Ogawa call it—number nearly five dozen. Located across the globe, the radars track gravity waves and other geospace phenomena.</p>`,
+    stem: `Which choice completes the text so that it conforms to the conventions of Standard English?`,
+    choices: { A:'Network:', B:'Network', C:'Network—', D:'Network,' }
+  },
+  {
+    id: 20,
+    passage: `<p class="passage-text">The Organisation for Economic Co-operation and Development (OECD) tracks comparative price list data for its thirty-eight member countries. For instance, in July 2021, a hypothetical basket of goods priced at 100 US dollars (USD) in the United States would have cost 39 USD and 130 USD in fellow OECD __________ and Iceland, respectively.</p>`,
+    stem: `Which choice completes the text so that it conforms to the conventions of Standard English?`,
+    choices: { A:'nations;Colombia', B:'nations:Colombia', C:'nations,Colombia', D:'nations  Colombia' }
+  },
+  {
+    id: 21,
+    passage: `<p class="passage-text">With their distinctive cone shapes and steeply sloping sides, the volcanoes Maungarei (New Zealand) and Fisher (Alaska) may look similar from afar. Pranabendu Moitra and other volcanologists, __________ can tell by how each was formed that Maungarei is a cinder cone volcano, while Fisher is a composite volcano.</p>`,
+    stem: `Which choice completes the text with the most logical transition?`,
+    choices: { A:'for example,', B:'in addition,', C:'though,', D:'therefore,' }
+  },
+  {
+    id: 22,
+    passage: `<p class="passage-text">In a 2022 analysis, researchers investigated how negative adjectives like "unhappy" evolve. __________ the researchers applied a statistical model to a set of words to infer the rate of cognate replacement—the rate at which a word will be replaced over time with a noncognate form—in Indo-European languages.</p>`,
+    stem: `Which choice completes the text with the most logical transition?`,
+    choices: { A:'Specifically,', B:'Thus,', C:'Granted,', D:'Therefore,' }
+  },
+  {
+    id: 23,
+    passage: `<p class="passage-text">The title of "Of Moderation," an essay by French philosopher Michel de Montaigne, suggests a straightforward topic. However, Montaigne's expansive, curious mind meant that he never limited himself to one subject. __________ the essay is not just a discussion of moderation but a broad exploration of Montaigne's entire worldview.</p>`,
+    stem: `Which choice completes the text with the most logical transition?`,
+    choices: { A:'Additionally,', B:'That said,', C:'Lastly,', D:'Predictably,' }
+  },
+  {
+    id: 24,
+    passage: `<p class="passage-text"><strong>While researching a topic, a student has taken the following notes:</strong></p>
+    <ul class="notes-list">
+      <li>Singuilucan is a municipality in the state of Hidalgo, Mexico.</li>
+      <li>Municipalities are governmental regions responsible for providing many public services to their residents.</li>
+      <li>One service they provide is water treatment.</li>
+      <li>Singuilucan covers an area of roughly 420 km².</li>
+      <li>Hidalgo is divided into 84 municipalities.</li>
+      <li>The student wants to emphasize the size of Singuilucan.</li>
+    </ul>`,
+    stem: `Which choice most effectively uses relevant information from the notes to accomplish the student's goal?`,
+    choices: {
+      A:'Singuilucan is one of 84 governmental regions, known as municipalities, across',
+      B:'Providing water treatment is just one example of the public services that',
+      C:'The municipality of Singuilucan in Hidalgo, Mexico, covers an area of roughly 420 km².',
+      D:'Singuilucan—a governmental region in the state of Hidalgo, Mexico—provides'
+    }
+  },
+  {
+    id: 25,
+    passage: `<p class="passage-text"><strong>While researching a topic, a student has taken the following notes:</strong></p>
+    <ul class="notes-list">
+      <li>Modularity of mind is the notion that the mind is at least partly composed of innate neural structures (modules) that perform fast, necessary tasks.</li>
+      <li>1983: cognitive scientist Jerry A. Fodor hypothesized that low-level cognitive systems (e.g., perception, language) are modular.</li>
+      <li>In Fodorian modularity, high-level systems (e.g., reasoning) are not modular.</li>
+      <li>2003: cognitive scientist Peter Carruthers proposed the massive modularity hypothesis (MMH).</li>
+      <li>MMH expands modularity to include all cognitive systems.</li>
+      <li>The student wants to compare Fodor's hypothesis with Carruthers's.</li>
+    </ul>`,
+    stem: `Which choice most effectively uses relevant information from the notes to accomplish this goal?`,
+    choices: {
+      A:'In considering some but not all cognitive systems modular, Fodorian modularity is not as expansive in its definition of modularity as MMH is.',
+      B:'The hypotheses of Fodor and Carruthers differ in whether they consider low-level cognitive systems, such as perception and language, modular.',
+      C:"In 2003, Carruthers proposed the massive modularity hypothesis, disagreeing with Fodor's earlier hypothesis that the mind is composed of innate neural structures.",
+      D:"Following Fodor's 1983 hypothesis, Carruthers proposed that modularity of mind includes all cognitive systems."
+    }
+  },
+  {
+    id: 26,
+    passage: `<p class="passage-text"><strong>While researching a topic, a student has taken the following notes:</strong></p>
+    <ul class="notes-list">
+      <li>There are more than 500 National Wildlife Refuges (NWRs) across the United States.</li>
+      <li>The Mason Neck NWR is a 2,276-acre area in Virginia, on the Atlantic coast.</li>
+      <li>It was established to protect the endangered bald eagle.</li>
+      <li>The Coachella Valley NWR is a 3,592-acre area in California, on the Pacific coast.</li>
+      <li>It was established to protect the endangered Coachella Valley fringe-toed lizard.</li>
+      <li>The student wants to provide an overview of the NWR program.</li>
+    </ul>`,
+    stem: `Which choice most effectively uses relevant information from the notes to accomplish this goal?`,
+    choices: {
+      A:'Both the Mason Neck NWR and the Coachella Valley NWR were established to protect endangered species.',
+      B:'One of more than 500 NWRs in the US, the Mason Neck NWR encompasses 2,276 acres in Virginia.',
+      C:"The US's more than 500 NWRs protect endangered species from coast to coast.",
+      D:"California's Coachella Valley NWR was established to protect the endangered Coachella Valley fringe-toed lizard."
+    }
+  },
+  {
+    id: 27,
+    passage: `<p class="passage-text"><strong>While researching a topic, a student has taken the following notes:</strong></p>
+    <ul class="notes-list">
+      <li>Vexillology is the study of flags.</li>
+      <li>The flags of many countries include symbols like animals, plants, or landforms.</li>
+      <li>These symbols often represent an aspect of the region's history, culture, or landscape.</li>
+      <li>The flag of Cyprus includes an olive branch.</li>
+      <li>The flag of Andorra includes a cow.</li>
+    </ul>`,
+    stem: `Which choice most effectively uses information from the given sentences to make and support a generalization about symbols on flags?`,
+    choices: {
+      A:'Many countries feature symbols on their flags, and the study of these designs is known as vexillology.',
+      B:"Cyprus's flag includes an olive branch, a symbol that is important to that country's national identity.",
+      C:"The flags of some countries include symbols of plants; Cyprus's, for example,",
+      D:'Vexillology is the study of flags; accordingly, vexillologists are interested in flags from around the world.'
+    }
+  }
+];
+
+
+// ── STATE ──
+let currentQ = 0;
+let userAnswers = {};
+let flagged = {};
+let submitted = false;
+let timerSeconds = 32 * 60;
+let timerInterval;
+
+// ── TIMER ──
+function startTimer() {
+  timerInterval = setInterval(() => {
+    timerSeconds--;
+    updateTimerDisplay();
+    if (timerSeconds <= 0) {
+      clearInterval(timerInterval);
+      submitExam(true);
+    }
+  }, 1000);
+}
+
+function updateTimerDisplay() {
+  const m = Math.floor(timerSeconds / 60);
+  const s = timerSeconds % 60;
+  const disp = document.getElementById('timer-display');
+  disp.textContent = `${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
+  disp.className = '';
+  if (timerSeconds <= 60) disp.classList.add('danger');
+  else if (timerSeconds <= 300) disp.classList.add('warn');
+}
+
+// ── RENDER ──
+function renderQuestion(idx) {
+  const q = QUESTIONS[idx];
+
+  // Passage
+  document.getElementById('passage-panel').innerHTML = q.passage;
+
+  // Question panel
+  const flagClass = flagged[q.id] ? 'flagged' : '';
+  let choicesHTML = Object.entries(q.choices).map(([k,v]) => {
+    const selClass = userAnswers[q.id] === k ? 'selected' : '';
+    return `<button class="choice-btn ${selClass}" onclick="selectChoice(${q.id},'${k}')">
+      <span class="choice-label">${k}</span>
+      <span>${v}</span>
+    </button>`;
+  }).join('');
+
+  document.getElementById('question-panel').innerHTML = `
+    <div class="q-header">
+      <div class="q-number">${q.id}</div>
+      <button class="q-flag-btn ${flagClass}" onclick="toggleFlag(${q.id})" id="flag-btn-${q.id}">
+        🚩 ${flagged[q.id] ? 'Flagged' : 'Mark for Review'}
+      </button>
+    </div>
+    <div class="q-stem">${q.stem}</div>
+    <div class="choice-list">${choicesHTML}</div>
+  `;
+
+  // Nav state
+  document.getElementById('prev-btn').disabled = idx === 0;
+  document.getElementById('next-btn').disabled = idx === QUESTIONS.length - 1;
+  document.getElementById('q-counter').textContent = `Question ${idx+1} of ${QUESTIONS.length}`;
+
+  // Progress
+  const pct = ((idx + 1) / QUESTIONS.length * 100).toFixed(1);
+  document.getElementById('progress-fill').style.width = pct + '%';
+
+  // Dots
+  renderDots();
+}
+
+function renderDots() {
+  const container = document.getElementById('q-dots');
+  container.innerHTML = QUESTIONS.map((q,i) => {
+    let cls = 'q-dot';
+    if (i === currentQ) cls += ' current';
+    else if (flagged[q.id]) cls += ' flagged-dot';
+    else if (userAnswers[q.id]) cls += ' answered';
+    return `<button class="${cls}" onclick="goTo(${i})">${q.id}</button>`;
+  }).join('');
+}
+
+function selectChoice(qId, choice) {
+  if (submitted) return;
+  userAnswers[qId] = choice;
+  renderQuestion(currentQ);
+}
+
+function toggleFlag(qId) {
+  flagged[qId] = !flagged[qId];
+  const btn = document.getElementById(`flag-btn-${qId}`);
+  if (btn) {
+    btn.className = `q-flag-btn ${flagged[qId] ? 'flagged' : ''}`;
+    btn.textContent = `🚩 ${flagged[qId] ? 'Flagged' : 'Mark for Review'}`;
+  }
+  renderDots();
+}
+
+function navigate(dir) {
+  const next = currentQ + dir;
+  if (next >= 0 && next < QUESTIONS.length) {
+    currentQ = next;
+    renderQuestion(currentQ);
+    document.getElementById('passage-panel').scrollTop = 0;
+    document.getElementById('question-panel').scrollTop = 0;
+  }
+}
+
+function goTo(idx) {
+  currentQ = idx;
+  renderQuestion(currentQ);
+}
+
+// ── SUBMIT ──
+function confirmSubmit() {
+  const answered = Object.keys(userAnswers).length;
+  const unanswered = QUESTIONS.length - answered;
+  let msg = `Submit Module 2?\n\nAnswered: ${answered} / ${QUESTIONS.length}`;
+  if (unanswered > 0) msg += `\nUnanswered: ${unanswered} questions`;
+  if (confirm(msg)) submitExam(false);
+}
+
+async function submitExam(timeUp) {
+  submitted = true;
+  clearInterval(timerInterval);
+  if (timeUp) alert('⏱ Time is up! Your answers have been submitted.');
+
+  // 점수 계산
+  let correct = 0;
+  QUESTIONS.forEach(q => {
+    if (userAnswers[q.id] === ANSWER_KEY[q.id]) correct++;
+  });
+
+  // Supabase 저장
+  if (currentUser) {
+    await sb.from('exam_results').upsert({
+      user_id: currentUser.id,
+      exam_id: EXAM_ID,
+      completed: true,
+      rw_m1_raw: correct,
+      answers: userAnswers,
+      submitted_at: new Date().toISOString()
+    }, { onConflict: 'user_id,exam_id' });
+  }
+
+  const pct = Math.round(correct / QUESTIONS.length * 100);
+  document.getElementById('res-raw').textContent = `${correct}/27`;
+  document.getElementById('res-pct').textContent = `${pct}%`;
+
+  // Review
+  const reviewHTML = QUESTIONS.map(q => {
+    const ua = userAnswers[q.id];
+    const ca = ANSWER_KEY[q.id];
+    let cls, verdict, detail;
+    if (!ua) {
+      cls = 'unanswered'; verdict = '— Not Answered'; detail = `Correct Answer: ${ca}`;
+    } else if (ua === ca) {
+      cls = 'correct'; verdict = '✓ Correct'; detail = `Your Answer: ${ua}`;
+    } else {
+      cls = 'wrong'; verdict = '✗ Incorrect'; detail = `Your Answer: ${ua} &nbsp;|&nbsp; Correct Answer: ${ca}`;
+    }
+    return `<div class="review-item ${cls}">
+      <div class="review-q-num">Question ${q.id}</div>
+      <div class="review-verdict">${verdict}</div>
+      <div class="review-answer">${detail}</div>
+    </div>`;
+  }).join('');
+
+  document.getElementById('review-list').innerHTML = reviewHTML;
+  document.getElementById('result-screen').style.display = 'block';
+  window.scrollTo(0,0);
+}
+
+// ── INIT ──
+initExam();
+</script>
+</body>
+</html>
