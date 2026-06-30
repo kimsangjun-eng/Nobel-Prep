@@ -546,7 +546,10 @@
     <div id="timer-label">Time Remaining</div>
     <div id="timer-display">32:00</div>
   </div>
-  <div class="header-right" id="q-counter">Question 1 of 27</div>
+  <div style="display:flex; align-items:center; gap:14px;">
+    <div class="header-right" id="q-counter">Question 1 of 27</div>
+    <button onclick="confirmLogout()" style="background:none; border:1px solid rgba(255,255,255,0.25); color:rgba(255,255,255,0.6); font-size:11px; font-family:Arial,sans-serif; padding:4px 10px; border-radius:6px; cursor:pointer;">Sign Out</button>
+  </div>
 </div>
 
 <!-- PROGRESS BAR -->
@@ -603,6 +606,12 @@ const EXAM_ID = 'sat-aug2024-us-rw-m2';
 let currentUser = null;
 
 // 로그인 확인 + 재풀기 차단
+async function confirmLogout() {
+  if (!confirm('Sign out now? Your progress on this module will be lost if not submitted.')) return;
+  await sb.auth.signOut();
+  window.location.href = 'index.html';
+}
+
 async function initExam() {
   const { data: { session } } = await sb.auth.getSession();
   if (!session) {

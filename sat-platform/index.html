@@ -199,15 +199,6 @@
   const { createClient } = supabase;
   const sb = createClient(SUPABASE_URL, SUPABASE_KEY);
 
-  // 이미 로그인 되어 있으면 시험 페이지로
-  async function checkSession() {
-    const { data: { session } } = await sb.auth.getSession();
-    if (session) {
-      window.location.href = 'exam.html';
-    }
-  }
-  checkSession();
-
   // ── 로그인 ──
   async function login() {
     const email = document.getElementById('email').value.trim();
