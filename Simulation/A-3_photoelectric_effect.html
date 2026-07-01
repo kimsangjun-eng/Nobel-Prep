@@ -1,0 +1,559 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>A-3 · Photoelectric Effect | Nobel Prep AP Chemistry</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --navy:#1a2744; --navy-mid:#1e3060; --navy-light:#2a4080;
+  --gold:#c9a84c; --gold-light:#d4b86a; --gold-bg:#f5e9c8;
+  --bg-page:#f0f2f5; --bg-card:#ffffff; --bg-card-alt:#f8f9fb;
+  --text-primary:#1a2744; --text-body:#2c3e50;
+  --text-muted:#6b7c93; --text-micro:#8a99ad;
+  --border:#dde3ee; --border-light:#eaeff8;
+  --red-accent:#e74c3c; --blue-accent:#3498db;
+  --green-accent:#27ae60; --purple-accent:#8e44ad;
+  --green-bg:#e8f5e9; --green-border:#4caf50; --green-text:#1b5e20;
+  --red-bg:#fdecea; --red-border:#e53935; --red-text:#7f0000;
+  --font-ui:'Inter',sans-serif; --font-mono:'JetBrains Mono',monospace;
+  --radius-sm:6px; --radius-md:10px; --radius-lg:14px;
+  --shadow-card:0 2px 8px rgba(26,39,68,0.08),0 1px 2px rgba(26,39,68,0.04);
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--font-ui);background:var(--bg-page);color:var(--text-body);min-height:100vh;-webkit-font-smoothing:antialiased}
+
+/* ── HEADER ── */
+.sim-header{background:var(--navy);padding:20px 32px;position:relative}
+.sim-header-eyebrow{font-size:10px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--gold);margin-bottom:6px;opacity:.9}
+.sim-header-title{font-size:26px;font-weight:700;color:#fff;letter-spacing:-.02em;line-height:1.2;margin-bottom:5px}
+.sim-header-subtitle{font-size:13.5px;color:rgba(255,255,255,.6);max-width:580px}
+.sim-badge{position:absolute;top:20px;right:32px;background:var(--gold-bg);color:var(--navy);font-size:11px;font-weight:700;font-family:var(--font-mono);letter-spacing:.04em;padding:5px 12px;border-radius:20px;border:1.5px solid var(--gold-light)}
+
+/* ── BODY ── */
+.sim-body{max-width:820px;margin:0 auto;padding:28px 20px}
+
+/* ── CARDS ── */
+.card-info{background:var(--bg-card);border:1px solid var(--border-light);border-radius:var(--radius-lg);padding:20px 28px;margin-bottom:20px;font-size:14px;line-height:1.8;color:var(--text-body);box-shadow:var(--shadow-card)}
+.card-info strong{color:var(--text-primary)}
+.card{background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius-lg);padding:20px 28px;margin-bottom:20px;box-shadow:var(--shadow-card)}
+.card-title{font-size:15px;font-weight:700;color:var(--text-primary);margin-bottom:4px}
+.card-subtitle{font-size:12.5px;color:var(--text-muted);margin-bottom:18px}
+
+/* ── CANVAS ── */
+.canvas-wrap{width:100%;border-radius:var(--radius-md);overflow:hidden;background:#0d1a2e;border:1px solid #1a3060;margin-bottom:16px;position:relative}
+canvas{display:block;width:100%}
+
+/* ── CONTROLS ── */
+.controls-grid{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-bottom:16px}
+.control-group{}
+.ctrl-label{font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--text-micro);margin-bottom:8px;display:block}
+.slider-wrap{display:flex;align-items:center;gap:10px}
+input[type=range]{-webkit-appearance:none;appearance:none;flex:1;height:5px;border-radius:3px;background:var(--border);outline:none;cursor:pointer}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:18px;height:18px;border-radius:50%;background:var(--navy);border:2.5px solid #fff;box-shadow:0 1px 4px rgba(0,0,0,.2);cursor:pointer}
+input[type=range]::-moz-range-thumb{width:18px;height:18px;border-radius:50%;background:var(--navy);border:2.5px solid #fff;cursor:pointer}
+.slider-val{font-family:var(--font-mono);font-size:13px;font-weight:600;color:var(--text-primary);min-width:52px;text-align:right}
+
+/* ── METAL SELECTOR ── */
+.metal-row{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px}
+.metal-btn{padding:7px 16px;border-radius:var(--radius-sm);border:1.5px solid var(--border);background:transparent;color:var(--text-primary);font-family:var(--font-ui);font-size:13px;font-weight:600;cursor:pointer;transition:all .15s}
+.metal-btn:hover{border-color:var(--navy)}
+.metal-btn.active{background:var(--navy);color:#fff;border-color:var(--navy)}
+
+/* ── RESULT BOX ── */
+.result-box{border-radius:var(--radius-md);border:1.5px solid;padding:13px 20px;text-align:center;font-size:14px;font-weight:700;margin-bottom:8px;transition:all .3s}
+.result-box.ejected{background:var(--green-bg);border-color:var(--green-border);color:var(--green-text)}
+.result-box.blocked{background:var(--red-bg);border-color:var(--red-border);color:var(--red-text)}
+.result-box.neutral{background:var(--bg-card-alt);border-color:var(--border);color:var(--text-muted)}
+.result-caption{font-size:12px;color:var(--text-muted);text-align:center;margin-bottom:16px}
+
+/* ── INFO CARDS ── */
+.info-cards{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:0}
+@media(max-width:600px){.info-cards{grid-template-columns:repeat(2,1fr)}}
+.info-card{background:var(--bg-card-alt);border:1px solid var(--border-light);border-radius:var(--radius-md);padding:12px 14px;text-align:center}
+.info-card.highlight{border-color:var(--gold);background:var(--gold-bg)}
+.ic-label{font-size:9.5px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--text-micro);margin-bottom:5px}
+.ic-val{font-family:var(--font-mono);font-size:16px;font-weight:700;color:var(--navy);line-height:1}
+.ic-unit{font-size:10px;color:var(--text-muted);margin-top:3px}
+
+/* ── FORMULA BOX ── */
+.formula-box{background:var(--bg-card-alt);border:1px solid var(--border-light);border-left:3px solid var(--gold);border-radius:0 var(--radius-md) var(--radius-md) 0;padding:14px 20px;font-size:13.5px;line-height:1.9;color:var(--text-body)}
+.formula-box .eq{font-family:var(--font-mono);font-size:15px;font-weight:700;color:var(--navy);display:block;margin-bottom:6px}
+.formula-box .sub{font-size:12px;color:var(--text-muted)}
+
+/* ── INTENSITY NOTE ── */
+.intensity-note{background:var(--gold-bg);border:1.5px solid var(--gold-light);border-radius:var(--radius-md);padding:12px 18px;font-size:13px;color:#7a5800;margin-bottom:16px;line-height:1.6}
+.intensity-note strong{color:#5a3c00}
+
+@media(max-width:600px){
+  .controls-grid{grid-template-columns:1fr}
+  .sim-header{padding:14px 18px}
+  .sim-header-title{font-size:20px}
+  .sim-badge{top:14px;right:18px}
+  .sim-body{padding:18px 12px}
+  .card{padding:16px 18px}
+}
+</style>
+</head>
+<body>
+
+<!-- ══ HEADER ══ -->
+<header class="sim-header">
+  <div class="sim-header-eyebrow">Nobel Prep · AP Chemistry · Chapter 7</div>
+  <h1 class="sim-header-title">Photoelectric Effect</h1>
+  <p class="sim-header-subtitle">Light hits a metal surface — will electrons be ejected? Frequency matters, not intensity.</p>
+  <span class="sim-badge">A-3</span>
+</header>
+
+<!-- ══ BODY ══ -->
+<main class="sim-body">
+
+  <!-- Concept card -->
+  <div class="card-info">
+    <strong>Einstein (1905)</strong> explained the photoelectric effect using Planck's quantum idea:
+    light travels as photons, each with energy <strong>E = hν</strong>.
+    An electron is ejected <em>only</em> if a photon's energy exceeds the metal's <strong>work function (Φ)</strong>.
+    The excess becomes <strong>kinetic energy</strong> of the ejected electron:
+    <strong>KE = hν − Φ</strong>.
+    Increasing intensity sends <em>more photons</em> but does <em>not</em> increase each photon's energy.
+  </div>
+
+  <!-- Simulation card -->
+  <div class="card">
+    <div class="card-title">Interactive Simulation</div>
+    <div class="card-subtitle">Adjust frequency and intensity — observe whether electrons are ejected</div>
+
+    <!-- Canvas -->
+    <div class="canvas-wrap">
+      <canvas id="simCanvas"></canvas>
+    </div>
+
+    <!-- Result -->
+    <div class="result-box neutral" id="resultBox">Adjust the controls to fire photons</div>
+    <div class="result-caption" id="resultCaption">—</div>
+
+    <!-- Metal selector -->
+    <span class="ctrl-label">Metal Surface</span>
+    <div class="metal-row" id="metalRow">
+      <!-- rendered by JS -->
+    </div>
+
+    <!-- Controls -->
+    <div class="controls-grid">
+      <div class="control-group">
+        <span class="ctrl-label">Frequency ν (× 10¹⁴ Hz)</span>
+        <div class="slider-wrap">
+          <input type="range" id="sliderFreq" min="3" max="15" step="0.1" value="6" oninput="onFreq(this)">
+          <span class="slider-val" id="valFreq">6.0</span>
+        </div>
+        <div style="display:flex;justify-content:space-between;margin-top:4px">
+          <span style="font-size:10px;color:var(--text-micro)">3 (red)</span>
+          <span style="font-size:10px;color:var(--text-micro)">7.5 (violet)</span>
+          <span style="font-size:10px;color:var(--text-micro)">15 (UV)</span>
+        </div>
+      </div>
+      <div class="control-group">
+        <span class="ctrl-label">Intensity (photons / sec)</span>
+        <div class="slider-wrap">
+          <input type="range" id="sliderInt" min="1" max="5" step="1" value="3" oninput="onIntensity(this)">
+          <span class="slider-val" id="valInt">Medium</span>
+        </div>
+        <div style="display:flex;justify-content:space-between;margin-top:4px">
+          <span style="font-size:10px;color:var(--text-micro)">Low</span>
+          <span style="font-size:10px;color:var(--text-micro)">High</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Intensity note -->
+    <div class="intensity-note">
+      💡 <strong>Key insight:</strong> Increasing intensity fires <em>more photons</em>, ejecting <em>more electrons</em> — but only if ν > ν_threshold. It does NOT increase KE of individual electrons.
+    </div>
+
+    <!-- Info cards -->
+    <div class="info-cards">
+      <div class="info-card">
+        <div class="ic-label">Photon Energy</div>
+        <div class="ic-val" id="dispEphoton">—</div>
+        <div class="ic-unit">× 10⁻¹⁹ J</div>
+      </div>
+      <div class="info-card">
+        <div class="ic-label">Work Function Φ</div>
+        <div class="ic-val" id="dispPhi">—</div>
+        <div class="ic-unit">× 10⁻¹⁹ J</div>
+      </div>
+      <div class="info-card">
+        <div class="ic-label">Threshold ν</div>
+        <div class="ic-val" id="dispNuThr">—</div>
+        <div class="ic-unit">× 10¹⁴ Hz</div>
+      </div>
+      <div class="info-card highlight">
+        <div class="ic-label">KE of Electron</div>
+        <div class="ic-val" id="dispKE">—</div>
+        <div class="ic-unit">× 10⁻¹⁹ J</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Formula card -->
+  <div class="card">
+    <div class="card-title">Einstein's Photoelectric Equation</div>
+    <div class="card-subtitle">Energy conservation for the photoelectric effect</div>
+    <div class="formula-box">
+      <span class="eq">KE = hν − Φ</span>
+      <span class="sub">
+        hν = photon energy &nbsp;(h = 6.626 × 10⁻³⁴ J·s)<br>
+        Φ = work function — minimum energy to eject an electron (metal-dependent)<br>
+        KE = kinetic energy of ejected electron (= 0 if hν &lt; Φ)<br><br>
+        Threshold frequency: &nbsp;<strong>ν₀ = Φ / h</strong> &nbsp;— below this, no electrons are ejected regardless of intensity
+      </span>
+    </div>
+  </div>
+
+</main>
+
+<script>
+/* ═══════════════════════════════════════════════
+   A-3  Photoelectric Effect
+   Canvas animation: photons → metal → electrons
+═══════════════════════════════════════════════ */
+
+const h_J = 6.626e-34; // Planck's constant
+
+/* ── METALS (work function in J) ── */
+const METALS = [
+  { name:'Cesium (Cs)',  phi: 3.43e-19, color:'#8e6bbf' },
+  { name:'Sodium (Na)',  phi: 3.65e-19, color:'#e8a020' },
+  { name:'Aluminum (Al)',phi: 6.54e-19, color:'#7ea8c0' },
+  { name:'Copper (Cu)', phi: 6.85e-19, color:'#c07840' },
+  { name:'Gold (Au)',    phi: 8.17e-19, color:'#c9a84c' },
+];
+
+let state = {
+  metalIdx: 0,
+  freq: 6.0,    // × 10¹⁴ Hz
+  intensity: 3, // 1–5
+};
+
+/* ── CANVAS SETUP ── */
+const canvas = document.getElementById('simCanvas');
+const ctx = canvas.getContext('2d');
+let W, H;
+
+function resizeCanvas() {
+  const wrap = canvas.parentElement;
+  const dpr = window.devicePixelRatio || 1;
+  W = wrap.clientWidth;
+  H = Math.round(W * 0.42);
+  canvas.width  = W * dpr;
+  canvas.height = H * dpr;
+  canvas.style.width  = W + 'px';
+  canvas.style.height = H + 'px';
+  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+}
+
+new ResizeObserver(() => { resizeCanvas(); }).observe(canvas.parentElement);
+
+/* ── PARTICLE CLASSES ── */
+class Photon {
+  constructor(intensity) {
+    this.x = 0;
+    this.y = H * 0.25 + (Math.random() - 0.5) * H * 0.15;
+    this.vx = 3.5 + Math.random() * 1.5;
+    this.vy = (Math.random() - 0.5) * 0.4;
+    this.r  = 4;
+    this.alive = true;
+    this.col = photonColor();
+  }
+  update() {
+    this.x += this.vx;
+    this.y += this.vy;
+    if (this.x > metalX() - this.r) this.alive = false;
+  }
+  draw() {
+    // Glow
+    const g = ctx.createRadialGradient(this.x, this.y, 0, this.x, this.y, this.r * 2.5);
+    g.addColorStop(0, this.col + 'ff');
+    g.addColorStop(0.5, this.col + '88');
+    g.addColorStop(1, this.col + '00');
+    ctx.beginPath(); ctx.arc(this.x, this.y, this.r * 2.5, 0, Math.PI * 2);
+    ctx.fillStyle = g; ctx.fill();
+    // Core
+    ctx.beginPath(); ctx.arc(this.x, this.y, this.r, 0, Math.PI * 2);
+    ctx.fillStyle = '#ffffff'; ctx.fill();
+  }
+}
+
+class Electron {
+  constructor(y) {
+    this.x = metalX();
+    this.y = y;
+    const KE = calcKE();
+    const spd = 3.5 + (KE / 3e-19) * 4;
+    const ang = Math.PI + (Math.random() - 0.5) * Math.PI * 0.6;
+    this.vx = Math.cos(ang) * spd;
+    this.vy = Math.sin(ang) * spd;
+    this.r  = 6;
+    this.life = 1.0;
+    this.alive = true;
+  }
+  update() {
+    this.x += this.vx;
+    this.y += this.vy;
+    this.life -= 0.010;
+    if (this.life <= 0 || this.x < -30 || this.x > W+30 || this.y > H+30 || this.y < -30) this.alive = false;
+  }
+  draw() {
+    ctx.save();
+    ctx.globalAlpha = this.life;
+    // Large outer glow
+    const g = ctx.createRadialGradient(this.x, this.y, 0, this.x, this.y, this.r * 5);
+    g.addColorStop(0,   '#00eeffff');
+    g.addColorStop(0.3, '#3498dbaa');
+    g.addColorStop(0.7, '#3498db44');
+    g.addColorStop(1,   '#3498db00');
+    ctx.beginPath(); ctx.arc(this.x, this.y, this.r * 5, 0, Math.PI * 2);
+    ctx.fillStyle = g; ctx.fill();
+    // Bright white core
+    ctx.beginPath(); ctx.arc(this.x, this.y, this.r, 0, Math.PI * 2);
+    ctx.fillStyle = '#ffffff'; ctx.fill();
+    // e⁻ label
+    if (this.life > 0.65) {
+      ctx.font = 'bold 10px Inter,sans-serif';
+      ctx.fillStyle = '#00eeff';
+      ctx.textAlign = 'center';
+      ctx.fillText('e⁻', this.x, this.y - this.r - 4);
+    }
+    ctx.restore();
+  }
+}
+
+class Impact {
+  constructor(x, y) {
+    this.x = x; this.y = y; this.life = 1.0; this.r = 0;
+  }
+  update() { this.life -= 0.06; this.r += 2; }
+  draw() {
+    ctx.save();
+    ctx.globalAlpha = this.life * 0.6;
+    ctx.beginPath(); ctx.arc(this.x, this.y, this.r, 0, Math.PI * 2);
+    ctx.strokeStyle = '#ff6060'; ctx.lineWidth = 2; ctx.stroke();
+    ctx.restore();
+  }
+  get alive() { return this.life > 0; }
+}
+
+let photons = [], electrons = [], impacts = [];
+let spawnTimer = 0;
+
+/* ── GEOMETRY ── */
+function metalX() { return W * 0.55; }
+
+/* ── PHYSICS ── */
+function photonEnergy() { return h_J * state.freq * 1e14; }
+function workFunction() { return METALS[state.metalIdx].phi; }
+function calcKE() { return Math.max(0, photonEnergy() - workFunction()); }
+function isEjected() { return photonEnergy() >= workFunction(); }
+function thresholdFreq() { return (workFunction() / h_J) / 1e14; }
+
+/* ── PHOTON COLOR by frequency ── */
+function photonColor() {
+  const f = state.freq; // × 10¹⁴ Hz
+  // Visible: 3.8 (red 700nm) → 7.5 (violet 400nm), UV above
+  if (f < 4.0)  return '#ff4040';   // red
+  if (f < 4.8)  return '#ff7700';   // orange
+  if (f < 5.2)  return '#ffdd00';   // yellow
+  if (f < 5.7)  return '#44cc44';   // green
+  if (f < 6.4)  return '#4488ff';   // blue
+  if (f < 7.5)  return '#8844ff';   // violet
+  return '#cc88ff';                   // UV (purple tint)
+}
+
+/* ── DRAW SCENE ── */
+function drawScene() {
+  if (!W || !H) return;
+
+  // Background
+  ctx.fillStyle = '#0d1a2e';
+  ctx.fillRect(0, 0, W, H);
+
+  // Light source (left)
+  drawLightSource();
+
+  // Metal plate
+  drawMetal();
+
+  // Particles
+  photons.forEach(p => p.draw());
+  electrons.forEach(e => e.draw());
+  impacts.forEach(i => i.draw());
+
+  // Labels
+  drawLabels();
+}
+
+function drawLightSource() {
+  const lx = W * 0.08, ly = H * 0.25;
+  const col = photonColor();
+  // Body
+  ctx.fillStyle = '#1a3060';
+  ctx.beginPath(); ctx.roundRect(lx - 22, ly - 14, 44, 28, 6); ctx.fill();
+  ctx.strokeStyle = '#2a5090'; ctx.lineWidth = 1.5; ctx.stroke();
+  // Lens glow
+  const g = ctx.createRadialGradient(lx + 20, ly, 0, lx + 20, ly, 18);
+  g.addColorStop(0, col + 'cc');
+  g.addColorStop(0.5, col + '55');
+  g.addColorStop(1, col + '00');
+  ctx.beginPath(); ctx.arc(lx + 20, ly, 18, 0, Math.PI * 2);
+  ctx.fillStyle = g; ctx.fill();
+  // Label
+  ctx.font = '500 10px Inter, sans-serif';
+  ctx.fillStyle = 'rgba(255,255,255,0.55)';
+  ctx.textAlign = 'center';
+  ctx.fillText('Light Source', lx, ly + 26);
+}
+
+function drawMetal() {
+  const mx = metalX();
+  const metal = METALS[state.metalIdx];
+  // Metal body
+  const grad = ctx.createLinearGradient(mx, 0, mx + W * 0.22, 0);
+  grad.addColorStop(0, metal.color + 'ff');
+  grad.addColorStop(0.4, metal.color + 'cc');
+  grad.addColorStop(1, metal.color + '44');
+  ctx.fillStyle = grad;
+  ctx.fillRect(mx, H * 0.08, W * 0.22, H * 0.84);
+
+  // Surface sheen
+  ctx.fillStyle = 'rgba(255,255,255,0.08)';
+  ctx.fillRect(mx, H * 0.08, 6, H * 0.84);
+
+  // Label
+  ctx.font = 'bold 11px Inter, sans-serif';
+  ctx.fillStyle = 'rgba(255,255,255,0.7)';
+  ctx.textAlign = 'center';
+  ctx.save();
+  ctx.translate(mx + W * 0.11, H * 0.5);
+  ctx.rotate(-Math.PI / 2);
+  ctx.fillText(metal.name, 0, 0);
+  ctx.restore();
+}
+
+function drawLabels() {
+  ctx.font = '500 10px Inter, sans-serif';
+  ctx.fillStyle = 'rgba(255,255,255,0.4)';
+  ctx.textAlign = 'center';
+  // Photon label
+  ctx.fillText('photons →', W * 0.3, H * 0.1);
+  // Electron label (only if ejected)
+  if (isEjected() && electrons.length > 0) {
+    ctx.fillStyle = 'rgba(160,232,255,0.7)';
+    ctx.fillText('electrons', W * 0.82, H * 0.15);
+  }
+}
+
+/* ── UPDATE ── */
+function spawnPhoton() {
+  photons.push(new Photon(state.intensity));
+}
+
+function update() {
+  if (!W || !H) return;
+
+  // Spawn photons by intensity
+  spawnTimer++;
+  const interval = Math.max(4, 20 - state.intensity * 3);
+  if (spawnTimer % interval === 0) spawnPhoton();
+
+  // Update photons
+  for (const p of photons) {
+    p.update();
+    // Hit metal
+    if (!p.alive) {
+      const hitY = p.y;
+      if (isEjected()) {
+        electrons.push(new Electron(hitY));
+      } else {
+        impacts.push(new Impact(metalX(), hitY));
+      }
+    }
+  }
+  photons = photons.filter(p => p.alive);
+  electrons = electrons.filter(e => { e.update(); return e.alive; });
+  impacts   = impacts.filter(i => { i.update(); return i.alive; });
+}
+
+/* ── ANIMATION LOOP ── */
+function loop() {
+  update();
+  drawScene();
+  requestAnimationFrame(loop);
+}
+
+/* ── UI UPDATE ── */
+function updateUI() {
+  const E_ph = photonEnergy();
+  const phi  = workFunction();
+  const KE   = calcKE();
+  const nu0  = thresholdFreq();
+  const ejected = isEjected();
+
+  document.getElementById('dispEphoton').textContent = (E_ph * 1e19).toFixed(2);
+  document.getElementById('dispPhi').textContent     = (phi  * 1e19).toFixed(2);
+  document.getElementById('dispNuThr').textContent   = nu0.toFixed(2);
+  document.getElementById('dispKE').textContent      = ejected ? (KE * 1e19).toFixed(2) : '0';
+
+  const box = document.getElementById('resultBox');
+  const cap = document.getElementById('resultCaption');
+  if (ejected) {
+    box.className = 'result-box ejected';
+    box.textContent = '⚡ Electrons ejected! hν > Φ';
+    cap.textContent = `KE = hν − Φ = ${(KE*1e19).toFixed(2)} × 10⁻¹⁹ J`;
+  } else {
+    box.className = 'result-box blocked';
+    box.textContent = '✗ No electrons — frequency too low';
+    cap.textContent = `Need ν ≥ ${nu0.toFixed(2)} × 10¹⁴ Hz for this metal`;
+  }
+}
+
+/* ── METAL BUTTONS ── */
+function buildMetalBtns() {
+  const row = document.getElementById('metalRow');
+  METALS.forEach((m, i) => {
+    const btn = document.createElement('button');
+    btn.className = 'metal-btn' + (i === 0 ? ' active' : '');
+    btn.textContent = m.name.split(' ')[0]; // short name
+    btn.onclick = () => {
+      state.metalIdx = i;
+      document.querySelectorAll('.metal-btn').forEach((b,j) => b.classList.toggle('active', j===i));
+      updateUI();
+    };
+    row.appendChild(btn);
+  });
+}
+
+/* ── SLIDER HANDLERS ── */
+function onFreq(el) {
+  state.freq = parseFloat(el.value);
+  document.getElementById('valFreq').textContent = state.freq.toFixed(1);
+  updateUI();
+}
+
+function onIntensity(el) {
+  state.intensity = parseInt(el.value);
+  const labels = ['','Low','Low-Med','Medium','Med-High','High'];
+  document.getElementById('valInt').textContent = labels[state.intensity];
+  updateUI();
+}
+
+/* ── INIT ── */
+resizeCanvas();
+buildMetalBtns();
+updateUI();
+loop();
+</script>
+</body>
+</html>
