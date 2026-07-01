@@ -54,7 +54,7 @@
   .logout-btn:hover { background: rgba(255,255,255,0.1); }
 
   /* MAIN */
-  .container { max-width: 1000px; margin: 32px auto; padding: 0 20px; }
+  .container { max-width: 1200px; margin: 32px auto; padding: 0 20px; }
 
   .section-title {
     font-size: 18px;
@@ -65,7 +65,6 @@
     border-bottom: 2px solid var(--gold);
   }
 
-  /* ADD STUDENT FORM */
   .card {
     background: white;
     border-radius: 14px;
@@ -74,6 +73,7 @@
     box-shadow: 0 2px 12px rgba(0,0,0,0.07);
   }
 
+  /* FORM */
   .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 14px; }
   .form-group label {
     display: block;
@@ -93,7 +93,6 @@
     outline: none;
   }
   .form-group input:focus { border-color: var(--navy); }
-
   .add-btn {
     background: var(--navy);
     color: white;
@@ -105,7 +104,6 @@
     cursor: pointer;
   }
   .add-btn:hover { background: #2a3f6b; }
-
   .msg {
     font-size: 13px;
     padding: 10px 14px;
@@ -114,42 +112,69 @@
     display: none;
   }
   .msg.success { background: #F0FDF4; color: var(--green); border: 1px solid var(--green); }
-  .msg.error { background: #FEF2F2; color: var(--red); border: 1px solid var(--red); }
+  .msg.error   { background: #FEF2F2; color: var(--red);   border: 1px solid var(--red);   }
 
-  /* STUDENT TABLE */
-  table { width: 100%; border-collapse: collapse; font-size: 14px; }
+  /* TABLE */
+  .table-scroll { overflow-x: auto; }
+  table { width: 100%; border-collapse: collapse; font-size: 13px; min-width: 900px; }
   th {
     background: var(--navy);
     color: white;
-    padding: 12px 16px;
+    padding: 11px 14px;
     text-align: left;
-    font-size: 12px;
+    font-size: 11px;
     text-transform: uppercase;
     letter-spacing: 0.5px;
+    white-space: nowrap;
   }
   th:first-child { border-radius: 8px 0 0 0; }
-  th:last-child { border-radius: 0 8px 0 0; }
-  td { padding: 12px 16px; border-bottom: 1px solid var(--gray-200); color: var(--gray-800); }
+  th:last-child  { border-radius: 0 8px 0 0; }
+  td { padding: 11px 14px; border-bottom: 1px solid var(--gray-200); color: var(--gray-800); }
+  tr:last-child td { border-bottom: none; }
   tr:hover td { background: var(--gray-50); }
 
+  /* SCORE SECTION HEADER */
+  .section-group {
+    background: var(--gray-100);
+    color: var(--navy);
+    font-size: 10px;
+    font-weight: bold;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    text-align: center;
+    padding: 6px;
+  }
+
+  /* SCORE BADGES */
   .score-badge {
     display: inline-block;
-    padding: 3px 10px;
+    padding: 3px 9px;
     border-radius: 20px;
     font-size: 12px;
     font-weight: bold;
+    white-space: nowrap;
   }
-  .score-done { background: #F0FDF4; color: var(--green); }
+  .score-done    { background: #F0FDF4; color: var(--green); }
   .score-pending { background: var(--gray-100); color: var(--gray-400); }
 
+  /* TOTAL SCORE */
+  .total-score {
+    font-weight: bold;
+    font-size: 14px;
+    color: var(--navy);
+  }
+  .total-score.good { color: var(--green); }
+
+  /* RESET BUTTON */
   .reset-btn {
     background: none;
     border: 1px solid var(--red);
     color: var(--red);
-    padding: 4px 10px;
+    padding: 4px 8px;
     border-radius: 6px;
-    font-size: 12px;
+    font-size: 11px;
     cursor: pointer;
+    white-space: nowrap;
   }
   .reset-btn:hover { background: #FEF2F2; }
 
@@ -171,6 +196,29 @@
     color: var(--gray-400);
     font-size: 14px;
   }
+
+  /* MOCK TEST SELECTOR */
+  .mock-selector {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 16px;
+    flex-wrap: wrap;
+  }
+  .mock-selector label {
+    font-size: 13px;
+    font-weight: bold;
+    color: var(--navy);
+  }
+  .mock-selector select {
+    padding: 7px 12px;
+    border: 2px solid var(--gray-200);
+    border-radius: 8px;
+    font-size: 13px;
+    outline: none;
+    color: var(--gray-800);
+  }
+  .mock-selector select:focus { border-color: var(--navy); }
 </style>
 </head>
 <body>
@@ -212,10 +260,19 @@
     <div class="msg" id="add-msg"></div>
   </div>
 
-  <!-- STUDENT LIST -->
+  <!-- STUDENT RESULTS -->
   <div class="card">
     <div class="section-title">Student Results</div>
-    <button class="refresh-btn" onclick="loadStudents()">↻ Refresh</button>
+
+    <div class="mock-selector">
+      <label>시험 회차:</label>
+      <select id="mock-select" onchange="loadStudents()">
+        <option value="1">Mock Test 1 (Aug 2024 US)</option>
+        <!-- 회차 추가 시 여기에 option 추가 -->
+      </select>
+      <button class="refresh-btn" onclick="loadStudents()">↻ Refresh</button>
+    </div>
+
     <div id="student-table-wrap">
       <div class="empty-state">Loading...</div>
     </div>
@@ -229,7 +286,42 @@
   const { createClient } = supabase;
   const sb = createClient(SUPABASE_URL, SUPABASE_KEY);
 
-  // 로그인 확인
+  // Mock Test별 exam_id 매핑
+  const MOCK_CONFIG = {
+    1: {
+      rw_m1: 'sat-aug2024-us-rw-m1',
+      rw_m2: 'sat-aug2024-us-rw-m2',
+      math_m1: 'sat-aug2024-us-math-m1',
+      math_m2: 'sat-aug2024-us-math-m2',
+      rw_total: 54,
+      math_total: 44,
+    }
+    // Mock Test 2 추가 시: 2: { rw_m1: 'sat-xxx-rw-m1', ... }
+  };
+
+  // RW 환산점수 (비공식)
+  const RW_TABLE = {
+    54:800,53:790,52:780,51:770,50:760,49:750,48:740,47:730,46:720,45:710,
+    44:700,43:690,42:680,41:670,40:660,39:650,38:640,37:630,36:620,35:610,
+    34:600,33:590,32:580,31:570,30:560,29:550,28:540,27:530,26:520,25:510,
+    24:500,23:490,22:480,21:470,20:460,19:450,18:440,17:430,16:420,15:410,
+    14:400,13:390,12:380,11:370,10:360,9:350,8:340,7:330,6:320,5:310,
+    4:300,3:290,2:280,1:270,0:200
+  };
+
+  // Math 환산점수 (비공식)
+  const MATH_TABLE = {
+    44:800,43:790,42:780,41:770,40:760,39:750,38:740,37:730,36:720,35:710,
+    34:700,33:690,32:680,31:670,30:660,29:650,28:640,27:630,26:620,25:610,
+    24:600,23:590,22:580,21:570,20:560,19:550,18:540,17:530,16:520,15:510,
+    14:500,13:490,12:480,11:470,10:460,9:450,8:440,7:430,6:420,5:410,
+    4:400,3:390,2:380,1:370,0:200
+  };
+
+  function convertRW(raw)   { return RW_TABLE[raw]   ?? Math.max(200, Math.round(200 + raw * (600/54))); }
+  function convertMath(raw) { return MATH_TABLE[raw] ?? Math.max(200, Math.round(200 + raw * (600/44))); }
+
+  // 관리자 확인
   async function checkAdmin() {
     const { data: { session } } = await sb.auth.getSession();
     if (!session) { window.location.href = 'index.html'; return; }
@@ -239,20 +331,18 @@
     loadStudents();
   }
 
-  // 로그아웃
   async function logout() {
     await sb.auth.signOut();
     window.location.href = 'index.html';
   }
 
-  // 학생 추가
+  // 학생 추가 (안내 메시지 — Service Role 없이는 Auth 계정 생성 불가)
   async function addStudent() {
-    const name = document.getElementById('new-name').value.trim();
-    const school = document.getElementById('new-school').value.trim();
-    const email = document.getElementById('new-email').value.trim();
+    const name     = document.getElementById('new-name').value.trim();
+    const school   = document.getElementById('new-school').value.trim();
+    const email    = document.getElementById('new-email').value.trim();
     const password = document.getElementById('new-password').value.trim();
-    const msgEl = document.getElementById('add-msg');
-
+    const msgEl    = document.getElementById('add-msg');
     msgEl.style.display = 'none';
 
     if (!name || !email || !password) {
@@ -262,90 +352,176 @@
       return;
     }
 
-    // Supabase Auth로 계정 생성 (admin용 — service role 필요)
-    // 현재는 학생이 직접 가입하는 방식으로 안내
     msgEl.className = 'msg success';
-    msgEl.textContent = `✓ Account created for ${name}. Share login info: ${email} / ${password}`;
+    msgEl.innerHTML = `
+      ✓ 학생 정보 확인 완료.<br>
+      <strong>Supabase 대시보드</strong>에서 직접 계정 생성 필요:<br>
+      Authentication → Add user → Email: <strong>${email}</strong> / PW: <strong>${password}</strong><br>
+      생성 후 student_profiles에 INSERT (이름: ${name}${school ? ', 학교: ' + school : ''})
+    `;
     msgEl.style.display = 'block';
 
-    // 초기화
     document.getElementById('new-name').value = '';
     document.getElementById('new-school').value = '';
     document.getElementById('new-email').value = '';
     document.getElementById('new-password').value = '';
-
-    loadStudents();
   }
 
-  // 학생 목록 + 결과 조회
+  // 학생 목록 + 전 모듈 결과 조회
   async function loadStudents() {
     const wrap = document.getElementById('student-table-wrap');
     wrap.innerHTML = '<div class="empty-state">Loading...</div>';
 
+    const mockNum = parseInt(document.getElementById('mock-select').value);
+    const cfg = MOCK_CONFIG[mockNum];
+    if (!cfg) { wrap.innerHTML = '<div class="empty-state">설정 없음</div>'; return; }
+
+    // 학생 목록
     const { data: profiles, error } = await sb
       .from('student_profiles')
       .select('*')
       .eq('is_admin', false)
       .order('name');
 
-    if (error || !profiles || profiles.length === 0) {
+    if (error) {
+      wrap.innerHTML = `<div class="empty-state" style="color:var(--red);">
+        오류: ${error.message}<br><small>RLS 정책 수정이 필요합니다. fix-rls-admin.sql을 실행하세요.</small>
+      </div>`;
+      return;
+    }
+
+    if (!profiles || profiles.length === 0) {
       wrap.innerHTML = '<div class="empty-state">No students yet. Add students above.</div>';
       return;
     }
 
-    // 결과 조회
-    const { data: results } = await sb
+    // 모든 모듈 결과 한 번에 조회
+    const allExamIds = [cfg.rw_m1, cfg.rw_m2, cfg.math_m1, cfg.math_m2];
+    const { data: results, error: rErr } = await sb
       .from('exam_results')
       .select('*')
-      .eq('exam_id', 'sat-aug2024-us-rw-m1');
+      .in('exam_id', allExamIds);
 
+    if (rErr) {
+      wrap.innerHTML = `<div class="empty-state" style="color:var(--red);">결과 조회 오류: ${rErr.message}</div>`;
+      return;
+    }
+
+    // user_id + exam_id로 결과 맵 구성
     const resultMap = {};
-    (results || []).forEach(r => { resultMap[r.user_id] = r; });
+    (results || []).forEach(r => {
+      if (!resultMap[r.user_id]) resultMap[r.user_id] = {};
+      resultMap[r.user_id][r.exam_id] = r;
+    });
 
     const rows = profiles.map(p => {
-      const r = resultMap[p.id];
-      const scoreBadge = r?.completed
-        ? `<span class="score-badge score-done">${r.rw_m1_raw ?? '?'} / 27</span>`
-        : `<span class="score-badge score-pending">Not taken</span>`;
+      const res = resultMap[p.id] || {};
+      const rwM1  = res[cfg.rw_m1];
+      const rwM2  = res[cfg.rw_m2];
+      const mthM1 = res[cfg.math_m1];
+      const mthM2 = res[cfg.math_m2];
 
-      const resetBtn = r?.completed
-        ? `<button class="reset-btn" onclick="resetExam('${p.id}')">Reset</button>`
-        : '';
+      // 원점수 합산
+      const rwRaw   = (rwM1?.rw_m1_raw  ?? 0) + (rwM2?.rw_m2_raw  ?? 0);
+      const mathRaw = (mthM1?.math_m1_raw ?? 0) + (mthM2?.math_m2_raw ?? 0);
+      const rwDone  = rwM1?.completed && rwM2?.completed;
+      const mathDone= mthM1?.completed && mthM2?.completed;
+
+      // 환산점수
+      const rwScaled   = rwDone   ? convertRW(rwRaw)   : null;
+      const mathScaled = mathDone ? convertMath(mathRaw) : null;
+      const totalScaled= (rwScaled && mathScaled) ? rwScaled + mathScaled : null;
+
+      // 점수 배지 헬퍼
+      function badge(r, rawKey, total) {
+        if (!r?.completed) return `<span class="score-badge score-pending">—</span>`;
+        const raw = r[rawKey] ?? 0;
+        return `<span class="score-badge score-done">${raw}/${total}</span>`;
+      }
+
+      // 제출일 (마지막 모듈 기준)
+      const lastSubmit = [rwM1, rwM2, mthM1, mthM2]
+        .filter(Boolean)
+        .map(r => r.submitted_at)
+        .sort()
+        .pop();
+
+      // Reset 버튼 (완료된 모듈만)
+      const resets = [];
+      if (rwM1?.completed)  resets.push(`<button class="reset-btn" onclick="resetModule('${p.id}','${cfg.rw_m1}')">RW M1</button>`);
+      if (rwM2?.completed)  resets.push(`<button class="reset-btn" onclick="resetModule('${p.id}','${cfg.rw_m2}')">RW M2</button>`);
+      if (mthM1?.completed) resets.push(`<button class="reset-btn" onclick="resetModule('${p.id}','${cfg.math_m1}')">Math M1</button>`);
+      if (mthM2?.completed) resets.push(`<button class="reset-btn" onclick="resetModule('${p.id}','${cfg.math_m2}')">Math M2</button>`);
+
+      const totalDisplay = totalScaled
+        ? `<span class="total-score good">${totalScaled}</span>`
+        : `<span class="total-score" style="color:var(--gray-400);">—</span>`;
 
       return `<tr>
-        <td>${p.name}</td>
-        <td>${p.school || '—'}</td>
-        <td style="font-size:13px;color:var(--gray-600);">${p.id.substring(0,8)}...</td>
-        <td>${scoreBadge}</td>
-        <td>${r?.submitted_at ? new Date(r.submitted_at).toLocaleDateString('ko-KR') : '—'}</td>
-        <td>${resetBtn}</td>
+        <td><strong>${p.name}</strong></td>
+        <td style="color:var(--gray-600);font-size:12px;">${p.school || '—'}</td>
+        <td>${badge(rwM1,  'rw_m1_raw',   27)}</td>
+        <td>${badge(rwM2,  'rw_m2_raw',   27)}</td>
+        <td style="font-size:12px;color:var(--gray-600);">${rwDone ? rwRaw+'/'+cfg.rw_total : '—'}</td>
+        <td style="font-size:12px;color:var(--gray-600);">${rwScaled ?? '—'}</td>
+        <td>${badge(mthM1, 'math_m1_raw', 22)}</td>
+        <td>${badge(mthM2, 'math_m2_raw', 22)}</td>
+        <td style="font-size:12px;color:var(--gray-600);">${mathDone ? mathRaw+'/'+cfg.math_total : '—'}</td>
+        <td style="font-size:12px;color:var(--gray-600);">${mathScaled ?? '—'}</td>
+        <td>${totalDisplay}</td>
+        <td style="font-size:12px;color:var(--gray-600);">${lastSubmit ? new Date(lastSubmit).toLocaleDateString('ko-KR') : '—'}</td>
+        <td style="display:flex;gap:4px;flex-wrap:wrap;">${resets.join('') || '<span style="color:var(--gray-400);font-size:12px;">—</span>'}</td>
       </tr>`;
     }).join('');
 
     wrap.innerHTML = `
+      <div class="table-scroll">
       <table>
         <thead>
           <tr>
-            <th>Name</th>
-            <th>School</th>
-            <th>User ID</th>
-            <th>RW M1 Score</th>
-            <th>Date</th>
-            <th>Actions</th>
+            <th rowspan="2">Name</th>
+            <th rowspan="2">School</th>
+            <th colspan="4" class="section-group" style="background:rgba(27,42,74,0.85);text-align:center;">Reading & Writing</th>
+            <th colspan="4" class="section-group" style="background:rgba(27,42,74,0.7);text-align:center;">Math</th>
+            <th rowspan="2">Total<br><span style="font-size:9px;font-weight:normal;">/1600</span></th>
+            <th rowspan="2">Date</th>
+            <th rowspan="2">Reset</th>
+          </tr>
+          <tr>
+            <th>M1<br><span style="font-size:9px;opacity:0.7;">/27</span></th>
+            <th>M2<br><span style="font-size:9px;opacity:0.7;">/27</span></th>
+            <th>Raw<br><span style="font-size:9px;opacity:0.7;">/54</span></th>
+            <th>Score<br><span style="font-size:9px;opacity:0.7;">/800</span></th>
+            <th>M1<br><span style="font-size:9px;opacity:0.7;">/22</span></th>
+            <th>M2<br><span style="font-size:9px;opacity:0.7;">/22</span></th>
+            <th>Raw<br><span style="font-size:9px;opacity:0.7;">/44</span></th>
+            <th>Score<br><span style="font-size:9px;opacity:0.7;">/800</span></th>
           </tr>
         </thead>
         <tbody>${rows}</tbody>
       </table>
+      </div>
+      <p style="margin-top:12px;font-size:11px;color:var(--gray-400);">
+        ※ 환산점수는 비공식 추정입니다. 실제 College Board 점수와 ±30점 오차가 있을 수 있습니다.
+      </p>
     `;
   }
 
-  // 시험 초기화 (재응시 허용)
-  async function resetExam(userId) {
-    if (!confirm('Reset this student\'s exam? They will be able to retake it.')) return;
-    await sb.from('exam_results')
+  // 모듈별 초기화
+  async function resetModule(userId, examId) {
+    const label = examId.includes('rw-m1') ? 'RW Module 1'
+                : examId.includes('rw-m2') ? 'RW Module 2'
+                : examId.includes('math-m1') ? 'Math Module 1'
+                : 'Math Module 2';
+    if (!confirm(`Reset ${label} for this student? They will be able to retake it.`)) return;
+    const { error } = await sb.from('exam_results')
       .delete()
       .eq('user_id', userId)
-      .eq('exam_id', 'sat-aug2024-us-rw-m1');
+      .eq('exam_id', examId);
+    if (error) {
+      alert('Reset failed: ' + error.message);
+      return;
+    }
     loadStudents();
   }
 
