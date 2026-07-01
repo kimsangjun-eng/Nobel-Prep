@@ -1,0 +1,483 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>A-1 Electromagnetic Spectrum | Nobel Prep AP Chemistry</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --navy:#0D1B3E;--gold:#C9A84C;--gold-lt:#F5E8C0;
+  --bg:#F5F7FA;--card:#FFFFFF;--txt:#1A1A2E;--txt2:#4A4E69;
+  --border:#E0E4EF;
+}
+body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--txt);
+  min-height:100vh;display:flex;flex-direction:column;align-items:center;padding:24px 16px 60px}
+
+header{width:100%;max-width:900px;display:flex;align-items:center;gap:14px;
+  margin-bottom:24px;padding-bottom:16px;border-bottom:2px solid var(--gold)}
+.logo{background:var(--navy);color:var(--gold);font-size:12px;font-weight:700;
+  padding:5px 11px;border-radius:4px;letter-spacing:.05em}
+header h1{font-size:17px;font-weight:600;color:var(--navy)}
+.badge{background:var(--gold-lt);color:#7a5c00;font-size:11px;font-weight:600;
+  padding:3px 10px;border-radius:3px;margin-left:auto;font-family:'JetBrains Mono',monospace}
+
+.card{background:var(--card);border-radius:12px;border:1px solid var(--border);
+  padding:24px 28px;width:100%;max-width:900px;margin-bottom:18px}
+
+/* ── SPECTRUM BAR ── */
+#spectrum-bar{
+  width:100%;height:44px;border-radius:6px;
+  background:linear-gradient(to right,
+    #8B00FF 0%,       /* gamma/X-ray end */
+    #6600FF 8%,
+    #4400FF 13%,      /* violet */
+    #0000FF 16%,
+    #00AAFF 19%,
+    #00FFFF 21%,
+    #00FF88 23%,
+    #00FF00 25%,
+    #AAFF00 27%,
+    #FFFF00 29%,
+    #FFAA00 31%,
+    #FF5500 34%,
+    #FF0000 38%,      /* red end of visible */
+    #CC0000 42%,
+    #880000 55%,
+    #440000 70%,
+    #220000 85%,
+    #110000 100%      /* microwave/radio */
+  );
+  position:relative;margin-bottom:8px;cursor:crosshair;border:1px solid #ccc;
+}
+#spectrum-bar .region-labels{
+  position:absolute;top:0;left:0;right:0;bottom:0;
+  display:flex;align-items:center;pointer-events:none;
+}
+.reg-label{
+  font-size:9px;font-weight:600;color:rgba(255,255,255,0.85);
+  text-align:center;text-shadow:0 1px 3px rgba(0,0,0,0.7);
+  overflow:hidden;white-space:nowrap;
+}
+#needle{
+  position:absolute;top:-6px;bottom:-6px;width:3px;
+  background:white;border-radius:2px;
+  box-shadow:0 0 6px rgba(0,0,0,0.5);
+  pointer-events:none;transform:translateX(-50%);
+  transition:left .05s linear;
+}
+
+/* ── WAVELENGTH AXIS ── */
+.axis-row{
+  display:flex;justify-content:space-between;
+  font-size:10px;color:var(--txt2);font-family:'JetBrains Mono',monospace;
+  margin-bottom:16px;padding:0 2px;
+}
+
+/* ── MAIN SLIDER ── */
+.slider-wrap{display:flex;align-items:center;gap:14px;margin-bottom:20px}
+.slider-wrap label{font-size:13px;color:var(--txt2);white-space:nowrap;min-width:24px}
+#wave-slider{flex:1;accent-color:var(--gold);cursor:pointer}
+.slider-val{font-family:'JetBrains Mono',monospace;font-size:15px;font-weight:500;
+  color:var(--navy);min-width:90px;text-align:right}
+
+/* ── PHOTON PREVIEW ── */
+#photon-box{
+  width:100%;height:70px;border-radius:8px;border:1px solid var(--border);
+  display:flex;align-items:center;justify-content:center;
+  margin-bottom:20px;position:relative;overflow:hidden;
+  background:#111;
+}
+#photon-color{
+  position:absolute;inset:0;opacity:0.18;transition:background .1s;
+}
+#wave-svg{width:100%;height:100%}
+.visible-label{
+  position:absolute;right:12px;top:50%;transform:translateY(-50%);
+  font-size:11px;font-weight:600;color:white;opacity:0.7;
+  font-family:'JetBrains Mono',monospace;
+}
+
+/* ── METRICS GRID ── */
+.metrics{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:20px}
+.metric{background:var(--bg);border-radius:8px;border:1px solid var(--border);padding:12px 14px}
+.m-label{font-size:10px;text-transform:uppercase;letter-spacing:.06em;color:var(--txt2);margin-bottom:4px}
+.m-val{font-family:'JetBrains Mono',monospace;font-size:16px;font-weight:500;color:var(--navy);white-space:nowrap}
+.m-unit{font-size:11px;color:var(--txt2);margin-top:2px}
+
+/* ── REGION CARD ── */
+#region-card{
+  border-radius:8px;border:2px solid var(--gold);padding:14px 18px;
+  display:flex;align-items:flex-start;gap:16px;
+}
+.rc-icon{font-size:28px;line-height:1}
+.rc-name{font-size:16px;font-weight:600;color:var(--navy);margin-bottom:3px}
+.rc-range{font-size:11px;font-family:'JetBrains Mono',monospace;color:var(--txt2);margin-bottom:5px}
+.rc-uses{font-size:12px;color:var(--txt2);line-height:1.6}
+.rc-badge{display:inline-block;background:var(--navy);color:var(--gold);
+  font-size:10px;font-weight:700;padding:2px 8px;border-radius:3px;margin-right:4px;margin-bottom:3px}
+
+/* ── ENERGY COMPARISON BAR ── */
+.compare-section h3{font-size:13px;font-weight:600;color:var(--navy);margin-bottom:10px}
+.compare-row{display:flex;align-items:center;gap:8px;margin-bottom:7px}
+.cr-label{font-size:11px;color:var(--txt2);width:90px;text-align:right;flex-shrink:0}
+.cr-bar-wrap{flex:1;background:#eee;border-radius:3px;height:8px;overflow:hidden}
+.cr-bar{height:100%;border-radius:3px;transition:width .3s}
+.cr-val{font-size:11px;font-family:'JetBrains Mono',monospace;color:var(--txt2);width:80px}
+
+/* ── FORMULA BOX ── */
+.formula-row{
+  display:flex;gap:12px;flex-wrap:wrap;margin-top:12px;
+}
+.formula{
+  background:var(--bg);border:1px solid var(--border);border-radius:6px;
+  padding:10px 16px;font-family:'JetBrains Mono',monospace;font-size:13px;
+  color:var(--navy);flex:1;min-width:160px;text-align:center;
+}
+.formula span{color:var(--gold);font-weight:600}
+
+/* ── VISIBLE ONLY notice ── */
+.vis-notice{
+  font-size:11px;color:#888;margin-top:6px;text-align:center;min-height:16px;font-style:italic;
+}
+
+@media(max-width:600px){
+  .metrics{grid-template-columns:repeat(2,1fr)}
+  header h1{font-size:14px}
+}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo">NOBEL PREP</div>
+  <h1>Electromagnetic Spectrum &amp; Photon Energy</h1>
+  <span class="badge">A-1 · AP Chem Ch.7</span>
+</header>
+
+<!-- MAIN INTERACTIVE CARD -->
+<div class="card">
+
+  <!-- Spectrum bar -->
+  <div id="spectrum-bar">
+    <div class="region-labels" id="reg-labels"></div>
+    <div id="needle"></div>
+  </div>
+  <div class="axis-row" id="axis-row"></div>
+
+  <!-- Slider -->
+  <div class="slider-wrap">
+    <label>λ</label>
+    <input type="range" id="wave-slider" min="0" max="1000" step="1" value="420"/>
+    <span class="slider-val" id="slider-display">420 nm</span>
+  </div>
+
+  <!-- Photon wave preview -->
+  <div id="photon-box">
+    <div id="photon-color"></div>
+    <svg id="wave-svg" preserveAspectRatio="none"></svg>
+    <span class="visible-label" id="vis-label"></span>
+  </div>
+  <div class="vis-notice" id="vis-notice"></div>
+
+  <!-- Metrics -->
+  <div class="metrics">
+    <div class="metric">
+      <div class="m-label">Wavelength (λ)</div>
+      <div class="m-val" id="m-lambda">420 nm</div>
+      <div class="m-unit">nanometers</div>
+    </div>
+    <div class="metric">
+      <div class="m-label">Frequency (ν)</div>
+      <div class="m-val" id="m-freq">7.14×10¹⁴</div>
+      <div class="m-unit">Hz</div>
+    </div>
+    <div class="metric">
+      <div class="m-label">Energy / photon (E)</div>
+      <div class="m-val" id="m-energy">4.73 eV</div>
+      <div class="m-unit">electron-volts</div>
+    </div>
+    <div class="metric">
+      <div class="m-label">Energy (kJ/mol)</div>
+      <div class="m-val" id="m-kjmol">284 kJ</div>
+      <div class="m-unit">per mole of photons</div>
+    </div>
+  </div>
+
+  <!-- Region info -->
+  <div id="region-card">
+    <div class="rc-icon" id="rc-icon">🔵</div>
+    <div>
+      <div class="rc-name" id="rc-name">Visible Light</div>
+      <div class="rc-range" id="rc-range">380 – 750 nm</div>
+      <div class="rc-uses" id="rc-uses">Human vision · Photography · Photosynthesis</div>
+    </div>
+  </div>
+
+</div>
+
+<!-- ENERGY COMPARISON CARD -->
+<div class="card">
+  <div class="compare-section">
+    <h3>Energy comparison across regions (relative to current selection)</h3>
+    <div id="compare-bars"></div>
+  </div>
+
+  <div class="formula-row">
+    <div class="formula">E = <span>h</span>ν &nbsp;=&nbsp; <span>h</span>c / λ</div>
+    <div class="formula">c = <span>3.00</span>×10⁸ m/s</div>
+    <div class="formula">h = <span>6.626</span>×10⁻³⁴ J·s</div>
+    <div class="formula">1 eV = <span>1.602</span>×10⁻¹⁹ J</div>
+  </div>
+</div>
+
+<script>
+const h = 6.626e-34;   // J·s
+const c = 3.00e8;      // m/s
+const eV = 1.602e-19;  // J per eV
+const NA = 6.022e23;
+
+// Regions: [label, minNm, maxNm, icon, uses, color on bar]
+const REGIONS = [
+  { name:'Gamma Ray',   min:0.001, max:0.01,  icon:'☢️',  uses:'Cancer therapy · Nuclear reactions · Sterilization', bar:'#9400D3' },
+  { name:'X-Ray',       min:0.01,  max:10,    icon:'🩻',  uses:'Medical imaging · Crystallography · Airport security', bar:'#7B00CC' },
+  { name:'Ultraviolet', min:10,    max:380,   icon:'🌞',  uses:'Sunburn · Vitamin D synthesis · Sterilization lamps', bar:'#5500BB' },
+  { name:'Visible',     min:380,   max:750,   icon:'🌈',  uses:'Human vision · Photography · Photosynthesis', bar:'#22AA22' },
+  { name:'Infrared',    min:750,   max:1e6,   icon:'🔥',  uses:'Heat sensing · TV remotes · Night vision cameras', bar:'#CC3300' },
+  { name:'Microwave',   min:1e6,   max:1e9,   icon:'📡',  uses:'Microwave ovens · Radar · WiFi / Bluetooth', bar:'#884400' },
+  { name:'Radio',       min:1e9,   max:1e12,  icon:'📻',  uses:'AM/FM radio · MRI machines · Cell phones', bar:'#442200' },
+];
+
+// Visible light colors by wavelength
+function visibleColor(nm) {
+  if (nm < 380 || nm > 750) return null;
+  let r,g,b;
+  if (nm < 440)      { r=-(nm-440)/60; g=0; b=1; }
+  else if (nm < 490) { r=0; g=(nm-440)/50; b=1; }
+  else if (nm < 510) { r=0; g=1; b=-(nm-510)/20; }
+  else if (nm < 580) { r=(nm-510)/70; g=1; b=0; }
+  else if (nm < 645) { r=1; g=-(nm-645)/65; b=0; }
+  else               { r=1; g=0; b=0; }
+  // Intensity falloff at edges
+  let factor = 1;
+  if (nm < 420)      factor = 0.3 + 0.7*(nm-380)/40;
+  else if (nm > 700) factor = 0.3 + 0.7*(750-nm)/50;
+  r = Math.round(255*Math.max(0,Math.min(1,r*factor)));
+  g = Math.round(255*Math.max(0,Math.min(1,g*factor)));
+  b = Math.round(255*Math.max(0,Math.min(1,b*factor)));
+  return `rgb(${r},${g},${b})`;
+}
+
+// Map slider (0-1000) to wavelength in nm (log scale, 0.001nm to 1e12nm)
+function sliderToNm(v) {
+  const logMin = Math.log10(0.001), logMax = Math.log10(1e12);
+  return Math.pow(10, logMin + (v/1000)*(logMax-logMin));
+}
+function nmToSlider(nm) {
+  const logMin = Math.log10(0.001), logMax = Math.log10(1e12);
+  return Math.round(((Math.log10(nm)-logMin)/(logMax-logMin))*1000);
+}
+
+function formatNm(nm) {
+  if (nm < 0.01)   return nm.toExponential(2)+' nm';
+  if (nm < 1)      return nm.toFixed(3)+' nm';
+  if (nm < 1000)   return nm.toFixed(1)+' nm';
+  if (nm < 1e6)    return (nm/1e3).toFixed(2)+' μm';
+  if (nm < 1e9)    return (nm/1e6).toFixed(2)+' mm';
+  if (nm < 1e12)   return (nm/1e9).toFixed(2)+' m';
+  return (nm/1e12).toFixed(2)+' km';
+}
+function formatFreq(hz) {
+  if (hz >= 1e18) return (hz/1e18).toFixed(2)+'×10¹⁸';
+  if (hz >= 1e15) return (hz/1e15).toFixed(2)+'×10¹⁵';
+  if (hz >= 1e12) return (hz/1e12).toFixed(2)+'×10¹²';
+  if (hz >= 1e9)  return (hz/1e9).toFixed(2)+'×10⁹';
+  if (hz >= 1e6)  return (hz/1e6).toFixed(2)+'×10⁶';
+  return hz.toFixed(0);
+}
+function formatEnergy(j) {
+  const ev = j/eV;
+  if (ev >= 1e6)  return (ev/1e6).toFixed(2)+'M';
+  if (ev >= 1e3)  return (ev/1e3).toFixed(2)+'k';
+  if (ev >= 1)    return ev.toFixed(3);
+  if (ev >= 1e-3) return (ev*1e3).toFixed(2)+'m';
+  return ev.toExponential(2);
+}
+function formatEUnit(j) {
+  const ev = j/eV;
+  if (ev >= 1e6)  return 'MeV';
+  if (ev >= 1e3)  return 'keV';
+  if (ev >= 1)    return 'eV';
+  if (ev >= 1e-3) return 'meV';
+  return 'eV';
+}
+
+function getRegion(nm) {
+  return REGIONS.find(r => nm >= r.min && nm < r.max) || REGIONS[REGIONS.length-1];
+}
+
+// Draw sine wave on SVG
+function drawWave(nm, color) {
+  const svg = document.getElementById('wave-svg');
+  const W = svg.clientWidth || 860, H = svg.clientHeight || 70;
+  // wavelength → cycles: more cycles = shorter wavelength
+  const logNm = Math.log10(Math.max(nm, 0.001));
+  const logMin = Math.log10(0.001), logMax = Math.log10(1e12);
+  const t = (logNm - logMin) / (logMax - logMin); // 0=gamma, 1=radio
+  const cycles = Math.round(2 + (1-t) * 28); // gamma=30 cycles, radio=2 cycles
+  const amp = H * 0.38;
+  const cy = H / 2;
+  const pts = [];
+  for (let x = 0; x <= W; x++) {
+    const y = cy + amp * Math.sin((x / W) * cycles * 2 * Math.PI);
+    pts.push(`${x.toFixed(1)},${y.toFixed(1)}`);
+  }
+  svg.innerHTML = `<polyline points="${pts.join(' ')}" fill="none"
+    stroke="${color || '#ffffff'}" stroke-width="2.5" opacity="0.85"/>`;
+}
+
+// Build axis labels
+function buildAxis() {
+  const row = document.getElementById('axis-row');
+  const marks = [
+    {v:0.001,label:'0.001 nm'},{v:0.1,label:'0.1 nm'},{v:10,label:'10 nm'},
+    {v:380,label:'380 nm'},{v:750,label:'750 nm'},{v:1e5,label:'0.1 mm'},
+    {v:1e8,label:'10 cm'},{v:1e11,label:'100 m'}
+  ];
+  const logMin=Math.log10(0.001),logMax=Math.log10(1e12);
+  row.innerHTML = '';
+  marks.forEach(m=>{
+    const pct = (Math.log10(m.v)-logMin)/(logMax-logMin)*100;
+    const el = document.createElement('span');
+    el.style.cssText = `position:absolute;left:${pct.toFixed(1)}%;transform:translateX(-50%)`;
+    el.textContent = m.label;
+    row.appendChild(el);
+  });
+  row.style.position='relative';row.style.height='16px';
+}
+
+// Build region labels on bar
+function buildRegionLabels() {
+  const el = document.getElementById('reg-labels');
+  const logMin=Math.log10(0.001),logMax=Math.log10(1e12);
+  el.innerHTML='';
+  REGIONS.forEach(r=>{
+    const x0=(Math.log10(r.min)-logMin)/(logMax-logMin)*100;
+    const x1=(Math.log10(r.max)-logMin)/(logMax-logMin)*100;
+    const w=x1-x0;
+    const span=document.createElement('span');
+    span.className='reg-label';
+    span.style.cssText=`width:${w.toFixed(2)}%;flex-shrink:0;`;
+    span.textContent = w>4 ? r.name.replace(' ','') : '';
+    el.appendChild(span);
+  });
+}
+
+// Comparison bars
+const CMP_REFS = [
+  {label:'Gamma Ray', nm:0.001},
+  {label:'X-Ray',     nm:0.1},
+  {label:'UV',        nm:200},
+  {label:'Visible',   nm:550},
+  {label:'Infrared',  nm:1e4},
+  {label:'Microwave', nm:1e7},
+  {label:'Radio',     nm:1e10},
+];
+function buildCompareBars(currentNm) {
+  const wrap = document.getElementById('compare-bars');
+  wrap.innerHTML = '';
+  const currentE = (h*c) / (currentNm*1e-9);
+  const maxE = (h*c)/(0.001e-9);
+
+  CMP_REFS.forEach(ref=>{
+    const e = (h*c)/(ref.nm*1e-9);
+    const pct = Math.min(100, (e/maxE)*100);
+    const isActive = ref.nm > 0 && Math.abs(Math.log10(ref.nm)-Math.log10(currentNm))<0.7;
+    const row = document.createElement('div');
+    row.className='compare-row';
+    const reg = getRegion(ref.nm);
+    row.innerHTML=`
+      <span class="cr-label">${ref.label}</span>
+      <div class="cr-bar-wrap">
+        <div class="cr-bar" style="width:${pct.toFixed(2)}%;background:${reg.bar};
+          opacity:${isActive?1:0.45}"></div>
+      </div>
+      <span class="cr-val">${formatEnergy(e)} ${formatEUnit(e)}</span>`;
+    wrap.appendChild(row);
+  });
+}
+
+function update(sliderVal) {
+  const nm = sliderToNm(sliderVal);
+  const lambda_m = nm * 1e-9;
+  const freq = c / lambda_m;
+  const energy_j = h * freq;
+  const energy_ev = energy_j / eV;
+  const energy_kjmol = (energy_j * NA) / 1000;
+
+  // Needle
+  const pct = (sliderVal / 1000) * 100;
+  document.getElementById('needle').style.left = pct + '%';
+
+  // Slider display
+  document.getElementById('slider-display').textContent = formatNm(nm);
+
+  // Metrics
+  document.getElementById('m-lambda').textContent = formatNm(nm);
+  document.getElementById('m-freq').textContent = formatFreq(freq)+' Hz';
+  document.getElementById('m-energy').textContent = formatEnergy(energy_j)+' '+formatEUnit(energy_j);
+  document.getElementById('m-kjmol').textContent = energy_kjmol>=1
+    ? energy_kjmol.toFixed(1)+' kJ' : (energy_kjmol*1000).toFixed(2)+' J';
+
+  // Region
+  const reg = getRegion(nm);
+  document.getElementById('rc-icon').textContent = reg.icon;
+  document.getElementById('rc-name').textContent = reg.name;
+  document.getElementById('rc-range').textContent =
+    formatNm(reg.min)+' – '+formatNm(reg.max);
+  document.getElementById('rc-uses').textContent = reg.uses;
+
+  // Wave and color
+  const vcol = visibleColor(nm);
+  const waveColor = vcol || (nm<380 ? '#AA88FF' : '#FF6622');
+  document.getElementById('photon-color').style.background = waveColor;
+  document.getElementById('photon-color').style.opacity = vcol ? '0.35' : '0.12';
+  drawWave(nm, waveColor);
+
+  // Visible label
+  if (vcol) {
+    document.getElementById('vis-label').textContent = formatNm(nm);
+    document.getElementById('vis-notice').textContent = '';
+  } else if (nm < 380) {
+    document.getElementById('vis-label').textContent = '';
+    document.getElementById('vis-notice').textContent = 'Not visible — too energetic for human eyes';
+  } else {
+    document.getElementById('vis-label').textContent = '';
+    document.getElementById('vis-notice').textContent = 'Not visible — wavelength too long for human eyes';
+  }
+
+  buildCompareBars(nm);
+}
+
+// Spectrum bar click
+document.getElementById('spectrum-bar').addEventListener('click', function(e){
+  const rect = this.getBoundingClientRect();
+  const pct = (e.clientX - rect.left) / rect.width;
+  const sv = Math.round(pct * 1000);
+  document.getElementById('wave-slider').value = sv;
+  update(sv);
+});
+
+document.getElementById('wave-slider').addEventListener('input', function(){
+  update(parseInt(this.value));
+});
+
+// Init
+buildAxis();
+buildRegionLabels();
+update(nmToSlider(500)); // start at 500nm (green)
+document.getElementById('wave-slider').value = nmToSlider(500);
+</script>
+</body>
+</html>
