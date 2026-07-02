@@ -1,0 +1,783 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>A-6 · Evolution of the Atomic Model | Nobel Prep AP Chemistry</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --navy:          #1a2744;
+  --navy-mid:      #1e3060;
+  --navy-light:    #2a4080;
+  --gold:          #c9a84c;
+  --gold-light:    #d4b86a;
+  --gold-bg:       #f5e9c8;
+
+  --bg-page:       #f0f2f5;
+  --bg-card:       #ffffff;
+  --bg-card-alt:   #f8f9fb;
+
+  --text-primary:  #1a2744;
+  --text-body:     #2c3e50;
+  --text-muted:    #6b7c93;
+  --text-micro:    #8a99ad;
+
+  --border:        #dde3ee;
+  --border-light:  #eaeff8;
+
+  --green-bg: #e8f5e9; --green-border: #4caf50; --green-text: #1b5e20;
+  --red-bg:   #fdecea; --red-border:   #e53935; --red-text:   #7f0000;
+  --yellow-bg:#fffde7; --yellow-border:#f9a825; --yellow-text:#5d4037;
+
+  --blue-accent:   #3498db;
+  --red-accent:    #e74c3c;
+  --green-accent:  #27ae60;
+  --purple-accent: #8e44ad;
+
+  --font-ui:   'Inter', sans-serif;
+  --font-mono: 'JetBrains Mono', monospace;
+
+  --space-xs:4px; --space-sm:8px; --space-md:16px;
+  --space-lg:24px; --space-xl:32px; --space-2xl:48px;
+
+  --radius-sm:6px; --radius-md:10px; --radius-lg:14px;
+
+  --shadow-card: 0 2px 8px rgba(26,39,68,0.08), 0 1px 2px rgba(26,39,68,0.04);
+}
+
+* { box-sizing: border-box; margin:0; padding:0; }
+body {
+  font-family: var(--font-ui);
+  background: var(--bg-page);
+  color: var(--text-body);
+  line-height: 1.5;
+  padding-bottom: var(--space-2xl);
+}
+.mono { font-family: var(--font-mono); }
+
+/* HEADER */
+.sim-header {
+  background: linear-gradient(135deg, var(--navy) 0%, var(--navy-mid) 100%);
+  padding: var(--space-xl) var(--space-lg) var(--space-lg);
+  color: #fff;
+  position: relative;
+}
+.sim-header-eyebrow {
+  color: var(--gold-light);
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  margin-bottom: var(--space-xs);
+}
+.sim-header-title {
+  font-size: 28px;
+  font-weight: 700;
+  margin-bottom: 6px;
+}
+.sim-header-subtitle {
+  font-size: 14px;
+  color: rgba(255,255,255,0.75);
+  max-width: 640px;
+}
+.sim-badge {
+  position: absolute;
+  top: var(--space-lg);
+  right: var(--space-lg);
+  background: var(--gold);
+  color: var(--navy);
+  font-family: var(--font-mono);
+  font-weight: 700;
+  font-size: 12px;
+  padding: 4px 10px;
+  border-radius: var(--radius-sm);
+}
+
+/* BODY */
+.sim-body {
+  max-width: 980px;
+  margin: 0 auto;
+  padding: var(--space-lg);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-lg);
+}
+
+.card, .card-info {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-card);
+  padding: var(--space-lg);
+}
+.card-info {
+  background: var(--bg-card-alt);
+}
+.card-title {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--navy);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: var(--space-sm);
+}
+
+/* Timeline */
+.timeline {
+  display: flex;
+  gap: var(--space-sm);
+  flex-wrap: wrap;
+  margin-top: var(--space-sm);
+}
+.timeline-step {
+  flex: 1 1 130px;
+  background: #fff;
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-md);
+  padding: 10px 12px;
+  font-size: 12.5px;
+  color: var(--text-muted);
+}
+.timeline-step b {
+  display: block;
+  color: var(--navy);
+  font-size: 13px;
+  margin-bottom: 2px;
+}
+.timeline-step .yr { color: var(--gold); font-family: var(--font-mono); font-size: 11px; }
+
+/* Model selector */
+.control-label {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  display: block;
+  margin-bottom: var(--space-sm);
+}
+.btn-group {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.btn-toggle {
+  font-family: var(--font-ui);
+  font-size: 13px;
+  font-weight: 600;
+  padding: 9px 16px;
+  border-radius: var(--radius-md);
+  border: 1.5px solid var(--border);
+  background: #fff;
+  color: var(--text-body);
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+.btn-toggle:hover { border-color: var(--gold); }
+.btn-toggle.active {
+  background: var(--navy);
+  border-color: var(--navy);
+  color: #fff;
+}
+
+/* Canvas */
+.canvas-wrapper {
+  width: 100%;
+  aspect-ratio: 16/9;
+  background: var(--bg-card-alt);
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  position: relative;
+}
+canvas { display: block; width: 100%; height: 100%; }
+
+.model-info {
+  margin-top: var(--space-md);
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-md);
+}
+@media (max-width:640px){ .model-info{ grid-template-columns: 1fr; } }
+.model-info-block h4 {
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--gold);
+  margin-bottom: 4px;
+}
+.model-info-block p { font-size: 13.5px; color: var(--text-body); }
+
+/* Extra controls per model */
+.extra-controls {
+  margin-top: var(--space-md);
+  padding-top: var(--space-md);
+  border-top: 1px dashed var(--border);
+}
+.btn {
+  font-family: var(--font-ui);
+  font-size: 13px;
+  font-weight: 600;
+  padding: 9px 18px;
+  border-radius: var(--radius-md);
+  border: none;
+  cursor: pointer;
+}
+.btn-primary { background: var(--navy); color: #fff; }
+.btn-primary:hover { background: var(--navy-light); }
+.btn-secondary { background: var(--bg-card-alt); color: var(--navy); border:1px solid var(--border); }
+
+.slider-row { display:flex; align-items:center; gap: var(--space-md); margin-top: var(--space-sm); }
+input[type=range] { flex:1; accent-color: var(--navy); }
+.slider-value { font-family: var(--font-mono); font-size: 13px; color: var(--navy); min-width: 60px; text-align:right; }
+
+.result-box {
+  margin-top: var(--space-md);
+  padding: 10px 14px;
+  border-radius: var(--radius-md);
+  font-size: 13.5px;
+  font-weight: 600;
+  border: 1px solid;
+}
+.result-box.green { background: var(--green-bg); border-color: var(--green-border); color: var(--green-text); }
+.result-box.red   { background: var(--red-bg);   border-color: var(--red-border);   color: var(--red-text); }
+.result-box.yellow{ background: var(--yellow-bg);border-color: var(--yellow-border);color: var(--yellow-text); }
+.result-box.neutral{ background: var(--bg-card-alt); border-color: var(--border); color: var(--text-body); }
+.result-caption { margin-top: 4px; font-size: 12px; color: var(--text-muted); font-weight: 400; }
+
+/* Energy level buttons (Bohr) */
+.level-row { display:flex; gap:8px; flex-wrap:wrap; margin-top: var(--space-sm); }
+.level-btn {
+  font-family: var(--font-mono);
+  font-size: 12.5px;
+  padding: 6px 12px;
+  border-radius: var(--radius-sm);
+  border: 1.5px solid var(--border);
+  background:#fff;
+  cursor:pointer;
+}
+.level-btn:hover { border-color: var(--blue-accent); }
+
+/* Comparison table */
+table.compare {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+  margin-top: var(--space-sm);
+}
+table.compare th, table.compare td {
+  text-align: left;
+  padding: 10px 12px;
+  border-bottom: 1px solid var(--border-light);
+  vertical-align: top;
+}
+table.compare th {
+  background: var(--bg-card-alt);
+  color: var(--navy);
+  font-size: 11.5px;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+table.compare td.model-name { font-weight: 700; color: var(--navy); white-space: nowrap; }
+</style>
+</head>
+<body>
+
+<header class="sim-header">
+  <div class="sim-header-eyebrow">Nobel Prep · AP Chemistry · Chapter 7</div>
+  <h1 class="sim-header-title">Evolution of the Atomic Model</h1>
+  <p class="sim-header-subtitle">From Dalton's solid sphere to the quantum mechanical electron cloud — trace how each new experiment forced scientists to revise their picture of the atom.</p>
+  <span class="sim-badge">A-6</span>
+</header>
+
+<main class="sim-body">
+
+  <!-- CONCEPT CARD -->
+  <div class="card-info">
+    <div class="card-title">Big Idea</div>
+    <p style="font-size:13.5px;">Every atomic model was replaced not because it was "wrong," but because a new experiment revealed a phenomenon it could not explain. Six models, six pieces of evidence:</p>
+    <div class="timeline">
+      <div class="timeline-step"><span class="yr">1803</span><b>Dalton</b>Solid, indivisible sphere</div>
+      <div class="timeline-step"><span class="yr">1904</span><b>Thomson</b>Plum pudding model</div>
+      <div class="timeline-step"><span class="yr">1911</span><b>Rutherford</b>Nuclear model</div>
+      <div class="timeline-step"><span class="yr">1913</span><b>Bohr</b>Quantized orbits</div>
+      <div class="timeline-step"><span class="yr">1924</span><b>de Broglie</b>Electron standing waves</div>
+      <div class="timeline-step"><span class="yr">1926</span><b>Quantum</b>Probability cloud</div>
+    </div>
+  </div>
+
+  <!-- MODEL SELECTOR -->
+  <div class="card">
+    <span class="control-label">SELECT MODEL</span>
+    <div class="btn-group" id="modelSelector">
+      <button class="btn-toggle active" data-model="dalton">Dalton</button>
+      <button class="btn-toggle" data-model="thomson">Thomson</button>
+      <button class="btn-toggle" data-model="rutherford">Rutherford</button>
+      <button class="btn-toggle" data-model="bohr">Bohr</button>
+      <button class="btn-toggle" data-model="debroglie">de Broglie</button>
+      <button class="btn-toggle" data-model="quantum">Quantum</button>
+    </div>
+  </div>
+
+  <!-- VISUALIZATION -->
+  <div class="card">
+    <div class="canvas-wrapper">
+      <canvas id="mainCanvas"></canvas>
+    </div>
+
+    <div class="model-info">
+      <div class="model-info-block">
+        <h4>Key Evidence</h4>
+        <p id="infoEvidence"></p>
+      </div>
+      <div class="model-info-block">
+        <h4>What It Couldn't Explain</h4>
+        <p id="infoLimitation"></p>
+      </div>
+    </div>
+
+    <!-- Rutherford controls -->
+    <div class="extra-controls" id="ctrl-rutherford" style="display:none;">
+      <button class="btn btn-primary" id="btnFire">▶ Fire Alpha Particles</button>
+      <div class="result-box neutral" id="rutherfordNote">Most particles pass straight through — the atom is mostly empty space. A few bounce back — there's a small, dense, positive nucleus.</div>
+    </div>
+
+    <!-- Bohr controls -->
+    <div class="extra-controls" id="ctrl-bohr" style="display:none;">
+      <span class="control-label">CLICK AN ENERGY LEVEL TO SEE AN ELECTRON TRANSITION</span>
+      <div class="level-row">
+        <button class="level-btn" data-n="1">n = 1</button>
+        <button class="level-btn" data-n="2">n = 2</button>
+        <button class="level-btn" data-n="3">n = 3</button>
+        <button class="level-btn" data-n="4">n = 4</button>
+      </div>
+      <div class="result-box neutral" id="bohrResult">Click a level above to drop the electron there and emit a photon.</div>
+    </div>
+
+    <!-- de Broglie controls -->
+    <div class="extra-controls" id="ctrl-debroglie" style="display:none;">
+      <span class="control-label">ORBIT RADIUS</span>
+      <div class="slider-row">
+        <input type="range" id="dbSlider" min="30" max="160" value="80" step="1">
+        <span class="slider-value mono" id="dbSliderVal">80 px</span>
+      </div>
+      <div class="result-box" id="dbResult"></div>
+      <button class="btn btn-secondary" id="btnSnap" style="margin-top:10px;">Snap to Nearest Stable Orbit</button>
+    </div>
+  </div>
+
+  <!-- COMPARISON TABLE -->
+  <div class="card">
+    <div class="card-title">Model Comparison</div>
+    <table class="compare">
+      <thead>
+        <tr><th>Model</th><th>Key Evidence</th><th>Limitation</th></tr>
+      </thead>
+      <tbody>
+        <tr><td class="model-name">Dalton</td><td>Law of conservation of mass; law of definite proportions</td><td>No internal structure — couldn't explain electricity or electrons</td></tr>
+        <tr><td class="model-name">Thomson</td><td>Cathode ray tube — discovered the electron and its charge/mass ratio</td><td>No explanation for where positive charge is concentrated</td></tr>
+        <tr><td class="model-name">Rutherford</td><td>Gold foil experiment — most α-particles passed through, a few deflected sharply</td><td>Classical physics predicts orbiting electrons should spiral into the nucleus</td></tr>
+        <tr><td class="model-name">Bohr</td><td>Discrete hydrogen emission spectrum (line spectrum, not continuous)</td><td>Only accurate for hydrogen; no reason given for why orbits are quantized</td></tr>
+        <tr><td class="model-name">de Broglie</td><td>Wave–particle duality; electron diffraction (Davisson–Germer)</td><td>Explains why orbits are quantized, but still assumes a fixed circular path</td></tr>
+        <tr><td class="model-name">Quantum Mechanical</td><td>Schrödinger equation; Heisenberg uncertainty principle</td><td>Gives up exact paths entirely — only probability regions (orbitals)</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+</main>
+
+<script>
+const canvas = document.getElementById('mainCanvas');
+const ctx = canvas.getContext('2d');
+
+let currentModel = 'dalton';
+let t = 0; // animation clock
+
+const MODEL_DATA = {
+  dalton: {
+    evidence: "Law of conservation of mass and law of definite proportions suggested matter is made of tiny, indivisible particles.",
+    limitation: "Treated the atom as a solid, featureless sphere — no electrons, no nucleus, no substructure at all."
+  },
+  thomson: {
+    evidence: "Cathode ray tube experiments showed rays bent toward a positive plate — negatively charged particles (electrons) exist inside atoms.",
+    limitation: "Assumed positive charge was a diffuse 'pudding' with electrons embedded like 'plums' — no concentrated nucleus."
+  },
+  rutherford: {
+    evidence: "In the gold foil experiment, most α-particles passed straight through, but a few deflected at large angles.",
+    limitation: "Couldn't explain why electrons orbiting a nucleus wouldn't lose energy and spiral inward, per classical electromagnetism."
+  },
+  bohr: {
+    evidence: "Hydrogen's emission spectrum showed only discrete lines, implying electrons occupy specific, quantized energy levels.",
+    limitation: "Worked only for hydrogen (1 electron); gave no physical reason why only certain orbits are allowed."
+  },
+  debroglie: {
+    evidence: "Electrons showed wave-like diffraction patterns — matter has wavelength λ = h / (mv).",
+    limitation: "A stable orbit is one where the electron's wave closes on itself as a whole number of wavelengths — this explains Bohr's quantization, but still pictures a fixed circular path."
+  },
+  quantum: {
+    evidence: "The Schrödinger equation and Heisenberg's uncertainty principle show we can never know an electron's exact position and momentum simultaneously.",
+    limitation: "No sharp 'edge' or path — electrons exist as a probability cloud (orbital), the most modern and accurate model."
+  }
+};
+
+function setInfo(m) {
+  document.getElementById('infoEvidence').textContent = MODEL_DATA[m].evidence;
+  document.getElementById('infoLimitation').textContent = MODEL_DATA[m].limitation;
+}
+
+// ---------- Canvas sizing ----------
+const ro = new ResizeObserver(() => {
+  const w = canvas.parentElement.clientWidth;
+  const h = canvas.parentElement.clientHeight;
+  if (w === 0 || h === 0) return;
+  canvas.width = w;
+  canvas.height = h;
+});
+ro.observe(canvas.parentElement);
+
+// ---------- Rutherford scattering particles ----------
+let alphaParticles = [];
+function fireAlphaParticles() {
+  alphaParticles = [];
+  const n = 22;
+  for (let i = 0; i < n; i++) {
+    const laneY = (Math.random() - 0.5) * 1.0; // -0.5..0.5 relative to center height
+    const deflect = Math.random() < 0.12; // ~12% deflect noticeably
+    alphaParticles.push({
+      x: -20,
+      yOffset: laneY,
+      speed: 2.2 + Math.random() * 0.6,
+      deflect,
+      deflectAngle: deflect ? (Math.random() < 0.5 ? -1 : 1) * (0.4 + Math.random() * 0.5) : 0,
+      bounced: false,
+      started: false,
+      delay: i * 6
+    });
+  }
+}
+
+// ---------- Bohr transition state ----------
+let electronLevel = 1;
+let flashPhoton = null; // {color, time}
+const levelColors = { '2-1': '#8e44ad', '3-1': '#3498db', '4-1': '#e74c3c', '3-2': '#27ae60', '4-2':'#f9a825','4-3':'#c0392b' };
+
+document.querySelectorAll('.level-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    const targetN = parseInt(btn.dataset.n);
+    if (targetN === electronLevel) return;
+    const fromN = electronLevel;
+    const key = Math.max(fromN,targetN)+'-'+Math.min(fromN,targetN);
+    const color = levelColors[key] || '#3498db';
+    if (targetN < fromN) {
+      flashPhoton = { color, life: 40 };
+      document.getElementById('bohrResult').textContent =
+        `Electron drops from n=${fromN} → n=${targetN}: energy is released as a photon (visualized in ${color}).`;
+      document.getElementById('bohrResult').className = 'result-box green';
+    } else {
+      document.getElementById('bohrResult').textContent =
+        `Electron absorbs a photon and jumps from n=${fromN} → n=${targetN}.`;
+      document.getElementById('bohrResult').className = 'result-box yellow';
+    }
+    electronLevel = targetN;
+  });
+});
+
+// ---------- de Broglie ----------
+const WAVELENGTH = 42; // px, fixed "electron wavelength" for the visualization
+const dbSlider = document.getElementById('dbSlider');
+function updateDeBroglie() {
+  const R = parseInt(dbSlider.value);
+  document.getElementById('dbSliderVal').textContent = R + ' px';
+  const circumference = 2 * Math.PI * R;
+  const nExact = circumference / WAVELENGTH;
+  const nRounded = Math.round(nExact);
+  const diff = Math.abs(nExact - nRounded);
+  const box = document.getElementById('dbResult');
+  if (diff < 0.06) {
+    box.className = 'result-box green';
+    box.innerHTML = `<b>Stable orbit</b> — the wave closes perfectly with n = ${nRounded} whole wavelengths (constructive interference).`;
+  } else {
+    box.className = 'result-box red';
+    box.innerHTML = `<b>Not allowed</b> — the wave overlaps out of phase with itself (n ≈ ${nExact.toFixed(2)}, destructive interference). Only whole-number wavelengths survive.`;
+  }
+}
+dbSlider.addEventListener('input', updateDeBroglie);
+document.getElementById('btnSnap').addEventListener('click', () => {
+  const R = parseInt(dbSlider.value);
+  const nRounded = Math.max(1, Math.round((2*Math.PI*R)/WAVELENGTH));
+  const targetR = (nRounded * WAVELENGTH) / (2*Math.PI);
+  dbSlider.value = Math.round(targetR);
+  updateDeBroglie();
+});
+
+// ---------- Model switching ----------
+document.getElementById('modelSelector').addEventListener('click', (e) => {
+  const btn = e.target.closest('.btn-toggle');
+  if (!btn) return;
+  document.querySelectorAll('#modelSelector .btn-toggle').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  currentModel = btn.dataset.model;
+  setInfo(currentModel);
+
+  document.getElementById('ctrl-rutherford').style.display = currentModel === 'rutherford' ? 'block' : 'none';
+  document.getElementById('ctrl-bohr').style.display = currentModel === 'bohr' ? 'block' : 'none';
+  document.getElementById('ctrl-debroglie').style.display = currentModel === 'debroglie' ? 'block' : 'none';
+  if (currentModel === 'debroglie') updateDeBroglie();
+});
+
+document.getElementById('btnFire').addEventListener('click', fireAlphaParticles);
+
+// ---------- Drawing ----------
+function cx() { return canvas.width / 2; }
+function cy() { return canvas.height / 2; }
+
+function drawDalton() {
+  const r = Math.min(canvas.width, canvas.height) * 0.22;
+  const grad = ctx.createRadialGradient(cx()-r*0.3, cy()-r*0.3, r*0.1, cx(), cy(), r);
+  grad.addColorStop(0, '#3a5490');
+  grad.addColorStop(1, '#1a2744');
+  ctx.beginPath();
+  ctx.arc(cx(), cy(), r, 0, Math.PI*2);
+  ctx.fillStyle = grad;
+  ctx.fill();
+  ctx.font = '13px Inter';
+  ctx.fillStyle = '#6b7c93';
+  ctx.textAlign = 'center';
+  ctx.fillText('Solid, indivisible sphere — no internal parts', cx(), cy() + r + 30);
+}
+
+function drawThomson() {
+  const r = Math.min(canvas.width, canvas.height) * 0.22;
+  const grad = ctx.createRadialGradient(cx(), cy(), 0, cx(), cy(), r);
+  grad.addColorStop(0, '#e8d9a8');
+  grad.addColorStop(1, '#c9a84c');
+  ctx.beginPath();
+  ctx.arc(cx(), cy(), r, 0, Math.PI*2);
+  ctx.fillStyle = grad;
+  ctx.fill();
+  ctx.strokeStyle = '#a8873a';
+  ctx.lineWidth = 2;
+  ctx.stroke();
+
+  // embedded electrons
+  const pts = 9;
+  ctx.fillStyle = '#1a2744';
+  for (let i=0;i<pts;i++) {
+    const ang = (i/pts)*Math.PI*2 + t*0.01;
+    const rad = r * (0.25 + 0.55*((i*37)%10)/10);
+    const ex = cx() + Math.cos(ang)*rad;
+    const ey = cy() + Math.sin(ang)*rad;
+    ctx.beginPath();
+    ctx.arc(ex, ey, 5, 0, Math.PI*2);
+    ctx.fill();
+    ctx.fillStyle = '#fff';
+    ctx.font = '8px Inter';
+    ctx.textAlign='center';
+    ctx.fillText('-', ex, ey+3);
+    ctx.fillStyle = '#1a2744';
+  }
+  ctx.font = '13px Inter';
+  ctx.fillStyle = '#6b7c93';
+  ctx.fillText('Negative electrons embedded in a positive "pudding"', cx(), cy() + r + 30);
+}
+
+function drawRutherford() {
+  const nucR = 8;
+  ctx.beginPath();
+  ctx.arc(cx(), cy(), nucR, 0, Math.PI*2);
+  ctx.fillStyle = '#c9a84c';
+  ctx.fill();
+
+  // orbiting electrons
+  const orbitR = Math.min(canvas.width, canvas.height) * 0.28;
+  ctx.strokeStyle = 'rgba(52,152,219,0.25)';
+  ctx.lineWidth = 1;
+  ctx.beginPath();
+  ctx.arc(cx(), cy(), orbitR, 0, Math.PI*2);
+  ctx.stroke();
+  for (let i=0;i<2;i++) {
+    const ang = t*0.03 + i*Math.PI;
+    const ex = cx() + Math.cos(ang)*orbitR;
+    const ey = cy() + Math.sin(ang)*orbitR*0.5;
+    ctx.beginPath();
+    ctx.arc(ex, ey, 4, 0, Math.PI*2);
+    ctx.fillStyle = '#3498db';
+    ctx.fill();
+  }
+
+  // alpha particles scattering off the nucleus directly
+  const targetX = cx();
+  alphaParticles.forEach(p => {
+    if (t < p.delay) return;
+    p.started = true;
+    const baseY = cy() + p.yOffset * canvas.height * 0.7;
+    if (!p.deflect) {
+      p.x += p.speed;
+    } else {
+      if (p.x < targetX - 4) {
+        p.x += p.speed;
+      } else if (!p.bounced) {
+        p.bounced = true;
+      }
+      if (p.bounced) {
+        p.x -= p.speed * 0.6;
+        p.y2 = (p.y2||baseY) + Math.sin(p.deflectAngle)*p.speed*1.2;
+      }
+    }
+    const py = p.bounced ? (p.y2||baseY) : baseY;
+    ctx.beginPath();
+    ctx.arc(p.x, py, 3, 0, Math.PI*2);
+    ctx.fillStyle = p.deflect ? '#e74c3c' : '#27ae60';
+    ctx.fill();
+  });
+
+  ctx.font = '13px Inter';
+  ctx.fillStyle = '#6b7c93';
+  ctx.textAlign = 'center';
+  ctx.fillText('Dense positive nucleus + orbiting electrons, mostly empty space', cx(), canvas.height - 12);
+}
+
+function drawBohr() {
+  const nucR = 8;
+  ctx.beginPath();
+  ctx.arc(cx(), cy(), nucR, 0, Math.PI*2);
+  ctx.fillStyle = '#c9a84c';
+  ctx.fill();
+
+  const baseR = Math.min(canvas.width, canvas.height) * 0.11;
+  for (let n=1;n<=4;n++) {
+    const r = baseR * n * 0.85;
+    ctx.beginPath();
+    ctx.arc(cx(), cy(), r, 0, Math.PI*2);
+    ctx.strokeStyle = n === electronLevel ? '#3498db' : 'rgba(52,152,219,0.2)';
+    ctx.lineWidth = n === electronLevel ? 2 : 1;
+    ctx.stroke();
+    ctx.font = '10px JetBrains Mono';
+    ctx.fillStyle = '#8a99ad';
+    ctx.textAlign = 'left';
+    ctx.fillText('n='+n, cx() + r + 4, cy()+3);
+  }
+
+  const r = baseR * electronLevel * 0.85;
+  const ang = t*0.04;
+  const ex = cx() + Math.cos(ang)*r;
+  const ey = cy() + Math.sin(ang)*r;
+  ctx.beginPath();
+  ctx.arc(ex, ey, 5, 0, Math.PI*2);
+  ctx.fillStyle = '#3498db';
+  ctx.fill();
+
+  if (flashPhoton && flashPhoton.life > 0) {
+    ctx.beginPath();
+    ctx.arc(ex, ey, 5 + (40-flashPhoton.life)*1.5, 0, Math.PI*2);
+    ctx.strokeStyle = flashPhoton.color;
+    ctx.globalAlpha = flashPhoton.life/40;
+    ctx.lineWidth = 2;
+    ctx.stroke();
+    ctx.globalAlpha = 1;
+    flashPhoton.life--;
+  }
+
+  ctx.font = '13px Inter';
+  ctx.fillStyle = '#6b7c93';
+  ctx.textAlign = 'center';
+  ctx.fillText('Electron confined to fixed, quantized circular orbits', cx(), canvas.height - 12);
+}
+
+function drawDeBroglie() {
+  const nucR = 8;
+  ctx.beginPath();
+  ctx.arc(cx(), cy(), nucR, 0, Math.PI*2);
+  ctx.fillStyle = '#c9a84c';
+  ctx.fill();
+
+  const R = parseInt(dbSlider.value);
+  const circumference = 2*Math.PI*R;
+  const nExact = circumference / WAVELENGTH;
+  const stable = Math.abs(nExact - Math.round(nExact)) < 0.06;
+
+  ctx.beginPath();
+  ctx.arc(cx(), cy(), R, 0, Math.PI*2);
+  ctx.strokeStyle = 'rgba(142,68,173,0.15)';
+  ctx.lineWidth = 1;
+  ctx.stroke();
+
+  // standing wave around the circle
+  const steps = 220;
+  ctx.beginPath();
+  for (let i=0;i<=steps;i++) {
+    const ang = (i/steps) * Math.PI*2;
+    const arcLen = ang * R;
+    const wave = Math.sin((arcLen / WAVELENGTH) * Math.PI*2) * 10;
+    const rr = R + wave;
+    const px = cx() + Math.cos(ang)*rr;
+    const py = cy() + Math.sin(ang)*rr;
+    if (i===0) ctx.moveTo(px,py); else ctx.lineTo(px,py);
+  }
+  ctx.closePath();
+  ctx.strokeStyle = stable ? '#27ae60' : '#e53935';
+  ctx.lineWidth = 2;
+  ctx.stroke();
+
+  ctx.font = '13px Inter';
+  ctx.fillStyle = '#6b7c93';
+  ctx.textAlign = 'center';
+  ctx.fillText(stable ? 'Wave meets itself in phase → allowed orbit' : 'Wave cancels itself out → forbidden orbit', cx(), canvas.height - 12);
+}
+
+function drawQuantum() {
+  const nucR = 7;
+  ctx.beginPath();
+  ctx.arc(cx(), cy(), nucR, 0, Math.PI*2);
+  ctx.fillStyle = '#c9a84c';
+  ctx.fill();
+
+  const maxR = Math.min(canvas.width, canvas.height) * 0.32;
+  const nPts = 420;
+  for (let i=0;i<nPts;i++) {
+    // radial probability density-ish sampling (peaks away from center, like 1s-ish shell but fuzzy)
+    const u = Math.random();
+    const rad = maxR * Math.sqrt(u) * (0.55 + 0.45*Math.sin(u*Math.PI));
+    const ang = Math.random()*Math.PI*2;
+    const px = cx() + Math.cos(ang)*rad;
+    const py = cy() + Math.sin(ang)*rad;
+    const alpha = 0.5 * (1 - rad/maxR) + 0.08;
+    ctx.beginPath();
+    ctx.arc(px, py, 1.6, 0, Math.PI*2);
+    ctx.fillStyle = `rgba(52,152,219,${alpha.toFixed(2)})`;
+    ctx.fill();
+  }
+
+  ctx.font = '13px Inter';
+  ctx.fillStyle = '#6b7c93';
+  ctx.textAlign = 'center';
+  ctx.fillText('No fixed path — only a probability cloud (orbital)', cx(), canvas.height - 12);
+}
+
+function draw() {
+  if (canvas.width === 0 || canvas.height === 0) return;
+  ctx.clearRect(0,0,canvas.width,canvas.height);
+  switch(currentModel) {
+    case 'dalton': drawDalton(); break;
+    case 'thomson': drawThomson(); break;
+    case 'rutherford': drawRutherford(); break;
+    case 'bohr': drawBohr(); break;
+    case 'debroglie': drawDeBroglie(); break;
+    case 'quantum': drawQuantum(); break;
+  }
+}
+
+function loop() {
+  t += 1;
+  draw();
+  requestAnimationFrame(loop);
+}
+
+setInfo(currentModel);
+updateDeBroglie();
+requestAnimationFrame(loop);
+</script>
+
+</body>
+</html>
