@@ -1,0 +1,508 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Nobel Prep — IB HL Chem Structure 1.3 Quiz A</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
+  :root{--navy:#1B2A4A;--navy2:#243660;--gold:#C9A84C;--white:#FFFFFF;--off:#F7F8FA;--gray1:#E8EAF0;--gray2:#9AA0B2;--gray3:#555D72;--green:#2D7D46;--green-bg:#EBF7EF;--red:#C0392B;--red-bg:#FDECEA;--teal:#1A7A8A;--teal-bg:#E6F4F6;--radius:10px;--shadow:0 2px 12px rgba(27,42,74,0.10);}
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{font-family:'Inter',sans-serif;background:var(--off);color:var(--navy);min-height:100vh;}
+  header{background:var(--navy);padding:16px 28px 0;position:sticky;top:0;z-index:100;box-shadow:0 2px 10px rgba(0,0,0,0.25);}
+  .header-top{display:flex;align-items:center;justify-content:space-between;padding-bottom:14px;}
+  .logo{display:flex;align-items:center;gap:12px;}
+  .logo-badge{width:38px;height:38px;background:var(--gold);border-radius:8px;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:15px;color:var(--navy);}
+  .logo-text h1{font-size:16px;font-weight:700;color:var(--white);}
+  .logo-text p{font-size:11px;color:var(--gold);margin-top:1px;}
+  .quiz-badge{background:var(--teal);color:var(--white);font-size:11px;font-weight:700;padding:4px 12px;border-radius:20px;letter-spacing:0.5px;}
+  .progress-bar-wrap{width:100%;height:3px;background:rgba(255,255,255,0.15);}
+  .progress-bar{height:100%;background:var(--teal);width:0%;transition:width 0.4s ease;}
+  main{max-width:780px;margin:0 auto;padding:28px 16px 80px;}
+  .name-card{background:var(--white);border-radius:var(--radius);box-shadow:var(--shadow);padding:24px 28px;margin-bottom:24px;border-left:4px solid var(--teal);}
+  .name-card h2{font-size:14px;font-weight:600;color:var(--navy2);margin-bottom:12px;}
+  .name-row{display:flex;gap:12px;flex-wrap:wrap;}
+  .name-row input{flex:1;min-width:180px;padding:10px 14px;border:1.5px solid var(--gray1);border-radius:8px;font-family:'Inter',sans-serif;font-size:14px;color:var(--navy);outline:none;transition:border-color 0.2s;}
+  .name-row input:focus{border-color:var(--teal);}
+  .section-header{background:var(--navy2);color:var(--white);padding:10px 18px;border-radius:8px 8px 0 0;font-size:12px;font-weight:600;letter-spacing:0.8px;text-transform:uppercase;display:flex;align-items:center;gap:8px;margin-top:24px;}
+  .section-header .badge{background:var(--teal);color:var(--white);padding:2px 8px;border-radius:10px;font-size:10px;}
+  .q-card{background:var(--white);border:1px solid var(--gray1);border-top:none;padding:20px 22px;}
+  .q-card:last-of-type{border-radius:0 0 var(--radius) var(--radius);}
+  .q-card.answered-correct{border-left:4px solid var(--green);}
+  .q-card.answered-wrong{border-left:4px solid var(--red);}
+  .q-card.selected-only{border-left:4px solid var(--teal);}
+  .q-card.unanswered-warn{border-left:4px solid #F39C12;animation:shake 0.3s;}
+  @keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-4px)}75%{transform:translateX(4px)}}
+  .q-num{font-size:10px;font-weight:700;color:var(--teal);letter-spacing:1px;text-transform:uppercase;margin-bottom:6px;}
+  .q-text{font-size:14px;font-weight:500;line-height:1.65;color:var(--navy);margin-bottom:14px;}
+  .stmt-list{list-style:none;margin:8px 0 14px;padding:0;display:flex;flex-direction:column;gap:6px;}
+  .stmt-list li{font-size:13.5px;color:var(--navy);line-height:1.6;padding:7px 11px;background:var(--off);border-radius:6px;border-left:2px solid var(--gray1);}
+  .stmt-list li b{color:var(--navy2);margin-right:6px;}
+  .options{display:flex;flex-direction:column;gap:8px;}
+  .option-btn{display:flex;align-items:center;gap:10px;padding:10px 14px;border-radius:8px;border:1.5px solid var(--gray1);background:var(--off);cursor:pointer;font-family:'Inter',sans-serif;font-size:13.5px;color:var(--navy);text-align:left;transition:all 0.15s;width:100%;}
+  .option-btn:hover:not(:disabled){border-color:var(--teal);background:var(--teal-bg);}
+  .option-btn.selected{border-color:var(--navy);background:#EEF1F8;font-weight:500;}
+  .option-btn.correct{border-color:var(--green);background:var(--green-bg);color:var(--green);font-weight:600;}
+  .option-btn.wrong{border-color:var(--red);background:var(--red-bg);color:var(--red);}
+  .option-btn.reveal-correct{border-color:var(--green);background:var(--green-bg);color:var(--green);font-weight:600;}
+  .opt-letter{width:24px;height:24px;border-radius:50%;background:var(--gray1);color:var(--gray3);font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+  .option-btn.correct .opt-letter,.option-btn.reveal-correct .opt-letter{background:var(--green);color:var(--white);}
+  .option-btn.wrong .opt-letter{background:var(--red);color:var(--white);}
+  .sa-wrap{display:flex;flex-direction:column;gap:8px;}
+  .sa-input{width:100%;padding:10px 14px;border-radius:8px;border:1.5px solid var(--gray1);font-family:'Inter',sans-serif;font-size:14px;color:var(--navy);outline:none;transition:border-color 0.2s;background:var(--off);}
+  .sa-input:focus{border-color:var(--teal);background:var(--white);}
+  .sa-input.correct{border-color:var(--green);background:var(--green-bg);}
+  .sa-input.wrong{border-color:var(--red);background:var(--red-bg);}
+  .feedback{margin-top:10px;padding:10px 14px;border-radius:8px;font-size:13px;font-weight:500;display:none;}
+  .feedback.correct{background:var(--green-bg);color:var(--green);display:flex;align-items:flex-start;gap:8px;}
+  .feedback.wrong{background:var(--red-bg);color:var(--red);display:flex;align-items:flex-start;gap:8px;}
+  .feedback-icon{font-size:16px;flex-shrink:0;}
+  .feedback-text{line-height:1.5;}
+  .progress-pill{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:var(--navy);color:var(--white);padding:10px 24px;border-radius:30px;font-size:13px;font-weight:600;box-shadow:0 4px 20px rgba(0,0,0,0.2);display:flex;gap:16px;align-items:center;z-index:200;}
+  .progress-pill span{color:var(--teal);}
+  .submit-section{margin-top:32px;text-align:center;}
+  .submit-btn{padding:14px 48px;background:var(--teal);color:var(--white);border:none;border-radius:10px;font-size:15px;font-weight:700;font-family:'Inter',sans-serif;cursor:pointer;box-shadow:0 4px 16px rgba(26,122,138,0.35);transition:all 0.2s;}
+  .submit-btn:hover{background:#155f6e;transform:translateY(-1px);}
+  .submit-btn:disabled{background:var(--gray2);color:var(--white);transform:none;box-shadow:none;cursor:default;}
+  .result-card{display:none;background:var(--white);border-radius:var(--radius);box-shadow:0 8px 32px rgba(27,42,74,0.15);padding:36px 32px;text-align:center;margin-top:32px;border-top:5px solid var(--teal);}
+  .result-score{font-size:56px;font-weight:700;color:var(--navy);line-height:1;}
+  .result-label{font-size:14px;color:var(--gray2);margin-top:6px;margin-bottom:24px;}
+  .result-badge{display:inline-block;padding:8px 24px;border-radius:30px;font-size:15px;font-weight:700;margin-bottom:20px;}
+  .result-badge.pass{background:var(--green-bg);color:var(--green);}
+  .result-badge.fail{background:var(--red-bg);color:var(--red);}
+  .result-breakdown{font-size:13px;color:var(--gray3);}
+</style>
+</head>
+<body>
+<header>
+  <div class="header-top">
+    <div class="logo">
+      <div class="logo-badge">NP</div>
+      <div class="logo-text">
+        <h1>Nobel Prep</h1>
+        <p>IB HL Chemistry · Structure 1.3</p>
+      </div>
+    </div>
+    <div class="quiz-badge">QUIZ A</div>
+  </div>
+  <div class="progress-bar-wrap"><div class="progress-bar" id="progressBar"></div></div>
+</header>
+
+<main>
+  <div class="name-card">
+    <h2>Student Information</h2>
+    <div class="name-row">
+      <input type="text" id="studentName" placeholder="Full Name"/>
+      <input type="text" id="studentPeriod" placeholder="Period" style="max-width:120px;"/>
+    </div>
+  </div>
+
+  <!-- ── SECTION 1: MCQ ─────────────────────────────────── -->
+  <div class="section-header">
+    Section 1 — Multiple Choice
+    <span class="badge">Q1–Q8</span>
+  </div>
+
+  <!-- Q1: 정답 A — origin of line emission spectrum -->
+  <div class="q-card" id="qcard-1">
+    <div class="q-num">Question 1</div>
+    <div class="q-text">Which of the following best describes the origin of a line emission spectrum?</div>
+    <div class="options" id="opts-1">
+      <button class="option-btn" onclick="selectMCQ(1,'A','A')"><span class="opt-letter">A</span> Electrons falling from a higher energy level to a lower energy level, releasing energy as a photon of specific frequency.</button>
+      <button class="option-btn" onclick="selectMCQ(1,'B','B')"><span class="opt-letter">B</span> Electrons absorbing photons of continuous frequency and being promoted to any energy level.</button>
+      <button class="option-btn" onclick="selectMCQ(1,'C','C')"><span class="opt-letter">C</span> Protons within the nucleus undergoing radioactive decay.</button>
+      <button class="option-btn" onclick="selectMCQ(1,'D','D')"><span class="opt-letter">D</span> Electrons gaining kinetic energy from collisions with other atoms.</button>
+    </div>
+    <div class="feedback" id="fb-1"></div>
+  </div>
+
+  <!-- Q2: 정답 B — convergence limit = ionization energy -->
+  <div class="q-card" id="qcard-2">
+    <div class="q-num">Question 2</div>
+    <div class="q-text">In the emission spectrum of hydrogen, the spectral lines converge at higher frequency. What does this convergence limit represent?</div>
+    <div class="options" id="opts-2">
+      <button class="option-btn" onclick="selectMCQ(2,'A','A')"><span class="opt-letter">A</span> The frequency of the least energetic line in the series.</button>
+      <button class="option-btn" onclick="selectMCQ(2,'B','B')"><span class="opt-letter">B</span> The ionization energy of the atom, corresponding to complete removal of the electron.</button>
+      <button class="option-btn" onclick="selectMCQ(2,'C','C')"><span class="opt-letter">C</span> The energy of the ground state only.</button>
+      <button class="option-btn" onclick="selectMCQ(2,'D','D')"><span class="opt-letter">D</span> The wavelength of the emitted photon in the visible region only.</button>
+    </div>
+    <div class="feedback" id="fb-2"></div>
+  </div>
+
+  <!-- Q3: 정답 C — number of orbitals in p sub-shell -->
+  <div class="q-card" id="qcard-3">
+    <div class="q-num">Question 3</div>
+    <div class="q-text">How many orbitals are there in a p sub-shell?</div>
+    <div class="options" id="opts-3">
+      <button class="option-btn" onclick="selectMCQ(3,'A','A')"><span class="opt-letter">A</span> 1</button>
+      <button class="option-btn" onclick="selectMCQ(3,'B','B')"><span class="opt-letter">B</span> 2</button>
+      <button class="option-btn" onclick="selectMCQ(3,'C','C')"><span class="opt-letter">C</span> 3</button>
+      <button class="option-btn" onclick="selectMCQ(3,'D','D')"><span class="opt-letter">D</span> 5</button>
+    </div>
+    <div class="feedback" id="fb-3"></div>
+  </div>
+
+  <!-- Q4: 정답 D — chromium exception to Aufbau principle -->
+  <div class="q-card" id="qcard-4">
+    <div class="q-num">Question 4</div>
+    <div class="q-text">What is the full electron configuration of a chromium atom (Z = 24), noting its exception to the Aufbau principle?</div>
+    <div class="options" id="opts-4">
+      <button class="option-btn" onclick="selectMCQ(4,'A','A')"><span class="opt-letter">A</span> 1s²2s²2p⁶3s²3p⁶3d⁶</button>
+      <button class="option-btn" onclick="selectMCQ(4,'B','B')"><span class="opt-letter">B</span> 1s²2s²2p⁶3s²3p⁶4s²3d⁴</button>
+      <button class="option-btn" onclick="selectMCQ(4,'C','C')"><span class="opt-letter">C</span> 1s²2s²2p⁶3s²3p⁶4s²3d⁶</button>
+      <button class="option-btn" onclick="selectMCQ(4,'D','D')"><span class="opt-letter">D</span> 1s²2s²2p⁶3s²3p⁶4s¹3d⁵</button>
+    </div>
+    <div class="feedback" id="fb-4"></div>
+  </div>
+
+  <!-- Q5: 정답 A — Hund's rule, nitrogen 2p³ -->
+  <div class="q-card" id="qcard-5">
+    <div class="q-num">Question 5</div>
+    <div class="q-text">According to Hund's rule, how are the three 2p electrons of a nitrogen atom arranged in the 2p sub-shell orbitals?</div>
+    <div class="options" id="opts-5">
+      <button class="option-btn" onclick="selectMCQ(5,'A','A')"><span class="opt-letter">A</span> One electron occupies each of the three 2p orbitals, all with parallel spin.</button>
+      <button class="option-btn" onclick="selectMCQ(5,'B','B')"><span class="opt-letter">B</span> All three electrons pair up within a single 2p orbital.</button>
+      <button class="option-btn" onclick="selectMCQ(5,'C','C')"><span class="opt-letter">C</span> Two electrons pair in one orbital while the third orbital remains empty.</button>
+      <button class="option-btn" onclick="selectMCQ(5,'D','D')"><span class="opt-letter">D</span> The electrons occupy the 3p orbitals instead of the 2p orbitals.</button>
+    </div>
+    <div class="feedback" id="fb-5"></div>
+  </div>
+
+  <!-- Q6: 정답 B — successive IE big jump indicates Group 1 -->
+  <div class="q-card" id="qcard-6">
+    <div class="q-num">Question 6</div>
+    <div class="q-text">An element has the following successive ionization energies (kJ mol⁻¹): 496, 4560, 6910, 9540. This large jump between the first and second ionization energies suggests the element belongs to which group of the periodic table?</div>
+    <div class="options" id="opts-6">
+      <button class="option-btn" onclick="selectMCQ(6,'A','A')"><span class="opt-letter">A</span> Group 2</button>
+      <button class="option-btn" onclick="selectMCQ(6,'B','B')"><span class="opt-letter">B</span> Group 1</button>
+      <button class="option-btn" onclick="selectMCQ(6,'C','C')"><span class="opt-letter">C</span> Group 17</button>
+      <button class="option-btn" onclick="selectMCQ(6,'D','D')"><span class="opt-letter">D</span> Group 18</button>
+    </div>
+    <div class="feedback" id="fb-6"></div>
+  </div>
+
+  <!-- Q7: 정답 C — O lower IE1 than N due to electron-electron repulsion -->
+  <div class="q-card" id="qcard-7">
+    <div class="q-num">Question 7</div>
+    <div class="q-text">Explain why the first ionization energy of oxygen is lower than that of nitrogen, despite oxygen having a higher nuclear charge.</div>
+    <div class="options" id="opts-7">
+      <button class="option-btn" onclick="selectMCQ(7,'A','A')"><span class="opt-letter">A</span> Oxygen has a full 2p sub-shell, providing extra shielding of its valence electrons.</button>
+      <button class="option-btn" onclick="selectMCQ(7,'B','B')"><span class="opt-letter">B</span> Oxygen has a smaller nuclear charge than nitrogen.</button>
+      <button class="option-btn" onclick="selectMCQ(7,'C','C')"><span class="opt-letter">C</span> Removing an electron from oxygen's paired 2p orbital is easier due to increased electron-electron repulsion.</button>
+      <button class="option-btn" onclick="selectMCQ(7,'D','D')"><span class="opt-letter">D</span> Oxygen has one more occupied principal energy level than nitrogen.</button>
+    </div>
+    <div class="feedback" id="fb-7"></div>
+  </div>
+
+  <!-- Q8: 정답 D — IE decreases down Group 1 -->
+  <div class="q-card" id="qcard-8">
+    <div class="q-num">Question 8</div>
+    <div class="q-text">Which of the following correctly explains the general decrease in first ionization energy down Group 1?</div>
+    <div class="options" id="opts-8">
+      <button class="option-btn" onclick="selectMCQ(8,'A','A')"><span class="opt-letter">A</span> Increasing nuclear charge outweighs the increase in atomic radius.</button>
+      <button class="option-btn" onclick="selectMCQ(8,'B','B')"><span class="opt-letter">B</span> Valence electrons become more tightly held as atomic number increases.</button>
+      <button class="option-btn" onclick="selectMCQ(8,'C','C')"><span class="opt-letter">C</span> The number of occupied sub-shells decreases down the group.</button>
+      <button class="option-btn" onclick="selectMCQ(8,'D','D')"><span class="opt-letter">D</span> Atomic radius and electron shielding increase, outweighing the increased nuclear charge.</button>
+    </div>
+    <div class="feedback" id="fb-8"></div>
+  </div>
+
+  <!-- ── SECTION 2: SHORT ANSWER ────────────────────────── -->
+  <div class="section-header">
+    Section 2 — Short Answer
+    <span class="badge">Q9–Q20</span>
+  </div>
+
+  <!-- Q9 -->
+  <div class="q-card" id="qcard-9">
+    <div class="q-num">Question 9</div>
+    <div class="q-text">A heated solid emits all wavelengths of light merging into each other without any gaps. State the term used to describe this type of spectrum. (Two words)</div>
+    <div class="sa-wrap"><input class="sa-input" type="text" id="sa-9" placeholder="Type your answer"/></div>
+    <div class="feedback" id="fb-9"></div>
+  </div>
+
+  <!-- Q10 -->
+  <div class="q-card" id="qcard-10">
+    <div class="q-num">Question 10</div>
+    <div class="q-text">A gaseous atom emits light only at specific, discrete frequencies, each corresponding to an electron transition between energy levels. State the term used to describe this type of spectrum. (Two words)</div>
+    <div class="sa-wrap"><input class="sa-input" type="text" id="sa-10" placeholder="Type your answer"/></div>
+    <div class="feedback" id="fb-10"></div>
+  </div>
+
+  <!-- Q11 -->
+  <div class="q-card" id="qcard-11">
+    <div class="q-num">Question 11</div>
+    <div class="q-text">The lines in an atomic emission spectrum converge at higher frequency into a continuum. State the atomic property that can be determined directly from this convergence limit. (Two words)</div>
+    <div class="sa-wrap"><input class="sa-input" type="text" id="sa-11" placeholder="Type your answer"/></div>
+    <div class="feedback" id="fb-11"></div>
+  </div>
+
+  <!-- Q12 -->
+  <div class="q-card" id="qcard-12">
+    <div class="q-num">Question 12</div>
+    <div class="q-text">The Lyman series of the hydrogen emission spectrum results from electron transitions down to the n = 1 energy level. State the full name (not the abbreviation) of the region of the electromagnetic spectrum in which the Lyman series is observed.</div>
+    <div class="sa-wrap"><input class="sa-input" type="text" id="sa-12" placeholder="Type your answer"/></div>
+    <div class="feedback" id="fb-12"></div>
+  </div>
+
+  <!-- Q13 -->
+  <div class="q-card" id="qcard-13">
+    <div class="q-num">Question 13</div>
+    <div class="q-text">State the maximum number of electrons that can occupy a single d sub-shell.</div>
+    <div class="sa-wrap"><input class="sa-input" type="text" id="sa-13" placeholder="Type your answer"/></div>
+    <div class="feedback" id="fb-13"></div>
+  </div>
+
+  <!-- Q14 -->
+  <div class="q-card" id="qcard-14">
+    <div class="q-num">Question 14</div>
+    <div class="q-text">State the name of the principle stating that electrons fill the available orbitals of lowest energy first, before filling higher-energy orbitals. (Two words)</div>
+    <div class="sa-wrap"><input class="sa-input" type="text" id="sa-14" placeholder="Type your answer"/></div>
+    <div class="feedback" id="fb-14"></div>
+  </div>
+
+  <!-- Q15 -->
+  <div class="q-card" id="qcard-15">
+    <div class="q-num">Question 15</div>
+    <div class="q-text">State which sub-shell fills with electrons before the 3d sub-shell, despite belonging to a higher principal energy level.</div>
+    <div class="sa-wrap"><input class="sa-input" type="text" id="sa-15" placeholder="Type your answer"/></div>
+    <div class="feedback" id="fb-15"></div>
+  </div>
+
+  <!-- Q16 -->
+  <div class="q-card" id="qcard-16">
+    <div class="q-num">Question 16</div>
+    <div class="q-text">State the maximum number of unpaired electrons possible in a nitrogen atom's 2p sub-shell, according to Hund's rule.</div>
+    <div class="sa-wrap"><input class="sa-input" type="text" id="sa-16" placeholder="Type your answer"/></div>
+    <div class="feedback" id="fb-16"></div>
+  </div>
+
+  <!-- Q17 -->
+  <div class="q-card" id="qcard-17">
+    <div class="q-num">Question 17</div>
+    <div class="q-text">An element has the following successive ionization energies (kJ mol⁻¹): 738, 1450, 7730, 10500. State the group number of this element in the periodic table.</div>
+    <div class="sa-wrap"><input class="sa-input" type="text" id="sa-17" placeholder="Type your answer"/></div>
+    <div class="feedback" id="fb-17"></div>
+  </div>
+
+  <!-- Q18 -->
+  <div class="q-card" id="qcard-18">
+    <div class="q-num">Question 18</div>
+    <div class="q-text">State whether the first ionization energy generally increases or decreases across Period 3, from sodium to argon.</div>
+    <div class="sa-wrap"><input class="sa-input" type="text" id="sa-18" placeholder="Type your answer"/></div>
+    <div class="feedback" id="fb-18"></div>
+  </div>
+
+  <!-- Q19 -->
+  <div class="q-card" id="qcard-19">
+    <div class="q-num">Question 19</div>
+    <div class="q-text">State whether the first ionization energy generally increases or decreases down Group 17, from fluorine to iodine.</div>
+    <div class="sa-wrap"><input class="sa-input" type="text" id="sa-19" placeholder="Type your answer"/></div>
+    <div class="feedback" id="fb-19"></div>
+  </div>
+
+  <!-- Q20 -->
+  <div class="q-card" id="qcard-20">
+    <div class="q-num">Question 20</div>
+    <div class="q-text">Aluminium's first ionization energy (578 kJ mol⁻¹) is lower than magnesium's (738 kJ mol⁻¹), even though aluminium has a greater nuclear charge. State the sub-shell from which the outer electron of aluminium is removed that accounts for this anomaly.</div>
+    <div class="sa-wrap"><input class="sa-input" type="text" id="sa-20" placeholder="Type your answer"/></div>
+    <div class="feedback" id="fb-20"></div>
+  </div>
+
+  <div class="submit-section">
+    <button class="submit-btn" id="submitBtn" onclick="submitQuiz()">Submit &amp; See Results</button>
+    <p style="font-size:12px;color:#9AA0B2;margin-top:12px;">Answers will be revealed after submission.</p>
+  </div>
+
+  <div class="result-card" id="resultCard">
+    <div class="result-score" id="resultScore">—</div>
+    <div class="result-label">out of 20 questions</div>
+    <div class="result-badge" id="resultBadge"></div>
+    <div class="result-breakdown" id="resultBreakdown"></div>
+  </div>
+</main>
+
+<div class="progress-pill">Answered: <span id="pillCount">0</span> / 20</div>
+
+<script>
+// ── SHA-256 해시 (AP Chem 퀴즈와 동일한 방식) ──────────────
+const MCQ_HASHES = {
+  1: 'ca978112ca1bbdcafac231b39a23dc4da786eff8147c4e72b9807785afee48bb', // A
+  2: '3e23e8160039594a33894f6564e1b1348bbd7a0088d42c4acb73eeaed59c009d', // B
+  3: '2e7d2c03a9507ae265ecf5b5356885a53393a2029d241394997265a1a25aefc6', // C
+  4: '18ac3e7343f016890c510e93f935261169d9e3f565436429830faf0934f4f8e4', // D
+  5: 'ca978112ca1bbdcafac231b39a23dc4da786eff8147c4e72b9807785afee48bb', // A
+  6: '3e23e8160039594a33894f6564e1b1348bbd7a0088d42c4acb73eeaed59c009d', // B
+  7: '2e7d2c03a9507ae265ecf5b5356885a53393a2029d241394997265a1a25aefc6', // C
+  8: '18ac3e7343f016890c510e93f935261169d9e3f565436429830faf0934f4f8e4', // D
+};
+const SA_HASHES = {
+  9:  'b9aabd70eb4fc2b923dc68f2ce0309870f9328a3b6b41cb95e725a559ca29aef', // continuous spectrum
+  10: '363484c5ff10c49c4945a953a8c29dccabbe38190872a90f34143d5d9b3230ff', // line spectrum
+  11: '761c4b5775bf438e055950820808332e33e413c792e314b9d15b1378d86bc741', // ionization energy
+  12: '3aa3c439b17cde08af54855a47765396be4ecea1a04284975a69aa91133969ae', // ultraviolet
+  13: '4a44dc15364204a80fe80e9039455cc1608281820fe2b24f1e5233ade6af1dd5', // 10
+  14: 'fdd4a16124ba7007c6d8fc455090ba44a3c96fa13fe889f9a2251cf7601a2221', // aufbau principle
+  15: '3fffd018d2223020be85670d93f565b63df54a9ce3ed2cdf6347a61df016938c', // 4s
+  16: '4e07408562bedb8b60ce05c1decfe3ad16b72230967de01f640b7e4729b49fce', // 3
+  17: 'd4735e3a265e16eee03f59718b9b5d03019c07d8b6c51f90da3a666eec13ab35', // 2
+  18: '0387dd2081a1cde3b02dc49d5dd17fac11e9a4d19533342189f020b9fdc4070c', // increases
+  19: '2d273a5704c484d522b70909cab40fa600e00a82b120bc57d2a8ce8aeb6dc1b5', // decreases
+  20: '70e9d05c2321d2200987b7013aeb84c912e544d9593859b17440441c748f87a7', // 3p
+};
+
+const selections = {};
+
+async function hashStr(s) {
+  const norm = s.trim().toLowerCase().replace(/\s+/g,'');
+  const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(norm));
+  return Array.from(new Uint8Array(buf)).map(b=>b.toString(16).padStart(2,'0')).join('');
+}
+
+function selectMCQ(qNum, letter, value) {
+  if (document.getElementById('resultCard').style.display === 'block') return;
+  document.querySelectorAll(`#opts-${qNum} .option-btn`).forEach(b => b.classList.remove('selected'));
+  event.currentTarget.classList.add('selected');
+  selections[qNum] = value;
+  const card = document.getElementById(`qcard-${qNum}`);
+  card.classList.remove('unanswered-warn');
+  card.classList.add('selected-only');
+  updateProgress();
+}
+
+function updateProgress() {
+  let c = 0;
+  for (let i = 1; i <= 8; i++) if (selections[i]) c++;
+  for (let i = 9; i <= 20; i++) {
+    const el = document.getElementById(`sa-${i}`);
+    if (el && el.value.trim()) c++;
+  }
+  document.getElementById('pillCount').textContent = c;
+  document.getElementById('progressBar').style.width = (c / 20 * 100) + '%';
+}
+
+document.addEventListener('DOMContentLoaded', async () => {
+  const allBtns = document.querySelectorAll('.option-btn');
+  for (const btn of allBtns) {
+    const match = btn.getAttribute('onclick').match(/'([^']+)'\)$/);
+    if (match) {
+      const h = await hashStr(match[1]);
+      btn.setAttribute('data-hash', h);
+    }
+  }
+  for (let i = 9; i <= 20; i++) {
+    const el = document.getElementById(`sa-${i}`);
+    if (el) el.addEventListener('input', updateProgress);
+  }
+});
+
+async function submitQuiz() {
+  let missing = [];
+  for (let i = 1; i <= 8; i++) if (!selections[i]) missing.push(i);
+  for (let i = 9; i <= 20; i++) {
+    const el = document.getElementById(`sa-${i}`);
+    if (!el || !el.value.trim()) missing.push(i);
+  }
+  if (missing.length > 0) {
+    missing.forEach(n => {
+      const c = document.getElementById(`qcard-${n}`);
+      c.classList.remove('unanswered-warn');
+      void c.offsetWidth;
+      c.classList.add('unanswered-warn');
+    });
+    document.getElementById(`qcard-${missing[0]}`).scrollIntoView({behavior:'smooth', block:'center'});
+    return;
+  }
+
+  document.querySelectorAll('.option-btn').forEach(b => b.disabled = true);
+  document.querySelectorAll('.sa-input').forEach(i => i.disabled = true);
+  document.getElementById('submitBtn').disabled = true;
+
+  let total = 0;
+  const det = [];
+
+  // MCQ 채점
+  for (let i = 1; i <= 8; i++) {
+    const uv = selections[i];
+    const uh = await hashStr(uv);
+    const isOk = uh === MCQ_HASHES[i];
+    if (isOk) total++;
+    det.push(`Q${i}:${isOk?'O':'X'}`);
+    document.querySelectorAll(`#opts-${i} .option-btn`).forEach(btn => {
+      btn.classList.remove('selected','selected-only');
+      if (btn.getAttribute('data-hash') === MCQ_HASHES[i]) btn.classList.add('reveal-correct');
+      const v = btn.getAttribute('onclick').match(/'([^']+)'\)$/)[1];
+      if (v === uv && isOk) btn.classList.add('correct');
+      if (v === uv && !isOk) btn.classList.add('wrong');
+    });
+    const fb = document.getElementById(`fb-${i}`);
+    fb.className = 'feedback ' + (isOk ? 'correct' : 'wrong');
+    fb.innerHTML = isOk
+      ? `<span class="feedback-icon">✓</span><span class="feedback-text">Correct!</span>`
+      : `<span class="feedback-icon">✗</span><span class="feedback-text">Incorrect. The correct answer is highlighted above.</span>`;
+    const card = document.getElementById(`qcard-${i}`);
+    card.classList.remove('selected-only','unanswered-warn');
+    card.classList.add(isOk ? 'answered-correct' : 'answered-wrong');
+  }
+
+  // SA 채점
+  for (let i = 9; i <= 20; i++) {
+    const raw = document.getElementById(`sa-${i}`).value.trim();
+    const uh = await hashStr(raw);
+    const isOk = uh === SA_HASHES[i];
+    if (isOk) total++;
+    det.push(`Q${i}:${isOk?'O':'X'}`);
+    document.getElementById(`sa-${i}`).classList.add(isOk ? 'correct' : 'wrong');
+    const fb = document.getElementById(`fb-${i}`);
+    fb.className = 'feedback ' + (isOk ? 'correct' : 'wrong');
+    fb.innerHTML = isOk
+      ? `<span class="feedback-icon">✓</span><span class="feedback-text">Correct!</span>`
+      : `<span class="feedback-icon">✗</span><span class="feedback-text">Incorrect. Check your answer and spelling.</span>`;
+    const card = document.getElementById(`qcard-${i}`);
+    card.classList.remove('selected-only','unanswered-warn');
+    card.classList.add(isOk ? 'answered-correct' : 'answered-wrong');
+  }
+
+  const name = document.getElementById('studentName').value.trim() || 'Anonymous';
+  const period = document.getElementById('studentPeriod').value.trim() || '—';
+  const pct = Math.round(total / 20 * 100);
+  const pass = pct >= 70;
+  const mcqS = det.slice(0,8).filter(s=>s.includes(':O')).length;
+  const saS  = det.slice(8).filter(s=>s.includes(':O')).length;
+
+  document.getElementById('resultScore').textContent = `${total} / 20`;
+  const badge = document.getElementById('resultBadge');
+  badge.textContent = pass ? '✓ Pass' : '✗ Needs Review';
+  badge.className = 'result-badge ' + (pass ? 'pass' : 'fail');
+  document.getElementById('resultBreakdown').innerHTML =
+    `${name} &nbsp;·&nbsp; Period ${period} &nbsp;·&nbsp; ${pct}%
+     &nbsp;|&nbsp; MCQ: ${mcqS}/8 &nbsp;·&nbsp; Short Answer: ${saS}/12`;
+
+  const rc = document.getElementById('resultCard');
+  rc.style.display = 'block';
+  rc.scrollIntoView({behavior:'smooth'});
+
+  sendToSheets({name, period, total, pct, mcqScore:mcqS, saScore:saS, pass, details:det.join(',')});
+}
+
+// ── Google Sheets 연동 ──────────────────────────────────────
+const SHEETS_URL = 'https://script.google.com/macros/s/AKfycbzC6VbZGji6iK9toMUqxErFixXow5_LVoEQkedwb0gNXwRRAJrbOQeb_oItGGGHb7JS/exec';
+function sendToSheets(d) {
+  if (SHEETS_URL === 'YOUR_APPS_SCRIPT_WEB_APP_URL_HERE') return;
+  fetch(SHEETS_URL, {
+    method:'POST', mode:'no-cors',
+    headers:{'Content-Type':'application/json'},
+    body: JSON.stringify({
+      quiz: 'IB HL Chem — Structure 1.3 — Quiz A',
+      name: d.name, period: d.period,
+      score: d.total, total: 20, percent: d.pct,
+      pass: d.pass ? 'Pass' : 'Fail',
+      mcq: d.mcqScore, sa: d.saScore,
+      timestamp: new Date().toISOString(),
+      details: d.details
+    })
+  }).catch(()=>{});
+}
+</script>
+</body>
+</html>
