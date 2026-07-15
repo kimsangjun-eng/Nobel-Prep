@@ -1,0 +1,750 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>A-7 · Successive Ionization Energy Explorer | Nobel Prep AP Chemistry</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<style>
+:root {
+  --navy: #1a2744;
+  --navy-mid: #1e3060;
+  --navy-light: #2a4080;
+  --gold: #c9a84c;
+  --gold-light: #d4b86a;
+  --gold-bg: #f5e9c8;
+  --gold-dark: #b07010;
+
+  --bg-page: #f0f2f5;
+  --bg-card: #ffffff;
+  --bg-card-alt: #f8f9fb;
+
+  --text-primary: #1a2744;
+  --text-body: #2c3e50;
+  --text-muted: #6b7c93;
+  --text-micro: #8a99ad;
+
+  --border: #dde3ee;
+  --border-light: #eaeff8;
+
+  --green-bg: #e8f5e9; --green-border: #4caf50; --green-text: #1b5e20;
+  --red-bg: #fdecea; --red-border: #e53935; --red-text: #7f0000;
+  --yellow-bg: #fffde7; --yellow-border: #f9a825; --yellow-text: #5d4037;
+
+  --blue-accent: #3498db;
+  --red-accent: #e74c3c;
+  --green-accent: #27ae60;
+  --purple-accent: #8e44ad;
+
+  --font-ui: 'Inter', sans-serif;
+  --font-mono: 'JetBrains Mono', monospace;
+
+  --space-xs: 4px; --space-sm: 8px; --space-md: 16px;
+  --space-lg: 24px; --space-xl: 32px; --space-2xl: 48px;
+
+  --radius-sm: 6px; --radius-md: 10px; --radius-lg: 14px;
+
+  --shadow-card: 0 2px 8px rgba(26,39,68,0.08), 0 1px 2px rgba(26,39,68,0.04);
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  background: var(--bg-page);
+  font-family: var(--font-ui);
+  color: var(--text-body);
+}
+
+.mono { font-family: var(--font-mono); }
+
+.sim-header {
+  background: linear-gradient(135deg, var(--navy) 0%, var(--navy-mid) 100%);
+  color: #fff;
+  padding: var(--space-xl) var(--space-lg) var(--space-lg);
+  position: relative;
+}
+.sim-header-eyebrow {
+  font-size: 12px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--gold-light);
+  font-weight: 600;
+  margin-bottom: var(--space-sm);
+}
+.sim-header-title {
+  font-size: 26px;
+  font-weight: 700;
+  margin: 0 0 var(--space-xs);
+}
+.sim-header-subtitle {
+  font-size: 14px;
+  color: #c7d0e0;
+  margin: 0;
+  max-width: 640px;
+  line-height: 1.5;
+}
+.sim-badge {
+  position: absolute;
+  top: var(--space-lg);
+  right: var(--space-lg);
+  background: var(--gold);
+  color: var(--navy);
+  font-family: var(--font-mono);
+  font-weight: 700;
+  font-size: 12px;
+  padding: 4px 10px;
+  border-radius: var(--radius-sm);
+}
+
+.sim-body {
+  max-width: 920px;
+  margin: 0 auto;
+  padding: var(--space-lg);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-lg);
+}
+
+.card, .card-info {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: var(--space-lg);
+  box-shadow: var(--shadow-card);
+}
+
+.card-info {
+  background: var(--bg-card-alt);
+}
+
+.card-title {
+  font-size: 13px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--navy);
+  margin: 0 0 var(--space-md);
+}
+
+.reaction-line {
+  font-family: var(--font-mono);
+  font-size: 13px;
+  color: var(--text-body);
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  padding: 6px 0;
+  flex-wrap: wrap;
+}
+.reaction-line .label {
+  margin-left: auto;
+  font-family: var(--font-ui);
+  color: var(--text-muted);
+  font-size: 12.5px;
+}
+.arrow { color: var(--gold-dark); }
+
+.trend-row {
+  margin-top: var(--space-md);
+  padding-top: var(--space-md);
+  border-top: 1px solid var(--border-light);
+  font-size: 13.5px;
+  line-height: 1.7;
+  color: var(--text-body);
+}
+.trend-row .mono { color: var(--navy); font-weight: 600; }
+
+.control-label {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  display: block;
+  margin-bottom: var(--space-sm);
+}
+
+.btn-group { display: flex; gap: var(--space-sm); flex-wrap: wrap; }
+
+.btn-toggle {
+  font-family: var(--font-ui);
+  font-size: 14px;
+  font-weight: 600;
+  padding: 10px 20px;
+  border-radius: var(--radius-md);
+  border: 1.5px solid var(--border);
+  background: var(--bg-card);
+  color: var(--text-body);
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+.btn-toggle:hover { border-color: var(--gold); }
+.btn-toggle.active {
+  background: var(--navy);
+  border-color: var(--navy);
+  color: #fff;
+}
+.btn-toggle .sub {
+  display: block;
+  font-size: 10.5px;
+  font-weight: 500;
+  opacity: 0.75;
+  margin-top: 2px;
+}
+
+.chart-wrapper {
+  position: relative;
+  height: 320px;
+  margin-top: var(--space-md);
+}
+
+.legend-row {
+  display: flex;
+  gap: var(--space-lg);
+  margin-top: var(--space-sm);
+  font-size: 12px;
+  color: var(--text-muted);
+}
+.legend-dot {
+  display: inline-block;
+  width: 10px; height: 10px;
+  border-radius: 3px;
+  margin-right: 6px;
+  vertical-align: middle;
+}
+
+.config-strip {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  overflow-x: auto;
+  padding: var(--space-md) 2px;
+  margin-top: var(--space-sm);
+}
+.config-cell {
+  flex: 0 0 auto;
+  text-align: center;
+  min-width: 108px;
+}
+.config-species {
+  font-family: var(--font-mono);
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--navy);
+}
+.config-formula {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: var(--text-body);
+  background: var(--bg-card-alt);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 6px 8px;
+  margin-top: 6px;
+  white-space: nowrap;
+}
+.config-cell.breach .config-formula {
+  border-color: var(--red-border);
+  background: var(--red-bg);
+  color: var(--red-text);
+}
+.config-arrow {
+  flex: 0 0 auto;
+  font-size: 12px;
+  color: var(--text-micro);
+  text-align: center;
+  min-width: 46px;
+}
+.config-arrow.jump {
+  color: var(--red-text);
+  font-weight: 700;
+}
+.config-arrow .glyph { font-size: 16px; display: block; }
+
+.result-box {
+  border-radius: var(--radius-md);
+  padding: var(--space-md);
+  font-size: 14px;
+  font-weight: 600;
+  margin-top: var(--space-md);
+}
+.result-box.red { background: var(--red-bg); border: 1px solid var(--red-border); color: var(--red-text); }
+.result-caption {
+  font-size: 13px;
+  color: var(--text-body);
+  line-height: 1.65;
+  margin-top: var(--space-sm);
+  font-weight: 400;
+}
+
+.atom-stage {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: var(--space-sm) 0 var(--space-md);
+  min-height: 260px;
+}
+#atomSvg { width: 260px; height: 260px; overflow: visible; }
+.nucleus-label {
+  font-family: var(--font-mono);
+  font-size: 13px;
+  font-weight: 700;
+  fill: #ffffff;
+}
+.energy-pulse {
+  position: absolute;
+  top: 4px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-family: var(--font-mono);
+  font-weight: 700;
+  font-size: 13px;
+  color: var(--gold-dark);
+  opacity: 0;
+  pointer-events: none;
+  white-space: nowrap;
+}
+.energy-pulse.show { animation: floatUp 900ms ease-out; }
+.energy-pulse.jump { color: var(--red-text); font-size: 15px; }
+@keyframes floatUp {
+  0%   { opacity: 0; transform: translate(-50%, 12px); }
+  15%  { opacity: 1; transform: translate(-50%, 0); }
+  75%  { opacity: 1; }
+  100% { opacity: 0; transform: translate(-50%, -34px); }
+}
+.fly-out { animation: flyOut 550ms ease-in forwards; }
+@keyframes flyOut {
+  0%   { opacity: 1; transform: translate(0, 0) scale(1); }
+  100% { opacity: 0; transform: translate(var(--dx), var(--dy)) scale(0.3); }
+}
+
+.atom-readout {
+  text-align: center;
+  font-size: 13.5px;
+  color: var(--text-body);
+  line-height: 1.6;
+}
+.atom-readout .mono {
+  display: block;
+  font-size: 17px;
+  color: var(--navy);
+  font-weight: 700;
+  margin-bottom: 4px;
+}
+.atom-readout .mono.jump-text { color: var(--red-text); }
+
+.atom-controls {
+  display: flex;
+  justify-content: center;
+  gap: var(--space-sm);
+  margin-top: var(--space-md);
+  flex-wrap: wrap;
+}
+.btn-toggle:disabled { opacity: 0.4; cursor: not-allowed; }
+.btn-toggle:disabled:hover { border-color: var(--border); }
+
+.energy-readout {
+  text-align: center;
+  font-family: var(--font-mono);
+  font-size: 12.5px;
+  color: var(--text-muted);
+  margin-top: var(--space-md);
+  padding-top: var(--space-md);
+  border-top: 1px solid var(--border-light);
+}
+
+@media (max-width: 640px) {
+  .sim-header-title { font-size: 21px; }
+  .sim-badge { position: static; display: inline-block; margin-top: var(--space-sm); }
+  .chart-wrapper { height: 260px; }
+}
+</style>
+</head>
+<body>
+
+<header class="sim-header">
+  <div class="sim-header-eyebrow">Nobel Prep &middot; AP Chemistry &middot; Chapter 7</div>
+  <h1 class="sim-header-title">Successive Ionization Energy Explorer</h1>
+  <p class="sim-header-subtitle">See why ionization energies always increase — and why one removal jumps far higher than the rest.</p>
+  <span class="sim-badge">A-7</span>
+</header>
+
+<main class="sim-body">
+
+  <div class="card-info">
+    <p class="card-title">Successive Ionization</p>
+    <div class="reaction-line">M(g) + energy <span class="arrow">&rarr;</span> M<sup>+</sup>(g) + e<sup>-</sup> <span class="label">First ionization energy (IE&#8321;)</span></div>
+    <div class="reaction-line">M<sup>+</sup>(g) + energy <span class="arrow">&rarr;</span> M<sup>2+</sup>(g) + e<sup>-</sup> <span class="label">Second ionization energy (IE&#8322;)</span></div>
+    <div class="reaction-line">M<sup>2+</sup>(g) + energy <span class="arrow">&rarr;</span> M<sup>3+</sup>(g) + e<sup>-</sup> <span class="label">Third ionization energy (IE&#8323;)</span></div>
+    <div class="trend-row">
+      Radius: <span class="mono">M &gt; M<sup>+</sup> &gt; M<sup>2+</sup> &gt; M<sup>3+</sup></span> &mdash; fewer electrons means less electron&ndash;electron repulsion, so the same nuclear charge pulls the remaining electrons in tighter.<br><br>
+      IE: <span class="mono">IE&#8321; &lt; IE&#8322; &lt; IE&#8323; &lt; &hellip;</span> &mdash; removing an electron from an increasingly positive ion always takes more energy than the removal before it, because the nuclear charge stays constant while the electron cloud shrinks.
+    </div>
+  </div>
+
+  <div class="card">
+    <p class="card-title">Choose an Element</p>
+    <span class="control-label">PERIOD 3 ELEMENT</span>
+    <div class="btn-group" id="elementGroup">
+      <button class="btn-toggle active" data-el="Na" onclick="selectElement('Na', this)">Na<span class="sub">1 valence e&#8315;</span></button>
+      <button class="btn-toggle" data-el="Mg" onclick="selectElement('Mg', this)">Mg<span class="sub">2 valence e&#8315;</span></button>
+      <button class="btn-toggle" data-el="Al" onclick="selectElement('Al', this)">Al<span class="sub">3 valence e&#8315;</span></button>
+      <button class="btn-toggle" data-el="Si" onclick="selectElement('Si', this)">Si<span class="sub">4 valence e&#8315;</span></button>
+    </div>
+  </div>
+
+  <div class="card">
+    <p class="card-title">Nucleus Pulling on Electrons</p>
+    <div class="atom-stage">
+      <div class="energy-pulse" id="energyPulse"></div>
+      <svg id="atomSvg" viewBox="0 0 300 300" aria-hidden="true"></svg>
+    </div>
+    <div class="atom-readout">
+      <span class="mono" id="speciesLabel">Na</span>
+      <span id="stepCaption">Neutral atom &mdash; no electrons removed yet. The dashed lines show the nuclear pull on each electron.</span>
+    </div>
+    <div class="atom-controls">
+      <button class="btn-toggle" id="removeBtn" onclick="removeElectron()">Remove Outermost Electron &rarr;</button>
+      <button class="btn-toggle" id="resetAtomBtn" onclick="resetAtom()">Reset</button>
+    </div>
+    <div class="energy-readout" id="energyReadout">Energy invested so far: 0 kJ/mol</div>
+  </div>
+
+  <div class="card">
+    <p class="card-title">Successive Ionization Energies (log scale)</p>
+    <div class="chart-wrapper"><canvas id="ieChart"></canvas></div>
+    <div class="legend-row">
+      <span><span class="legend-dot" style="background:var(--navy-light)"></span>Valence electron removed</span>
+      <span><span class="legend-dot" style="background:var(--red-accent)"></span>Core electron removed &mdash; large jump</span>
+    </div>
+  </div>
+
+  <div class="card">
+    <p class="card-title">Electron Removal Sequence</p>
+    <div class="config-strip" id="configStrip"></div>
+    <div class="result-box red" id="resultBox"></div>
+    <p class="result-caption" id="resultCaption"></p>
+  </div>
+
+</main>
+
+<script>
+const ELEMENTS = {
+  Na: {
+    z: 11, valence: 1,
+    ie: [496, 4562, 6912, 9543, 13353, 16610, 20114],
+    configs: [
+      "1s\u00b22s\u00b22p\u20763s\u00b9",
+      "1s\u00b22s\u00b22p\u2076",
+      "1s\u00b22s\u00b22p\u2075",
+      "1s\u00b22s\u00b22p\u2074",
+      "1s\u00b22s\u00b22p\u00b3",
+      "1s\u00b22s\u00b22p\u00b2",
+      "1s\u00b22s\u00b22p\u00b9",
+      "1s\u00b22s\u00b2"
+    ],
+    shells: [
+      [2,8,1],[2,8,0],[2,7,0],[2,6,0],[2,5,0],[2,4,0],[2,3,0],[2,2,0]
+    ]
+  },
+  Mg: {
+    z: 12, valence: 2,
+    ie: [738, 1451, 7733, 10540, 13630, 18020, 21711],
+    configs: [
+      "1s\u00b22s\u00b22p\u20763s\u00b2",
+      "1s\u00b22s\u00b22p\u20763s\u00b9",
+      "1s\u00b22s\u00b22p\u2076",
+      "1s\u00b22s\u00b22p\u2075",
+      "1s\u00b22s\u00b22p\u2074",
+      "1s\u00b22s\u00b22p\u00b3",
+      "1s\u00b22s\u00b22p\u00b2",
+      "1s\u00b22s\u00b22p\u00b9"
+    ],
+    shells: [
+      [2,8,2],[2,8,1],[2,8,0],[2,7,0],[2,6,0],[2,5,0],[2,4,0],[2,3,0]
+    ]
+  },
+  Al: {
+    z: 13, valence: 3,
+    ie: [577, 1817, 2745, 11577, 14842, 18379, 23326],
+    configs: [
+      "1s\u00b22s\u00b22p\u20763s\u00b23p\u00b9",
+      "1s\u00b22s\u00b22p\u20763s\u00b2",
+      "1s\u00b22s\u00b22p\u20763s\u00b9",
+      "1s\u00b22s\u00b22p\u2076",
+      "1s\u00b22s\u00b22p\u2075",
+      "1s\u00b22s\u00b22p\u2074",
+      "1s\u00b22s\u00b22p\u00b3",
+      "1s\u00b22s\u00b22p\u00b2"
+    ],
+    shells: [
+      [2,8,3],[2,8,2],[2,8,1],[2,8,0],[2,7,0],[2,6,0],[2,5,0],[2,4,0]
+    ]
+  },
+  Si: {
+    z: 14, valence: 4,
+    ie: [786, 1577, 3232, 4356, 16091, 19805, 23780],
+    configs: [
+      "1s\u00b22s\u00b22p\u20763s\u00b23p\u00b2",
+      "1s\u00b22s\u00b22p\u20763s\u00b23p\u00b9",
+      "1s\u00b22s\u00b22p\u20763s\u00b2",
+      "1s\u00b22s\u00b22p\u20763s\u00b9",
+      "1s\u00b22s\u00b22p\u2076",
+      "1s\u00b22s\u00b22p\u2075",
+      "1s\u00b22s\u00b22p\u2074",
+      "1s\u00b22s\u00b22p\u00b3"
+    ],
+    shells: [
+      [2,8,4],[2,8,3],[2,8,2],[2,8,1],[2,8,0],[2,7,0],[2,6,0],[2,5,0]
+    ]
+  }
+};
+
+const IE_LABELS = ["IE\u2081","IE\u2082","IE\u2083","IE\u2084","IE\u2085","IE\u2086","IE\u2087"];
+const SPECIES_LABELS = (el) => {
+  const sup = ["","\u207a","\u00b2\u207a","\u00b3\u207a","\u2074\u207a","\u2075\u207a","\u2076\u207a","\u2077\u207a"];
+  return sup.map(s => el + s);
+};
+
+let currentElement = "Na";
+let chart = null;
+let atomStep = 0;
+let cumulativeEnergy = 0;
+
+const SHELL_BASE_R = [40, 70, 100];
+const ATOM_DEFS = '<defs><radialGradient id="nucleusGlow" cx="50%" cy="50%" r="50%">' +
+  '<stop offset="0%" stop-color="#c9a84c" stop-opacity="0.55"/>' +
+  '<stop offset="100%" stop-color="#c9a84c" stop-opacity="0"/></radialGradient></defs>';
+
+function renderAtom() {
+  const data = ELEMENTS[currentElement];
+  const shells = data.shells[atomStep];
+  const svg = document.getElementById('atomSvg');
+  const cx = 150, cy = 150;
+  const shrink = 1 - Math.min(atomStep, 6) * 0.035;
+  const nucleusR = 20 + atomStep * 1.4;
+
+  let html = ATOM_DEFS;
+  html += '<circle cx="' + cx + '" cy="' + cy + '" r="' + nucleusR + '" fill="url(#nucleusGlow)"/>';
+  html += '<circle cx="' + cx + '" cy="' + cy + '" r="16" fill="var(--navy)" stroke="var(--gold)" stroke-width="2"/>';
+  html += '<text x="' + cx + '" y="' + (cy + 5) + '" text-anchor="middle" class="nucleus-label">' + currentElement + '</text>';
+
+  shells.forEach((count, i) => {
+    if (count <= 0) return;
+    const r = SHELL_BASE_R[i] * shrink;
+    html += '<circle cx="' + cx + '" cy="' + cy + '" r="' + r + '" fill="none" stroke="var(--border)" stroke-width="1.5" stroke-dasharray="3 4"/>';
+    for (let k = 0; k < count; k++) {
+      const angle = (2 * Math.PI / count) * k - Math.PI / 2;
+      const ex = cx + r * Math.cos(angle);
+      const ey = cy + r * Math.sin(angle);
+      html += '<line x1="' + cx + '" y1="' + cy + '" x2="' + ex + '" y2="' + ey + '" stroke="var(--gold)" stroke-width="0.6" opacity="0.35"/>';
+      html += '<circle cx="' + ex + '" cy="' + ey + '" r="6" fill="var(--blue-accent)" stroke="#fff" stroke-width="1.2"/>';
+    }
+  });
+
+  svg.innerHTML = html;
+}
+
+function flyElectron(shellIdx) {
+  const data = ELEMENTS[currentElement];
+  const shells = data.shells[atomStep];
+  const count = shells[shellIdx];
+  if (count <= 0) return;
+  const svg = document.getElementById('atomSvg');
+  const cx = 150, cy = 150;
+  const shrink = 1 - Math.min(atomStep, 6) * 0.035;
+  const r = SHELL_BASE_R[shellIdx] * shrink;
+  const angle = -Math.PI / 2;
+  const ex = cx + r * Math.cos(angle);
+  const ey = cy + r * Math.sin(angle);
+  const dx = Math.cos(angle) * 90;
+  const dy = Math.sin(angle) * 90;
+
+  const ns = 'http://www.w3.org/2000/svg';
+  const flying = document.createElementNS(ns, 'circle');
+  flying.setAttribute('cx', ex);
+  flying.setAttribute('cy', ey);
+  flying.setAttribute('r', 6);
+  flying.setAttribute('fill', 'var(--blue-accent)');
+  flying.setAttribute('stroke', '#fff');
+  flying.setAttribute('stroke-width', '1.2');
+  flying.classList.add('fly-out');
+  flying.style.setProperty('--dx', dx + 'px');
+  flying.style.setProperty('--dy', dy + 'px');
+  svg.appendChild(flying);
+}
+
+function pulseEnergy(ieValue, isJump) {
+  const pulse = document.getElementById('energyPulse');
+  pulse.classList.remove('show', 'jump');
+  void pulse.offsetWidth; // restart animation
+  pulse.textContent = '+ ' + ieValue.toLocaleString() + ' kJ/mol energy in';
+  pulse.classList.add('show');
+  if (isJump) pulse.classList.add('jump');
+}
+
+function removeElectron() {
+  const data = ELEMENTS[currentElement];
+  const maxStep = data.valence + 1;
+  if (atomStep >= maxStep) return;
+
+  const shells = data.shells[atomStep];
+  let shellIdx = shells.length - 1;
+  while (shellIdx >= 0 && shells[shellIdx] <= 0) shellIdx--;
+  if (shellIdx < 0) return;
+
+  const isJump = (atomStep === data.valence);
+  const ieValue = data.ie[atomStep];
+
+  flyElectron(shellIdx);
+  pulseEnergy(ieValue, isJump);
+  cumulativeEnergy += ieValue;
+  atomStep++;
+
+  document.getElementById('removeBtn').disabled = true;
+  setTimeout(() => {
+    renderAtom();
+    updateAtomReadout(isJump);
+    document.getElementById('removeBtn').disabled = (atomStep >= maxStep);
+  }, 550);
+}
+
+function updateAtomReadout(justJumped) {
+  const speciesLabels = SPECIES_LABELS(currentElement);
+  const label = document.getElementById('speciesLabel');
+  const caption = document.getElementById('stepCaption');
+  label.textContent = speciesLabels[atomStep];
+  label.classList.toggle('jump-text', justJumped);
+
+  if (atomStep === 0) {
+    caption.textContent = 'Neutral atom \u2014 no electrons removed yet. The dashed lines show the nuclear pull on each electron.';
+  } else if (justJumped) {
+    caption.textContent = '\u26A1 That electron came from a filled, noble-gas-like core \u2014 removing it takes much more energy than any valence electron.';
+  } else {
+    caption.textContent = 'One more electron removed. The remaining electron cloud pulls in slightly tighter around the unchanged nuclear charge.';
+  }
+
+  document.getElementById('energyReadout').textContent =
+    'Energy invested so far: ' + cumulativeEnergy.toLocaleString() + ' kJ/mol';
+}
+
+function resetAtom() {
+  atomStep = 0;
+  cumulativeEnergy = 0;
+  renderAtom();
+  updateAtomReadout(false);
+  document.getElementById('removeBtn').disabled = false;
+  document.getElementById('energyPulse').classList.remove('show', 'jump');
+}
+
+function buildChart() {
+  const ctx = document.getElementById('ieChart').getContext('2d');
+  chart = new Chart(ctx, {
+    type: 'bar',
+    data: {
+      labels: IE_LABELS,
+      datasets: [{
+        data: [],
+        backgroundColor: [],
+        borderRadius: 4,
+        maxBarThickness: 46
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        legend: { display: false },
+        tooltip: {
+          callbacks: {
+            label: (item) => item.parsed.y.toLocaleString() + ' kJ/mol'
+          }
+        }
+      },
+      scales: {
+        y: {
+          type: 'logarithmic',
+          min: 100,
+          title: { display: true, text: 'Ionization Energy (kJ/mol)', color: '#6b7c93', font: { family: 'Inter', size: 12 } },
+          ticks: { color: '#6b7c93', font: { family: 'JetBrains Mono', size: 10 } },
+          grid: { color: '#eaeff8' }
+        },
+        x: {
+          ticks: { color: '#2c3e50', font: { family: 'JetBrains Mono', size: 12, weight: '600' } },
+          grid: { display: false }
+        }
+      }
+    }
+  });
+}
+
+function render() {
+  const data = ELEMENTS[currentElement];
+  const jumpIndex = data.valence; // 0-indexed IE array: jump happens AT this index (IE valence+1)
+  const colors = data.ie.map((_, i) => i === jumpIndex ? '#e74c3c' : '#2a4080');
+
+  chart.data.datasets[0].data = data.ie;
+  chart.data.datasets[0].backgroundColor = colors;
+  chart.update();
+
+  renderConfigStrip(data, jumpIndex);
+  renderExplanation(data, jumpIndex);
+}
+
+function renderConfigStrip(data, jumpIndex) {
+  const strip = document.getElementById('configStrip');
+  strip.innerHTML = '';
+  const speciesLabels = SPECIES_LABELS(currentElement);
+
+  for (let i = 0; i <= data.valence + 1 && i < speciesLabels.length; i++) {
+    const cell = document.createElement('div');
+    cell.className = 'config-cell' + (i === jumpIndex + 1 ? ' breach' : '');
+    cell.innerHTML =
+      '<div class="config-species">' + speciesLabels[i] + '</div>' +
+      '<div class="config-formula">' + data.configs[i] + '</div>';
+    strip.appendChild(cell);
+
+    if (i < data.valence + 1 && i < speciesLabels.length - 1) {
+      const arrow = document.createElement('div');
+      const isJump = (i === jumpIndex);
+      arrow.className = 'config-arrow' + (isJump ? ' jump' : '');
+      arrow.innerHTML = '<span class="glyph">&rarr;</span>' + IE_LABELS[i] + (isJump ? '<br>JUMP' : '');
+      strip.appendChild(arrow);
+    }
+  }
+}
+
+function renderExplanation(data, jumpIndex) {
+  const box = document.getElementById('resultBox');
+  const caption = document.getElementById('resultCaption');
+  const n = data.valence;
+
+  box.textContent = '\u26A0 Largest jump: IE' + toSub(n) + ' \u2192 IE' + toSub(n + 1);
+  caption.textContent =
+    'For ' + currentElement + ', the first ' + n + ' ionization' + (n > 1 ? 's' : '') +
+    ' remove valence electrons one at a time. IE' + toSub(n + 1) + ' is far larger because it removes a core electron from a filled, noble-gas-like configuration \u2014 a shell held much closer to the nucleus with far less shielding.';
+}
+
+function toSub(num) {
+  const subs = ['\u2080','\u2081','\u2082','\u2083','\u2084','\u2085','\u2086','\u2087','\u2088'];
+  return String(num).split('').map(d => subs[parseInt(d,10)]).join('');
+}
+
+function selectElement(el, btn) {
+  currentElement = el;
+  document.querySelectorAll('#elementGroup .btn-toggle').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  render();
+  resetAtom();
+}
+
+buildChart();
+render();
+resetAtom();
+</script>
+
+</body>
+</html>
