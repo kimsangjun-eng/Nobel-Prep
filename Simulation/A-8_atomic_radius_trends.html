@@ -1,0 +1,524 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>A-8 · Atomic Radius Trends | Nobel Prep AP Chemistry</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --navy: #1a2744;
+  --navy-mid: #1e3060;
+  --navy-light: #2a4080;
+  --gold: #c9a84c;
+  --gold-light: #d4b86a;
+  --gold-dark: #b07010;
+
+  --bg-page: #f0f2f5;
+  --bg-card: #ffffff;
+  --bg-card-alt: #f8f9fb;
+
+  --text-primary: #1a2744;
+  --text-body: #2c3e50;
+  --text-muted: #6b7c93;
+  --text-micro: #8a99ad;
+
+  --border: #dde3ee;
+  --border-light: #eaeff8;
+
+  --red-bg: #fdecea; --red-border: #e53935; --red-text: #7f0000;
+  --blue-accent: #3498db;
+
+  --font-ui: 'Inter', sans-serif;
+  --font-mono: 'JetBrains Mono', monospace;
+
+  --space-xs: 4px; --space-sm: 8px; --space-md: 16px;
+  --space-lg: 24px; --space-xl: 32px;
+
+  --radius-sm: 6px; --radius-md: 10px; --radius-lg: 14px;
+
+  --shadow-card: 0 2px 8px rgba(26,39,68,0.08), 0 1px 2px rgba(26,39,68,0.04);
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  background: var(--bg-page);
+  font-family: var(--font-ui);
+  color: var(--text-body);
+}
+
+.mono { font-family: var(--font-mono); }
+
+.sim-header {
+  background: linear-gradient(135deg, var(--navy) 0%, var(--navy-mid) 100%);
+  color: #fff;
+  padding: var(--space-md) var(--space-lg);
+  position: relative;
+}
+.sim-header-eyebrow {
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--gold-light);
+  font-weight: 600;
+  margin-bottom: 2px;
+}
+.sim-header-title {
+  font-size: 20px;
+  font-weight: 700;
+  margin: 0 0 2px;
+}
+.sim-header-subtitle {
+  font-size: 12.5px;
+  color: #c7d0e0;
+  margin: 0;
+  max-width: 640px;
+  line-height: 1.4;
+}
+.sim-badge {
+  position: absolute;
+  top: var(--space-md);
+  right: var(--space-lg);
+  background: var(--gold);
+  color: var(--navy);
+  font-family: var(--font-mono);
+  font-weight: 700;
+  font-size: 12px;
+  padding: 4px 10px;
+  border-radius: var(--radius-sm);
+}
+
+.sim-body {
+  max-width: 760px;
+  margin: 0 auto;
+  padding: var(--space-md);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
+}
+
+.card, .card-info {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: var(--space-md);
+  box-shadow: var(--shadow-card);
+}
+.card-info { background: var(--bg-card-alt); }
+
+.card-title {
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--navy);
+  margin: 0 0 var(--space-sm);
+}
+
+.trend-row {
+  font-size: 12.5px;
+  line-height: 1.55;
+  color: var(--text-body);
+}
+.trend-row .mono { color: var(--navy); font-weight: 600; }
+.trend-row + .trend-row { margin-top: var(--space-sm); padding-top: var(--space-sm); border-top: 1px solid var(--border-light); }
+
+.btn-group { display: flex; gap: var(--space-sm); flex-wrap: wrap; align-items: center; }
+.btn-toggle {
+  font-family: var(--font-ui);
+  font-size: 13px;
+  font-weight: 600;
+  padding: 8px 16px;
+  border-radius: var(--radius-md);
+  border: 1.5px solid var(--border);
+  background: var(--bg-card);
+  color: var(--text-body);
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+.btn-toggle:hover { border-color: var(--gold); }
+.btn-toggle.active { background: var(--navy); border-color: var(--navy); color: #fff; }
+.btn-toggle:disabled { opacity: 0.4; cursor: not-allowed; }
+
+.play-controls { display: flex; gap: var(--space-sm); margin-top: var(--space-sm); }
+.btn-play {
+  font-family: var(--font-ui);
+  font-size: 13px;
+  font-weight: 600;
+  padding: 7px 14px;
+  border-radius: var(--radius-md);
+  border: 1.5px solid var(--gold);
+  background: var(--gold-light);
+  color: var(--navy);
+  cursor: pointer;
+}
+.btn-play:hover { background: var(--gold); }
+.btn-play.secondary {
+  background: var(--bg-card);
+  border-color: var(--border);
+  color: var(--text-body);
+}
+.btn-play.secondary:hover { border-color: var(--gold); }
+
+.legend-row {
+  display: flex;
+  gap: var(--space-md);
+  margin-top: var(--space-sm);
+  font-size: 11.5px;
+  color: var(--text-muted);
+  flex-wrap: wrap;
+}
+.legend-dot {
+  display: inline-block;
+  width: 9px; height: 9px;
+  border-radius: 50%;
+  margin-right: 5px;
+  vertical-align: middle;
+}
+
+.atom-row {
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  gap: var(--space-md);
+  padding: var(--space-md) var(--space-sm) var(--space-sm);
+  overflow-x: auto;
+  flex-wrap: nowrap;
+}
+.atom-row.vertical {
+  flex-direction: column;
+  align-items: center;
+  overflow-x: visible;
+  overflow-y: auto;
+  gap: var(--space-sm);
+}
+
+.atom-mini {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  flex: 0 0 auto;
+  opacity: 0.5;
+  transition: opacity 0.35s ease;
+  cursor: pointer;
+}
+.atom-mini.active { opacity: 1; }
+.atom-mini svg { display: block; overflow: visible; }
+
+.atom-symbol {
+  font-family: var(--font-mono);
+  font-weight: 700;
+  font-size: 12.5px;
+  color: var(--navy);
+  margin-top: var(--space-xs);
+}
+.atom-value {
+  font-family: var(--font-mono);
+  font-size: 10.5px;
+  color: var(--text-muted);
+}
+
+.nucleus-label { font-family: var(--font-mono); font-weight: 700; fill: #ffffff; }
+
+.pull-dot { animation: pullTravel 900ms ease-in-out infinite alternate; }
+@keyframes pullTravel {
+  from { transform: translate(0, 0); }
+  to   { transform: translate(var(--pdx), var(--pdy)); }
+}
+
+.result-box {
+  border-radius: var(--radius-md);
+  padding: var(--space-sm) var(--space-md);
+  font-size: 13px;
+  font-weight: 600;
+  margin-top: var(--space-md);
+  background: var(--red-bg);
+  border: 1px solid var(--red-border);
+  color: var(--red-text);
+}
+.result-caption {
+  font-size: 12px;
+  color: var(--text-body);
+  line-height: 1.5;
+  margin-top: var(--space-xs);
+  font-weight: 400;
+}
+
+@media (max-width: 640px) {
+  .sim-header-title { font-size: 18px; }
+  .sim-badge { position: static; display: inline-block; margin-top: var(--space-xs); }
+}
+</style>
+</head>
+<body>
+
+<header class="sim-header">
+  <div class="sim-header-eyebrow">Nobel Prep &middot; AP Chemistry &middot; Chapter 7</div>
+  <h1 class="sim-header-title">Atomic Radius Trends</h1>
+  <p class="sim-header-subtitle">Watch the nucleus, shells, and electrons &mdash; and feel the pull change size by size.</p>
+  <span class="sim-badge">A-8</span>
+</header>
+
+<main class="sim-body">
+
+  <div class="card-info">
+    <div class="trend-row">
+      <span class="mono">Across a period:</span> # of protons &uarr; &rarr; effective nuclear charge (Z<sub>eff</sub>) &uarr; &rarr; electrons pulled in more tightly &rarr; atomic radius &darr;
+    </div>
+    <div class="trend-row">
+      <span class="mono">Down a group:</span> # of shells &uarr; &rarr; shielding &uarr; &rarr; valence electrons held less tightly &rarr; atomic radius &uarr;
+    </div>
+  </div>
+
+  <div class="card">
+    <p class="card-title">Choose a Direction</p>
+    <div class="btn-group" id="modeGroup">
+      <button class="btn-toggle active" data-mode="period" onclick="selectMode('period', this)">Across a Period (Li &rarr; Ne)</button>
+      <button class="btn-toggle" data-mode="group" onclick="selectMode('group', this)">Down a Group (Li &rarr; Rb)</button>
+    </div>
+
+    <div class="legend-row">
+      <span><span class="legend-dot" style="background:var(--navy-light)"></span>Nucleus</span>
+      <span><span class="legend-dot" style="background:var(--blue-accent)"></span>Electron</span>
+      <span><span class="legend-dot" style="background:var(--gold)"></span>Nucleus&ndash;electron pull (animated on active atom)</span>
+    </div>
+
+    <div class="atom-row" id="atomRow"></div>
+
+    <div class="play-controls">
+      <button class="btn-play" id="playBtn" onclick="togglePlay()">&#9654; Play Attraction Wave</button>
+      <button class="btn-play secondary" onclick="replaySequence()">&#8635; Replay</button>
+    </div>
+
+    <div class="result-box" id="resultBox"></div>
+    <p class="result-caption" id="resultCaption"></p>
+  </div>
+
+</main>
+
+<script>
+const PERIOD_DATA = [
+  { symbol: "Li", z: 3,  r: 167, shells: [2,1] },
+  { symbol: "C",  z: 6,  r: 67,  shells: [2,4] },
+  { symbol: "O",  z: 8,  r: 48,  shells: [2,6] },
+  { symbol: "Ne", z: 10, r: 38,  shells: [2,8] }
+];
+
+const GROUP_DATA = [
+  { symbol: "Li", z: 3,  r: 152, shells: [2,1] },
+  { symbol: "Na", z: 11, r: 186, shells: [2,8,1] },
+  { symbol: "K",  z: 19, r: 227, shells: [2,8,8,1] },
+  { symbol: "Rb", z: 37, r: 248, shells: [2,8,18,8,1] }
+];
+
+let currentMode = "period";
+let sequenceIndex = -1;
+let isPlaying = false;
+let sequenceTimer = null;
+
+function outerRadiusScale(data) {
+  const rMin = Math.min(...data.map(d => d.r));
+  const rMax = Math.max(...data.map(d => d.r));
+  const pxMin = currentMode === "group" ? 22 : 34;
+  const pxMax = currentMode === "group" ? 52 : 92;
+  return (r) => pxMin + (r - rMin) / (rMax - rMin) * (pxMax - pxMin);
+}
+
+function nucleusRadius(z) {
+  return 5 + Math.sqrt(z) * 1.1;
+}
+
+function buildAtomSvg(d, outerR, gid) {
+  const nucR = nucleusRadius(d.z);
+  const size = Math.round(outerR * 2 + 20);
+  const c = size / 2;
+  const shellCount = d.shells.length;
+
+  let svg = '<svg viewBox="0 0 ' + size + ' ' + size + '" width="' + size + '" height="' + size + '" data-symbol="' + d.symbol + '">';
+  svg += '<defs><radialGradient id="' + gid + '" cx="50%" cy="50%" r="50%">' +
+    '<stop offset="0%" stop-color="#c9a84c" stop-opacity="0.55"/>' +
+    '<stop offset="100%" stop-color="#c9a84c" stop-opacity="0"/></radialGradient></defs>';
+  svg += '<circle cx="' + c + '" cy="' + c + '" r="' + (nucR + 6) + '" fill="url(#' + gid + ')"/>';
+
+  const electronPositions = [];
+
+  d.shells.forEach((count, i) => {
+    const shellR = outerR * (i + 1) / shellCount;
+    svg += '<circle cx="' + c + '" cy="' + c + '" r="' + shellR.toFixed(1) + '" fill="none" stroke="var(--navy-light)" stroke-width="1.6" stroke-dasharray="3 3" opacity="0.55"/>';
+    for (let k = 0; k < count; k++) {
+      const angle = (2 * Math.PI / count) * k - Math.PI / 2 + i * 0.35;
+      const ex = c + shellR * Math.cos(angle);
+      const ey = c + shellR * Math.sin(angle);
+      electronPositions.push({ ex, ey, cx: c, cy: c });
+      svg += '<line x1="' + c + '" y1="' + c + '" x2="' + ex.toFixed(1) + '" y2="' + ey.toFixed(1) + '" stroke="var(--gold)" stroke-width="0.5" opacity="0.3"/>';
+      svg += '<circle cx="' + ex.toFixed(1) + '" cy="' + ey.toFixed(1) + '" r="3.4" fill="var(--blue-accent)" stroke="#fff" stroke-width="0.9"/>';
+    }
+  });
+
+  svg += '<circle cx="' + c + '" cy="' + c + '" r="' + nucR.toFixed(1) + '" fill="var(--navy)" stroke="var(--gold)" stroke-width="1.6"/>';
+  svg += '<text x="' + c + '" y="' + (c + nucR * 0.32) + '" text-anchor="middle" class="nucleus-label" font-size="' + Math.max(8, nucR) + '">' + d.symbol + '</text>';
+  svg += '</svg>';
+
+  return { svg, electronPositions };
+}
+
+function renderRow() {
+  const data = currentMode === "period" ? PERIOD_DATA : GROUP_DATA;
+  const scale = outerRadiusScale(data);
+  const row = document.getElementById('atomRow');
+  row.className = 'atom-row' + (currentMode === "group" ? ' vertical' : '');
+  row.innerHTML = '';
+
+  const cache = [];
+  data.forEach((d, idx) => {
+    const outerR = scale(d.r);
+    const gid = 'nucG-' + currentMode + '-' + idx;
+    const built = buildAtomSvg(d, outerR, gid);
+    cache.push(built.electronPositions);
+
+    const wrap = document.createElement('div');
+    wrap.className = 'atom-mini';
+    wrap.dataset.index = idx;
+    wrap.onclick = () => focusAtom(idx);
+    wrap.innerHTML =
+      built.svg +
+      '<div class="atom-symbol">' + d.symbol + '</div>' +
+      '<div class="atom-value">' + d.r + ' pm</div>';
+    row.appendChild(wrap);
+  });
+
+  row._electronCache = cache;
+
+  updateExplanation();
+  stopSequence();
+  clearActiveStates();
+}
+
+function clearActiveStates() {
+  document.querySelectorAll('.atom-mini').forEach(el => {
+    el.classList.remove('active');
+    const svg = el.querySelector('svg');
+    svg.querySelectorAll('.pull-dot').forEach(dot => dot.remove());
+  });
+}
+
+function setActiveAtom(idx) {
+  clearActiveStates();
+  const row = document.getElementById('atomRow');
+  const el = row.querySelector('.atom-mini[data-index="' + idx + '"]');
+  if (!el) return;
+  el.classList.add('active');
+  const svg = el.querySelector('svg');
+  const positions = row._electronCache[idx];
+  const ns = 'http://www.w3.org/2000/svg';
+
+  positions.forEach((p) => {
+    const dx = (p.cx - p.ex) * 0.55;
+    const dy = (p.cy - p.ey) * 0.55;
+    const dot = document.createElementNS(ns, 'circle');
+    dot.setAttribute('cx', p.ex);
+    dot.setAttribute('cy', p.ey);
+    dot.setAttribute('r', 2.2);
+    dot.setAttribute('fill', 'var(--gold)');
+    dot.classList.add('pull-dot');
+    dot.style.setProperty('--pdx', dx.toFixed(1) + 'px');
+    dot.style.setProperty('--pdy', dy.toFixed(1) + 'px');
+    svg.appendChild(dot);
+  });
+}
+
+function focusAtom(idx) {
+  stopSequence();
+  setActiveAtom(idx);
+}
+
+function delayForStep(idx, total) {
+  const minDelay = 500, maxDelay = 1500;
+  const t = total <= 1 ? 0 : idx / (total - 1);
+  if (currentMode === "period") {
+    return maxDelay - t * (maxDelay - minDelay); // speeds up left -> right
+  }
+  return minDelay + t * (maxDelay - minDelay); // slows down top -> bottom
+}
+
+function playSequenceStep() {
+  if (!isPlaying) return;
+  const data = currentMode === "period" ? PERIOD_DATA : GROUP_DATA;
+  if (sequenceIndex >= data.length) {
+    isPlaying = false;
+    updatePlayButton();
+    return;
+  }
+  setActiveAtom(sequenceIndex);
+  const delay = delayForStep(sequenceIndex, data.length);
+  sequenceTimer = setTimeout(() => {
+    sequenceIndex++;
+    playSequenceStep();
+  }, delay);
+}
+
+function togglePlay() {
+  if (isPlaying) {
+    isPlaying = false;
+    clearTimeout(sequenceTimer);
+    updatePlayButton();
+    return;
+  }
+  isPlaying = true;
+  const total = (currentMode === "period" ? PERIOD_DATA : GROUP_DATA).length;
+  if (sequenceIndex < 0 || sequenceIndex >= total) {
+    sequenceIndex = 0;
+  }
+  updatePlayButton();
+  playSequenceStep();
+}
+
+function replaySequence() {
+  stopSequence();
+  isPlaying = true;
+  sequenceIndex = 0;
+  updatePlayButton();
+  playSequenceStep();
+}
+
+function stopSequence() {
+  isPlaying = false;
+  clearTimeout(sequenceTimer);
+  sequenceIndex = -1;
+  updatePlayButton();
+}
+
+function updatePlayButton() {
+  const btn = document.getElementById('playBtn');
+  btn.innerHTML = isPlaying ? '&#10073;&#10073; Pause' : '&#9654; Play Attraction Wave';
+}
+
+function updateExplanation() {
+  const box = document.getElementById('resultBox');
+  const caption = document.getElementById('resultCaption');
+
+  if (currentMode === "period") {
+    box.textContent = '\u2193 Li (167 pm) \u2192 Ne (38 pm): radius shrinks by over 75%';
+    caption.textContent =
+      'Moving left to right, each added proton increases the nuclear pull while electrons are added to the same outer shell. Effective nuclear charge rises steadily \u2014 notice the pull animation speeds up atom by atom.';
+  } else {
+    box.textContent = '\u2191 Li (152 pm) \u2192 Rb (248 pm): radius grows by over 60%';
+    caption.textContent =
+      'Moving down a group, each new period adds an entire electron shell. Valence electrons sit farther from the nucleus and are shielded by more core electrons \u2014 notice the pull animation slows down atom by atom.';
+  }
+}
+
+function selectMode(mode, btn) {
+  currentMode = mode;
+  document.querySelectorAll('#modeGroup .btn-toggle').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  renderRow();
+}
+
+renderRow();
+</script>
+
+</body>
+</html>

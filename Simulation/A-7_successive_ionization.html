@@ -62,32 +62,32 @@ body {
 .sim-header {
   background: linear-gradient(135deg, var(--navy) 0%, var(--navy-mid) 100%);
   color: #fff;
-  padding: var(--space-xl) var(--space-lg) var(--space-lg);
+  padding: var(--space-md) var(--space-lg);
   position: relative;
 }
 .sim-header-eyebrow {
-  font-size: 12px;
+  font-size: 11px;
   letter-spacing: 0.08em;
   text-transform: uppercase;
   color: var(--gold-light);
   font-weight: 600;
-  margin-bottom: var(--space-sm);
+  margin-bottom: 2px;
 }
 .sim-header-title {
-  font-size: 26px;
+  font-size: 20px;
   font-weight: 700;
-  margin: 0 0 var(--space-xs);
+  margin: 0 0 2px;
 }
 .sim-header-subtitle {
-  font-size: 14px;
+  font-size: 12.5px;
   color: #c7d0e0;
   margin: 0;
   max-width: 640px;
-  line-height: 1.5;
+  line-height: 1.4;
 }
 .sim-badge {
   position: absolute;
-  top: var(--space-lg);
+  top: var(--space-md);
   right: var(--space-lg);
   background: var(--gold);
   color: var(--navy);
@@ -99,19 +99,28 @@ body {
 }
 
 .sim-body {
-  max-width: 920px;
+  max-width: 640px;
   margin: 0 auto;
-  padding: var(--space-lg);
+  padding: var(--space-md);
+}
+
+.layout-grid {
   display: flex;
   flex-direction: column;
-  gap: var(--space-lg);
+  gap: var(--space-md);
+  align-items: stretch;
+}
+.col-left, .col-right {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
 }
 
 .card, .card-info {
   background: var(--bg-card);
   border: 1px solid var(--border);
   border-radius: var(--radius-lg);
-  padding: var(--space-lg);
+  padding: var(--space-md);
   box-shadow: var(--shadow-card);
 }
 
@@ -120,38 +129,38 @@ body {
 }
 
 .card-title {
-  font-size: 13px;
+  font-size: 12px;
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.05em;
   color: var(--navy);
-  margin: 0 0 var(--space-md);
+  margin: 0 0 var(--space-sm);
 }
 
 .reaction-line {
   font-family: var(--font-mono);
-  font-size: 13px;
+  font-size: 12px;
   color: var(--text-body);
   display: flex;
   align-items: center;
   gap: var(--space-sm);
-  padding: 6px 0;
+  padding: 3px 0;
   flex-wrap: wrap;
 }
 .reaction-line .label {
   margin-left: auto;
   font-family: var(--font-ui);
   color: var(--text-muted);
-  font-size: 12.5px;
+  font-size: 11px;
 }
 .arrow { color: var(--gold-dark); }
 
 .trend-row {
-  margin-top: var(--space-md);
-  padding-top: var(--space-md);
+  margin-top: var(--space-sm);
+  padding-top: var(--space-sm);
   border-top: 1px solid var(--border-light);
-  font-size: 13.5px;
-  line-height: 1.7;
+  font-size: 12.5px;
+  line-height: 1.55;
   color: var(--text-body);
 }
 .trend-row .mono { color: var(--navy); font-weight: 600; }
@@ -170,9 +179,9 @@ body {
 
 .btn-toggle {
   font-family: var(--font-ui);
-  font-size: 14px;
+  font-size: 13px;
   font-weight: 600;
-  padding: 10px 20px;
+  padding: 7px 14px;
   border-radius: var(--radius-md);
   border: 1.5px solid var(--border);
   background: var(--bg-card);
@@ -188,16 +197,16 @@ body {
 }
 .btn-toggle .sub {
   display: block;
-  font-size: 10.5px;
+  font-size: 9.5px;
   font-weight: 500;
   opacity: 0.75;
-  margin-top: 2px;
+  margin-top: 1px;
 }
 
 .chart-wrapper {
   position: relative;
-  height: 320px;
-  margin-top: var(--space-md);
+  height: 210px;
+  margin-top: var(--space-sm);
 }
 
 .legend-row {
@@ -218,31 +227,31 @@ body {
 .config-strip {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 8px;
   overflow-x: auto;
-  padding: var(--space-md) 2px;
-  margin-top: var(--space-sm);
+  padding: var(--space-sm) 2px;
+  margin-top: 2px;
 }
 .config-cell {
   flex: 0 0 auto;
   text-align: center;
-  min-width: 108px;
+  min-width: 92px;
 }
 .config-species {
   font-family: var(--font-mono);
-  font-size: 13px;
+  font-size: 12px;
   font-weight: 700;
   color: var(--navy);
 }
 .config-formula {
   font-family: var(--font-mono);
-  font-size: 12px;
+  font-size: 10.5px;
   color: var(--text-body);
   background: var(--bg-card-alt);
   border: 1px solid var(--border);
   border-radius: var(--radius-sm);
-  padding: 6px 8px;
-  margin-top: 6px;
+  padding: 5px 6px;
+  margin-top: 4px;
   white-space: nowrap;
 }
 .config-cell.breach .config-formula {
@@ -252,30 +261,30 @@ body {
 }
 .config-arrow {
   flex: 0 0 auto;
-  font-size: 12px;
+  font-size: 11px;
   color: var(--text-micro);
   text-align: center;
-  min-width: 46px;
+  min-width: 40px;
 }
 .config-arrow.jump {
   color: var(--red-text);
   font-weight: 700;
 }
-.config-arrow .glyph { font-size: 16px; display: block; }
+.config-arrow .glyph { font-size: 14px; display: block; }
 
 .result-box {
   border-radius: var(--radius-md);
-  padding: var(--space-md);
-  font-size: 14px;
+  padding: var(--space-sm) var(--space-md);
+  font-size: 13px;
   font-weight: 600;
-  margin-top: var(--space-md);
+  margin-top: var(--space-sm);
 }
 .result-box.red { background: var(--red-bg); border: 1px solid var(--red-border); color: var(--red-text); }
 .result-caption {
-  font-size: 13px;
+  font-size: 12px;
   color: var(--text-body);
-  line-height: 1.65;
-  margin-top: var(--space-sm);
+  line-height: 1.5;
+  margin-top: var(--space-xs);
   font-weight: 400;
 }
 
@@ -284,10 +293,10 @@ body {
   display: flex;
   justify-content: center;
   align-items: center;
-  padding: var(--space-sm) 0 var(--space-md);
-  min-height: 260px;
+  padding: 2px 0 var(--space-sm);
+  min-height: 190px;
 }
-#atomSvg { width: 260px; height: 260px; overflow: visible; }
+#atomSvg { width: 190px; height: 190px; overflow: visible; }
 .nucleus-label {
   font-family: var(--font-mono);
   font-size: 13px;
@@ -296,26 +305,26 @@ body {
 }
 .energy-pulse {
   position: absolute;
-  top: 4px;
+  top: 0;
   left: 50%;
   transform: translateX(-50%);
   font-family: var(--font-mono);
   font-weight: 700;
-  font-size: 13px;
+  font-size: 12px;
   color: var(--gold-dark);
   opacity: 0;
   pointer-events: none;
   white-space: nowrap;
 }
-.energy-pulse.show { animation: floatUp 900ms ease-out; }
-.energy-pulse.jump { color: var(--red-text); font-size: 15px; }
+.energy-pulse.show { animation: floatUp 1300ms ease-out; }
+.energy-pulse.jump { color: var(--red-text); font-size: 13.5px; }
 @keyframes floatUp {
   0%   { opacity: 0; transform: translate(-50%, 12px); }
   15%  { opacity: 1; transform: translate(-50%, 0); }
   75%  { opacity: 1; }
-  100% { opacity: 0; transform: translate(-50%, -34px); }
+  100% { opacity: 0; transform: translate(-50%, -30px); }
 }
-.fly-out { animation: flyOut 550ms ease-in forwards; }
+.fly-out { animation: flyOut 1100ms ease-in forwards; }
 @keyframes flyOut {
   0%   { opacity: 1; transform: translate(0, 0) scale(1); }
   100% { opacity: 0; transform: translate(var(--dx), var(--dy)) scale(0.3); }
@@ -323,16 +332,17 @@ body {
 
 .atom-readout {
   text-align: center;
-  font-size: 13.5px;
+  font-size: 12px;
   color: var(--text-body);
-  line-height: 1.6;
+  line-height: 1.45;
+  min-height: 32px;
 }
 .atom-readout .mono {
   display: block;
-  font-size: 17px;
+  font-size: 15px;
   color: var(--navy);
   font-weight: 700;
-  margin-bottom: 4px;
+  margin-bottom: 2px;
 }
 .atom-readout .mono.jump-text { color: var(--red-text); }
 
@@ -340,7 +350,7 @@ body {
   display: flex;
   justify-content: center;
   gap: var(--space-sm);
-  margin-top: var(--space-md);
+  margin-top: var(--space-sm);
   flex-wrap: wrap;
 }
 .btn-toggle:disabled { opacity: 0.4; cursor: not-allowed; }
@@ -349,17 +359,17 @@ body {
 .energy-readout {
   text-align: center;
   font-family: var(--font-mono);
-  font-size: 12.5px;
+  font-size: 11.5px;
   color: var(--text-muted);
-  margin-top: var(--space-md);
-  padding-top: var(--space-md);
+  margin-top: var(--space-sm);
+  padding-top: var(--space-sm);
   border-top: 1px solid var(--border-light);
 }
 
 @media (max-width: 640px) {
-  .sim-header-title { font-size: 21px; }
-  .sim-badge { position: static; display: inline-block; margin-top: var(--space-sm); }
-  .chart-wrapper { height: 260px; }
+  .sim-header-title { font-size: 18px; }
+  .sim-badge { position: static; display: inline-block; margin-top: var(--space-xs); }
+  .chart-wrapper { height: 220px; }
 }
 </style>
 </head>
@@ -373,20 +383,21 @@ body {
 </header>
 
 <main class="sim-body">
+<div class="layout-grid">
 
   <div class="card-info">
     <p class="card-title">Successive Ionization</p>
-    <div class="reaction-line">M(g) + energy <span class="arrow">&rarr;</span> M<sup>+</sup>(g) + e<sup>-</sup> <span class="label">First ionization energy (IE&#8321;)</span></div>
-    <div class="reaction-line">M<sup>+</sup>(g) + energy <span class="arrow">&rarr;</span> M<sup>2+</sup>(g) + e<sup>-</sup> <span class="label">Second ionization energy (IE&#8322;)</span></div>
-    <div class="reaction-line">M<sup>2+</sup>(g) + energy <span class="arrow">&rarr;</span> M<sup>3+</sup>(g) + e<sup>-</sup> <span class="label">Third ionization energy (IE&#8323;)</span></div>
+    <div class="reaction-line">M(g) + energy <span class="arrow">&rarr;</span> M<sup>+</sup>(g) + e<sup>-</sup> <span class="label">IE&#8321;</span></div>
+    <div class="reaction-line">M<sup>+</sup>(g) + energy <span class="arrow">&rarr;</span> M<sup>2+</sup>(g) + e<sup>-</sup> <span class="label">IE&#8322;</span></div>
+    <div class="reaction-line">M<sup>2+</sup>(g) + energy <span class="arrow">&rarr;</span> M<sup>3+</sup>(g) + e<sup>-</sup> <span class="label">IE&#8323;</span></div>
     <div class="trend-row">
-      Radius: <span class="mono">M &gt; M<sup>+</sup> &gt; M<sup>2+</sup> &gt; M<sup>3+</sup></span> &mdash; fewer electrons means less electron&ndash;electron repulsion, so the same nuclear charge pulls the remaining electrons in tighter.<br><br>
-      IE: <span class="mono">IE&#8321; &lt; IE&#8322; &lt; IE&#8323; &lt; &hellip;</span> &mdash; removing an electron from an increasingly positive ion always takes more energy than the removal before it, because the nuclear charge stays constant while the electron cloud shrinks.
+      Radius: <span class="mono">M &gt; M<sup>+</sup> &gt; M<sup>2+</sup> &gt; M<sup>3+</sup></span> &mdash; fewer electrons means less repulsion, so the same nuclear charge pulls the rest in tighter.<br>
+      IE: <span class="mono">IE&#8321; &lt; IE&#8322; &lt; IE&#8323; &lt; &hellip;</span> &mdash; each removal from an increasingly positive ion costs more energy than the last.
     </div>
   </div>
 
   <div class="card">
-    <p class="card-title">Choose an Element</p>
+    <p class="card-title">Nucleus Pulling on Electrons</p>
     <span class="control-label">PERIOD 3 ELEMENT</span>
     <div class="btn-group" id="elementGroup">
       <button class="btn-toggle active" data-el="Na" onclick="selectElement('Na', this)">Na<span class="sub">1 valence e&#8315;</span></button>
@@ -394,17 +405,13 @@ body {
       <button class="btn-toggle" data-el="Al" onclick="selectElement('Al', this)">Al<span class="sub">3 valence e&#8315;</span></button>
       <button class="btn-toggle" data-el="Si" onclick="selectElement('Si', this)">Si<span class="sub">4 valence e&#8315;</span></button>
     </div>
-  </div>
-
-  <div class="card">
-    <p class="card-title">Nucleus Pulling on Electrons</p>
     <div class="atom-stage">
       <div class="energy-pulse" id="energyPulse"></div>
       <svg id="atomSvg" viewBox="0 0 300 300" aria-hidden="true"></svg>
     </div>
     <div class="atom-readout">
       <span class="mono" id="speciesLabel">Na</span>
-      <span id="stepCaption">Neutral atom &mdash; no electrons removed yet. The dashed lines show the nuclear pull on each electron.</span>
+      <span id="stepCaption">Neutral atom &mdash; dashed lines show the nuclear pull on each electron.</span>
     </div>
     <div class="atom-controls">
       <button class="btn-toggle" id="removeBtn" onclick="removeElectron()">Remove Outermost Electron &rarr;</button>
@@ -417,8 +424,8 @@ body {
     <p class="card-title">Successive Ionization Energies (log scale)</p>
     <div class="chart-wrapper"><canvas id="ieChart"></canvas></div>
     <div class="legend-row">
-      <span><span class="legend-dot" style="background:var(--navy-light)"></span>Valence electron removed</span>
-      <span><span class="legend-dot" style="background:var(--red-accent)"></span>Core electron removed &mdash; large jump</span>
+      <span><span class="legend-dot" style="background:var(--navy-light)"></span>Valence e&#8315; removed</span>
+      <span><span class="legend-dot" style="background:var(--red-accent)"></span>Core e&#8315; &mdash; large jump</span>
     </div>
   </div>
 
@@ -429,6 +436,7 @@ body {
     <p class="result-caption" id="resultCaption"></p>
   </div>
 
+</div>
 </main>
 
 <script>
@@ -609,7 +617,7 @@ function removeElectron() {
     renderAtom();
     updateAtomReadout(isJump);
     document.getElementById('removeBtn').disabled = (atomStep >= maxStep);
-  }, 550);
+  }, 1100);
 }
 
 function updateAtomReadout(justJumped) {
