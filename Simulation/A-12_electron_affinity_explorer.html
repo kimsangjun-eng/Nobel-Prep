@@ -1,0 +1,464 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>A-12 · Electron Affinity Explorer | Nobel Prep AP Chemistry</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --navy: #1a2744;
+  --navy-mid: #1e3060;
+  --navy-light: #2a4080;
+  --gold: #c9a84c;
+  --gold-light: #d4b86a;
+  --gold-bg: #f5e9c8;
+  --gold-dark: #7a4a06;
+
+  --bg-page: #f0f2f5;
+  --bg-card: #ffffff;
+  --bg-card-alt: #f8f9fb;
+
+  --text-primary: #1a2744;
+  --text-body: #2c3e50;
+  --text-muted: #6b7c93;
+  --text-micro: #8a99ad;
+
+  --border: #dde3ee;
+  --border-light: #eaeff8;
+
+  --red-bg: #fdecea; --red-border: #e53935; --red-text: #7f0000;
+  --blue-accent: #3498db;
+
+  --font-ui: 'Inter', sans-serif;
+  --font-mono: 'JetBrains Mono', monospace;
+
+  --space-xs: 4px; --space-sm: 8px; --space-md: 16px;
+  --space-lg: 24px; --space-xl: 32px;
+
+  --radius-sm: 6px; --radius-md: 10px; --radius-lg: 14px;
+
+  --shadow-card: 0 2px 8px rgba(26,39,68,0.08), 0 1px 2px rgba(26,39,68,0.04);
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  background: var(--bg-page);
+  font-family: var(--font-ui);
+  color: var(--text-body);
+}
+
+.mono { font-family: var(--font-mono); }
+
+.sim-header {
+  background: linear-gradient(135deg, var(--navy) 0%, var(--navy-mid) 100%);
+  color: #fff;
+  padding: var(--space-md) var(--space-lg);
+  position: relative;
+}
+.sim-header-eyebrow {
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--gold-light);
+  font-weight: 600;
+  margin-bottom: 2px;
+}
+.sim-header-title { font-size: 20px; font-weight: 700; margin: 0 0 2px; }
+.sim-header-subtitle { font-size: 12.5px; color: #c7d0e0; margin: 0; max-width: 640px; line-height: 1.4; }
+.sim-badge {
+  position: absolute;
+  top: var(--space-md);
+  right: var(--space-lg);
+  background: var(--gold);
+  color: var(--navy);
+  font-family: var(--font-mono);
+  font-weight: 700;
+  font-size: 12px;
+  padding: 4px 10px;
+  border-radius: var(--radius-sm);
+}
+
+.sim-body {
+  max-width: 680px;
+  margin: 0 auto;
+  padding: var(--space-md);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
+}
+
+.card, .card-info {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: var(--space-md);
+  box-shadow: var(--shadow-card);
+}
+.card-info { background: var(--bg-card-alt); }
+
+.card-title {
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--navy);
+  margin: 0 0 var(--space-sm);
+}
+
+.def-eq { font-family: var(--font-mono); font-size: 13.5px; color: var(--navy); text-align: center; margin: var(--space-sm) 0; font-weight: 600; }
+.def-text { font-size: 12.5px; line-height: 1.55; color: var(--text-body); }
+.def-text b { color: var(--navy); }
+.def-text .neg { color: var(--gold-dark); font-weight: 700; }
+.def-text .pos { color: var(--red-text); font-weight: 700; }
+
+.btn-group { display: flex; gap: var(--space-sm); flex-wrap: wrap; justify-content: center; }
+.btn-toggle {
+  font-family: var(--font-ui);
+  font-size: 13px;
+  font-weight: 600;
+  padding: 8px 16px;
+  border-radius: var(--radius-md);
+  border: 1.5px solid var(--border);
+  background: var(--bg-card);
+  color: var(--text-body);
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+.btn-toggle:hover { border-color: var(--gold); }
+.btn-toggle.active { background: var(--navy); border-color: var(--navy); color: #fff; }
+.btn-toggle.active.neg-active { background: var(--gold-dark); border-color: var(--gold-dark); }
+.btn-toggle.active.pos-active { background: var(--red-border); border-color: var(--red-border); }
+
+/* Section 1: sign stage */
+.sign-stage {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 140px;
+  padding: var(--space-md) 0;
+}
+.sign-atom {
+  width: 64px; height: 64px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 30%, #4f6cad, var(--navy-light) 70%);
+  border: 2px solid var(--gold);
+  display: flex; align-items: center; justify-content: center;
+  color: #fff; font-family: var(--font-mono); font-weight: 700; font-size: 14px;
+  position: relative;
+  z-index: 2;
+}
+.sign-electron {
+  position: absolute;
+  width: 12px; height: 12px;
+  border-radius: 50%;
+  background: var(--blue-accent);
+  border: 1.5px solid #fff;
+  z-index: 3;
+}
+.sign-electron.negative { animation: pullIn 1.4s ease-in-out infinite; }
+.sign-electron.positive { animation: pushBounce 1.4s ease-in-out infinite; }
+@keyframes pullIn {
+  0%   { transform: translate(70px, -50px); opacity: 1; }
+  60%  { transform: translate(0, 0); opacity: 1; }
+  100% { transform: translate(0, 0); opacity: 0; }
+}
+@keyframes pushBounce {
+  0%   { transform: translate(70px, -50px); }
+  45%  { transform: translate(18px, -8px); }
+  55%  { transform: translate(30px, -18px); }
+  100% { transform: translate(70px, -50px); }
+}
+.sign-ring {
+  position: absolute;
+  border-radius: 50%;
+  border: 2px solid var(--gold);
+  opacity: 0;
+}
+.sign-ring.negative { animation: ringOut 1.4s ease-out infinite; }
+@keyframes ringOut {
+  0%   { width: 64px; height: 64px; opacity: 0.7; }
+  100% { width: 150px; height: 150px; opacity: 0; }
+}
+.sign-arrow-in {
+  position: absolute;
+  font-size: 20px;
+  color: var(--red-text);
+  opacity: 0;
+}
+.sign-arrow-in.positive { animation: arrowPulse 1.4s ease-in-out infinite; }
+@keyframes arrowPulse {
+  0%, 100% { opacity: 0; }
+  50% { opacity: 1; }
+}
+
+.sign-caption {
+  text-align: center;
+  font-size: 12.5px;
+  line-height: 1.5;
+  color: var(--text-body);
+  margin-top: var(--space-sm);
+}
+.sign-caption b.neg { color: var(--gold-dark); }
+.sign-caption b.pos { color: var(--red-text); }
+
+/* Section 2: orbital boxes */
+.orbital-flow { display: flex; align-items: center; justify-content: center; gap: var(--space-sm); flex-wrap: wrap; margin-top: var(--space-sm); }
+.orbital-group { display: flex; flex-direction: column; align-items: center; gap: var(--space-xs); }
+.orbital-set { display: flex; gap: 4px; }
+.orbital-box {
+  width: 26px; height: 26px;
+  border: 1.5px solid var(--border);
+  border-radius: 4px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 14px; color: var(--navy);
+  background: var(--bg-card-alt);
+}
+.orbital-box.repel { border-color: var(--red-border); background: var(--red-bg); color: var(--red-text); }
+.orbital-sublabel { font-size: 9.5px; color: var(--text-muted); font-family: var(--font-mono); }
+.orbital-arrow { font-size: 18px; color: var(--text-muted); font-weight: 700; }
+.orbital-tag {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  font-weight: 700;
+  padding: 3px 8px;
+  border-radius: var(--radius-sm);
+}
+.orbital-tag.neg { background: var(--gold-bg); color: var(--gold-dark); }
+.orbital-tag.pos { background: var(--red-bg); color: var(--red-text); }
+.repel-note {
+  font-size: 10.5px;
+  color: var(--red-text);
+  text-align: center;
+  margin-top: var(--space-xs);
+  line-height: 1.3;
+}
+
+/* Section 3: heatmap */
+.heatmap { display: flex; flex-direction: column; gap: 4px; margin-top: var(--space-sm); }
+.heatmap-row { display: grid; grid-template-columns: repeat(8, 1fr); gap: 4px; }
+.heat-cell {
+  border-radius: 6px;
+  padding: 5px 2px;
+  text-align: center;
+  font-family: var(--font-mono);
+}
+.heat-symbol { font-size: 11px; font-weight: 700; }
+.heat-value { font-size: 9.5px; margin-top: 1px; }
+
+.legend-row { display: flex; gap: var(--space-md); margin-top: var(--space-sm); font-size: 11px; color: var(--text-muted); flex-wrap: wrap; align-items: center; }
+.legend-swatch { display: inline-block; width: 14px; height: 10px; border-radius: 2px; margin-right: 4px; vertical-align: middle; }
+
+@media (max-width: 640px) {
+  .sim-header-title { font-size: 18px; }
+  .sim-badge { position: static; display: inline-block; margin-top: var(--space-xs); }
+  .heat-symbol { font-size: 9.5px; }
+  .heat-value { font-size: 8px; }
+}
+</style>
+</head>
+<body>
+
+<header class="sim-header">
+  <div class="sim-header-eyebrow">Nobel Prep &middot; AP Chemistry &middot; Chapter 7</div>
+  <h1 class="sim-header-title">Electron Affinity Explorer</h1>
+  <p class="sim-header-subtitle">Why negative means favorable, and why nitrogen breaks the pattern.</p>
+  <span class="sim-badge">A-12</span>
+</header>
+
+<main class="sim-body">
+
+  <div class="card-info">
+    <p class="card-title">Electron Affinity (EA)</p>
+    <div class="def-eq">X(g) + e<sup>-</sup> &rarr; X<sup>-</sup>(g)</div>
+    <p class="def-text">The energy change when an electron is added to a gaseous atom. <span class="neg">Negative EA</span>: energy is <b>released</b> &mdash; favorable, stable. <span class="pos">Positive EA</span>: energy must be <b>absorbed</b> &mdash; unfavorable.</p>
+  </div>
+
+  <div class="card">
+    <p class="card-title">1. What Does the Sign Mean?</p>
+    <div class="btn-group" id="signGroup">
+      <button class="btn-toggle active neg-active" data-sign="negative" onclick="selectSign('negative', this)">Negative EA</button>
+      <button class="btn-toggle" data-sign="positive" onclick="selectSign('positive', this)">Positive EA</button>
+    </div>
+
+    <div class="sign-stage">
+      <div class="sign-ring" id="signRing"></div>
+      <div class="sign-atom">X</div>
+      <div class="sign-electron" id="signElectron"></div>
+      <div class="sign-arrow-in" id="signArrowIn" style="transform: translate(70px, -50px);">&#8592;&#9889;</div>
+    </div>
+    <p class="sign-caption" id="signCaption"></p>
+  </div>
+
+  <div class="card">
+    <p class="card-title">2. Orbital Exception: Carbon vs Nitrogen</p>
+    <div class="btn-group" id="elGroup">
+      <button class="btn-toggle active" data-el="C" onclick="selectOrbitalEl('C', this)">Carbon</button>
+      <button class="btn-toggle" data-el="N" onclick="selectOrbitalEl('N', this)">Nitrogen</button>
+    </div>
+    <div id="orbitalArea"></div>
+  </div>
+
+  <div class="card">
+    <p class="card-title">3. Trend Across Periods 2 &amp; 3 (kJ/mol)</p>
+    <div class="heatmap" id="heatmap"></div>
+    <div class="legend-row">
+      <span><span class="legend-swatch" style="background:var(--gold-dark)"></span>strongly negative (favorable)</span>
+      <span><span class="legend-swatch" style="background:var(--gold-bg)"></span>weakly negative</span>
+      <span><span class="legend-swatch" style="background:var(--red-bg)"></span>positive (unfavorable)</span>
+    </div>
+  </div>
+
+</main>
+
+<script>
+/* ---------- Section 1: sign convention ---------- */
+function selectSign(sign, btn) {
+  document.querySelectorAll('#signGroup .btn-toggle').forEach(b => {
+    b.classList.remove('active', 'neg-active', 'pos-active');
+  });
+  btn.classList.add('active', sign === 'negative' ? 'neg-active' : 'pos-active');
+
+  const electron = document.getElementById('signElectron');
+  const ring = document.getElementById('signRing');
+  const arrowIn = document.getElementById('signArrowIn');
+  const caption = document.getElementById('signCaption');
+
+  electron.classList.remove('negative', 'positive');
+  ring.classList.remove('negative');
+  arrowIn.classList.remove('positive');
+
+  if (sign === 'negative') {
+    electron.classList.add('negative');
+    ring.classList.add('negative');
+    caption.innerHTML = 'The electron is <b class="neg">pulled in and merges smoothly</b> \u2014 energy radiates outward as it settles. This is the common, favorable case.';
+  } else {
+    electron.classList.add('positive');
+    arrowIn.classList.add('positive');
+    caption.innerHTML = 'The electron is <b class="pos">resisted at the edge</b> \u2014 outside energy must be pushed in to force it on. This is the rarer, unfavorable case (e.g. noble gases, N, Mg).';
+  }
+}
+
+/* ---------- Section 2: orbital boxes ---------- */
+function orbitalHTML(count, repel) {
+  if (count === 0) return '<div class="orbital-box"></div>';
+  if (count === 1) return '<div class="orbital-box"><span class="orbital-arrow">\u2191</span></div>';
+  return '<div class="orbital-box' + (repel ? ' repel' : '') + '"><span class="orbital-arrow">\u21C5</span></div>';
+}
+
+const ORBITAL_DATA = {
+  C: {
+    before: { s1: 2, s2: 2, p: [1,1,0] },
+    after:  { s1: 2, s2: 2, p: [1,1,1] },
+    repelIndex: -1,
+    tag: 'EA < 0',
+    tagClass: 'neg',
+    note: ''
+  },
+  N: {
+    before: { s1: 2, s2: 2, p: [1,1,1] },
+    after:  { s1: 2, s2: 2, p: [2,1,1] },
+    repelIndex: 0,
+    tag: 'EA > 0',
+    tagClass: 'pos',
+    note: 'electronic repulsion &rarr; unstable'
+  }
+};
+
+function buildOrbitalGroup(state, repelIndex) {
+  let html = '<div class="orbital-group">';
+  html += '<div class="orbital-set">' + orbitalHTML(state.s1) + '</div><div class="orbital-sublabel">1s\u00b2</div>';
+  html += '</div>';
+  html += '<div class="orbital-group">';
+  html += '<div class="orbital-set">' + orbitalHTML(state.s2) + '</div><div class="orbital-sublabel">2s\u00b2</div>';
+  html += '</div>';
+  html += '<div class="orbital-group">';
+  html += '<div class="orbital-set">' + state.p.map((c, i) => orbitalHTML(c, i === repelIndex)).join('') + '</div>';
+  const pTotal = state.p.reduce((a,b) => a+b, 0);
+  html += '<div class="orbital-sublabel">2p' + toSuper(pTotal) + '</div>';
+  html += '</div>';
+  return html;
+}
+
+function toSuper(n) {
+  const map = {0:'\u2070',1:'\u00b9',2:'\u00b2',3:'\u00b3',4:'\u2074',5:'\u2075',6:'\u2076'};
+  return map[n] || n;
+}
+
+function selectOrbitalEl(el, btn) {
+  document.querySelectorAll('#elGroup .btn-toggle').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  renderOrbital(el);
+}
+
+function renderOrbital(el) {
+  const d = ORBITAL_DATA[el];
+  const area = document.getElementById('orbitalArea');
+  let html = '<div class="orbital-flow">';
+  html += buildOrbitalGroup(d.before, -1);
+  html += '<div style="font-family:var(--font-mono);font-size:13px;color:var(--text-muted);">+ e<sup>-</sup> &rarr;</div>';
+  html += buildOrbitalGroup(d.after, d.repelIndex);
+  html += '<div class="orbital-tag ' + d.tagClass + '">' + d.tag + '</div>';
+  html += '</div>';
+  if (d.note) {
+    html += '<p class="repel-note">' + d.note + '</p>';
+  }
+  area.innerHTML = html;
+}
+
+/* ---------- Section 3: heatmap ---------- */
+const PERIOD2 = [
+  { s: "Li", v: -60 }, { s: "Be", v: null }, { s: "B", v: -27 }, { s: "C", v: -122 },
+  { s: "N", v: null }, { s: "O", v: -141 }, { s: "F", v: -328 }, { s: "Ne", v: null }
+];
+const PERIOD3 = [
+  { s: "Na", v: -53 }, { s: "Mg", v: null }, { s: "Al", v: -43 }, { s: "Si", v: -134 },
+  { s: "P", v: -72 }, { s: "S", v: -200 }, { s: "Cl", v: -349 }, { s: "Ar", v: null }
+];
+
+function lerpColor(hex1, hex2, t) {
+  const c1 = hex1.match(/\w\w/g).map(x => parseInt(x, 16));
+  const c2 = hex2.match(/\w\w/g).map(x => parseInt(x, 16));
+  const c = c1.map((v, i) => Math.round(v + (c2[i] - v) * t));
+  return 'rgb(' + c.join(',') + ')';
+}
+
+function heatColor(v) {
+  if (v === null) return { bg: 'var(--red-bg)', fg: 'var(--red-text)' };
+  const maxAbs = 350;
+  const t = Math.min(Math.abs(v) / maxAbs, 1);
+  const bg = lerpColor('f5e9c8', '7a4a06', t);
+  const fg = t > 0.5 ? '#ffffff' : 'var(--navy)';
+  return { bg, fg };
+}
+
+function renderHeatmap() {
+  const container = document.getElementById('heatmap');
+  container.innerHTML = '';
+  [PERIOD2, PERIOD3].forEach(period => {
+    const row = document.createElement('div');
+    row.className = 'heatmap-row';
+    period.forEach(item => {
+      const c = heatColor(item.v);
+      const cell = document.createElement('div');
+      cell.className = 'heat-cell';
+      cell.style.background = c.bg;
+      cell.style.color = c.fg;
+      cell.innerHTML = '<div class="heat-symbol">' + item.s + '</div><div class="heat-value">' + (item.v === null ? '&gt; 0' : item.v) + '</div>';
+      row.appendChild(cell);
+    });
+    container.appendChild(row);
+  });
+}
+
+/* ---------- init ---------- */
+selectSign('negative', document.querySelector('#signGroup .btn-toggle.active'));
+renderOrbital('C');
+renderHeatmap();
+</script>
+
+</body>
+</html>
