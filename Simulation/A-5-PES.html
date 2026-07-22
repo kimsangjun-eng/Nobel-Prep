@@ -26,7 +26,7 @@ header h1{font-size:17px;font-weight:600;color:var(--navy)}
 
 /* ── CONCEPT DIAGRAM ── */
 .concept-row{display:flex;align-items:center;gap:0;margin-bottom:8px;flex-wrap:wrap;gap:16px}
-canvas#concept{display:block;border-radius:8px;background:#07091a}
+canvas#concept{display:block;border-radius:8px;background:#F5F7FC;border:1px solid var(--border)}
 .concept-eq{display:flex;flex-direction:column;gap:8px}
 .eq-box{background:var(--bg);border:1px solid var(--border);border-radius:7px;
   padding:10px 14px;font-family:'JetBrains Mono',monospace;font-size:13px;color:var(--navy)}
@@ -112,6 +112,7 @@ canvas#pes{display:block;width:100%;height:100%}
         <span style="font-size:11px;color:#C9A84C;font-weight:600">● Orbital electrons</span>
         <span style="font-size:11px;color:#3CC878;font-weight:600">● Ejected e⁻ (KE)</span>
         <span style="font-size:11px;color:#FF6B6B;font-weight:600">⚡ Energy released</span>
+        <span style="font-size:11px;color:#E05A5A;font-weight:600">━ Binding strength (thicker = harder to remove)</span>
       </div>
     </div>
     <div class="concept-eq">
@@ -156,6 +157,14 @@ canvas#pes{display:block;width:100%;height:100%}
 
   <!-- Peak info cards -->
   <div class="peak-grid" id="peak-grid"></div>
+
+  <!-- WHY THIS IE? -->
+  <div style="margin-top:18px;padding-top:16px;border-top:1px solid var(--border)">
+    <div style="font-size:12px;font-weight:600;color:var(--txt2);text-transform:uppercase;
+      letter-spacing:.06em;margin-bottom:10px">Why does IE differ? <span style="font-weight:400;text-transform:none;color:#999">(click a peak above)</span></div>
+    <div id="why-distance-track"></div>
+    <div id="why-text" class="theory" style="margin-top:12px"></div>
+  </div>
 
   <div class="metrics">
     <div class="metric">
@@ -229,6 +238,13 @@ let currentEl = 'Na';
 let hoveredPeak = null;
 let selectedPeak = null;
 
+// Subshell colors — shared by the concept diagram AND the PES chart
+const SUB_COLORS = {
+  '1s':'#E05A5A','2s':'#E09A30','2p':'#5B6FD4',
+  '3s':'#3CC878','3p':'#3CA0FF','3d':'#B450FF',
+  '4s':'#FF6B6B','4p':'#FFB347',
+};
+
 // ─────────────────────────────────────────────────────
 // CONCEPT ANIMATION — rich version
 // ─────────────────────────────────────────────────────
@@ -247,14 +263,51 @@ function setupConcept(){
   cCtx.setTransform(cDPR,0,0,cDPR,0,0);
 }
 
-// Orbital ring data: {r, electrons, color, label}
-const ORBIT_DATA = [
-  {r:0.10, e:2,  col:'#E05A5A', lbl:'1s',  eAngle:[0, Math.PI]},
-  {r:0.17, e:2,  col:'#E09A30', lbl:'2s',  eAngle:[Math.PI/4, 5*Math.PI/4]},
-  {r:0.24, e:6,  col:'#5B6FD4', lbl:'2p',  eAngle:[0,Math.PI/3,2*Math.PI/3,Math.PI,4*Math.PI/3,5*Math.PI/3]},
-  {r:0.32, e:2,  col:'#3CC878', lbl:'3s',  eAngle:[Math.PI/6, 7*Math.PI/6]},
-  {r:0.40, e:1,  col:'#3CA0FF', lbl:'3p*', eAngle:[3*Math.PI/4]},
-];
+// Orbital ring data is now built dynamically from the selected element's real PES peaks,
+// so the concept diagram always matches whichever element is chosen below.
+function buildOrbitData(el) {
+  const peaks = PES_DATA[el].peaks;
+  const ies = peaks.map(p => p.ie);
+  const minIE = Math.min(...ies), maxIE = Math.max(...ies);
+  const ns = peaks.map(p => parseInt(p.sub[0], 10));
+  const minN = Math.min(...ns), maxN = Math.max(...ns);
+
+  return peaks.map(p => {
+    const n = parseInt(p.sub[0], 10);
+    const r = maxN === minN ? 0.24 : 0.12 + ((n - minN) / (maxN - minN)) * 0.30;
+    const bind = maxIE === minIE ? 0.6 : 0.12 + ((p.ie - minIE) / (maxIE - minIE)) * 0.88;
+    let bindLabel;
+    if (bind >= 0.82) bindLabel = 'STRONG (core)';
+    else if (bind >= 0.58) bindLabel = 'MEDIUM-STRONG';
+    else if (bind >= 0.38) bindLabel = 'MEDIUM';
+    else if (bind >= 0.20) bindLabel = 'MEDIUM-WEAK';
+    else bindLabel = 'WEAK (valence)';
+    const count = p.e;
+    const eAngle = Array.from({length: count}, (_, i) => (2 * Math.PI / count) * i);
+    return { r, e: count, col: SUB_COLORS[p.sub] || '#5B6FD4', lbl: p.sub, eAngle, bind, bindLabel };
+  });
+}
+
+let ORBIT_DATA = buildOrbitData(currentEl);
+
+function rebuildConcept() {
+  ORBIT_DATA = buildOrbitData(currentEl);
+  ejectCycle = 0;
+  ejectedOrbit = 0;
+  phase = 'orbit';
+  phaseT = 0;
+  photonT = 0;
+  ejectT = 0;
+  hitFlash = 0;
+}
+
+function bindColor(t) {
+  // t: 1 = strong (red), 0 = weak (green)
+  const c1 = [60, 200, 120];   // weak - green
+  const c2 = [220, 60, 60];    // strong - red
+  const c = c1.map((v,i) => Math.round(v + (c2[i]-v)*t));
+  return `rgb(${c[0]},${c[1]},${c[2]})`;
+}
 
 // Animation state machine
 // phase: 'orbit' → photon enters → hit → eject → fly → reset
@@ -263,12 +316,13 @@ let phaseT = 0;
 let photonT = 0;       // 0→1 photon travel
 let ejectT  = 0;       // 0→1 ejected electron travel
 let hitFlash = 0;      // flash on impact
-let ejectedOrbit = 2;  // which orbit's electron gets ejected (cycle)
+let ejectedOrbit = 0;  // which orbit's electron gets ejected (cycle)
 let ejectCycle = 0;
 let orbitAngles = ORBIT_DATA.map(o=>o.eAngle.map(a=>a)); // mutable copy
 let globalT = 0;
 
-const PHASE_DUR = { orbit:80, photon:50, hit:15, eject:70, fly:30 };
+const PHASE_DUR = { orbit:170, photon:110, hit:15, eject:130, fly:60 };
+let dynamicHitDur = 20;
 
 function lerp(a,b,t){ return a+(b-a)*t; }
 function easeIn(t){ return t*t; }
@@ -277,10 +331,10 @@ function easeOut(t){ return 1-(1-t)*(1-t); }
 function drawConcept() {
   cCtx.clearRect(0,0,cW,cH);
 
-  // Dark bg with subtle gradient
-  const bgGrad = cCtx.createRadialGradient(cW*0.45,cH*0.5,0,cW*0.45,cH*0.5,cW*0.5);
-  bgGrad.addColorStop(0,'#0d1128');
-  bgGrad.addColorStop(1,'#07091a');
+  // Light bg, consistent with the rest of the sim (no dark panels)
+  const bgGrad = cCtx.createRadialGradient(cW*0.45,cH*0.5,0,cW*0.45,cH*0.5,cW*0.55);
+  bgGrad.addColorStop(0,'#FFFDF6');
+  bgGrad.addColorStop(1,'#F5F7FC');
   cCtx.fillStyle=bgGrad;
   cCtx.fillRect(0,0,cW,cH);
 
@@ -293,15 +347,15 @@ function drawConcept() {
     // Ring
     cCtx.beginPath();
     cCtx.arc(cx,cy,r,0,Math.PI*2);
-    cCtx.strokeStyle = orb.col+'55';
-    cCtx.lineWidth = 1;
+    cCtx.strokeStyle = orb.col+'99';
+    cCtx.lineWidth = 1.3;
     cCtx.setLineDash([2,3]);
     cCtx.stroke();
     cCtx.setLineDash([]);
 
     // Label
     cCtx.font='bold 9px JetBrains Mono,monospace';
-    cCtx.fillStyle = orb.col+'AA';
+    cCtx.fillStyle = orb.col;
     cCtx.textAlign='left';
     cCtx.fillText(orb.lbl, cx+r+3, cy-r*0.3);
 
@@ -315,6 +369,26 @@ function drawConcept() {
 
       // Skip the ejected electron after ejection starts
       if(isEjectOrb && ei===0 && (phase==='eject'||phase==='fly')) return;
+
+      // ── Binding "tether" from nucleus to the electron about to be ejected ──
+      if(isEjectOrb && ei===0 && (phase==='orbit'||phase==='photon'||phase==='hit')){
+        const bCol = bindColor(orb.bind);
+        const pulse = 1 + Math.sin(globalT*0.15)*0.15;
+        cCtx.beginPath();
+        cCtx.moveTo(cx,cy);
+        cCtx.lineTo(ex2,ey2);
+        cCtx.strokeStyle = bCol;
+        cCtx.lineWidth = (1 + orb.bind*4.5) * pulse;
+        cCtx.globalAlpha = 0.65;
+        cCtx.stroke();
+        cCtx.globalAlpha = 1;
+
+        // Binding strength label near nucleus
+        cCtx.font = 'bold 9px JetBrains Mono,monospace';
+        cCtx.fillStyle = bCol;
+        cCtx.textAlign = 'center';
+        cCtx.fillText('BINDING: ' + orb.bindLabel, cx, cy+baseR*0.5+14);
+      }
 
       // Draw electron
       const eR = 3.5;
@@ -341,7 +415,7 @@ function drawConcept() {
   cCtx.font='bold 9px Inter,sans-serif';
   cCtx.fillStyle='#0d1128';
   cCtx.textAlign='center';
-  cCtx.fillText('N',cx,cy+3);
+  cCtx.fillText(currentEl,cx,cy+3);
 
   // ── Photon wave beam ──
   if(phase==='photon'||phase==='hit'){
@@ -358,8 +432,8 @@ function drawConcept() {
     }
     const pGrd=cCtx.createLinearGradient(0,0,curEnd,0);
     pGrd.addColorStop(0,'#4488FF00');
-    pGrd.addColorStop(0.3,'#4488FFFF');
-    pGrd.addColorStop(1,'#88CCFFFF');
+    pGrd.addColorStop(0.3,'#3467D8FF');
+    pGrd.addColorStop(1,'#2E6FD9FF');
     cCtx.strokeStyle=pGrd;
     cCtx.lineWidth=2.5;
     cCtx.stroke();
@@ -372,21 +446,21 @@ function drawConcept() {
       cCtx.lineTo(hx-10,hy-4);
       cCtx.lineTo(hx-10,hy+4);
       cCtx.closePath();
-      cCtx.fillStyle='#88CCFF';
+      cCtx.fillStyle='#2E6FD9';
       cCtx.fill();
     }
 
     // hν label near photon
     const lx = Math.min(curEnd*0.5, 80);
     cCtx.font='11px JetBrains Mono,monospace';
-    cCtx.fillStyle='#88CCFF';
+    cCtx.fillStyle='#2E6FD9';
     cCtx.textAlign='center';
     cCtx.fillText('hν', lx, beamY-10);
   }
 
   // ── Hit flash ──
   if(phase==='hit'){
-    const fAlpha = Math.max(0,1-hitFlash/PHASE_DUR.hit);
+    const fAlpha = Math.max(0,1-hitFlash/dynamicHitDur);
     const orb2=ORBIT_DATA[ejectedOrbit];
     const hitR=baseR*orb2.r;
     const hx=cx+hitR*Math.cos(orb2.eAngle[0]+globalT*0.008);
@@ -394,17 +468,32 @@ function drawConcept() {
     // Starburst
     cCtx.save();
     cCtx.translate(hx,hy);
-    for(let ray=0;ray<8;ray++){
-      const ra=ray*Math.PI/4;
-      const rLen=(12+Math.sin(globalT*0.3+ray)*4)*fAlpha;
+    const rayCount = 4 + Math.round(orb2.bind*18); // weak=~5 rays, strong=~22 rays
+    const rayScale = 0.35 + orb2.bind*2.3;          // weak=short burst, strong=long burst
+    const rayWidth = 1 + orb2.bind*4;
+    for(let ray=0;ray<rayCount;ray++){
+      const ra=ray*(Math.PI*2/rayCount);
+      const rLen=(12+Math.sin(globalT*0.3+ray)*4)*fAlpha*rayScale;
       cCtx.beginPath();
       cCtx.moveTo(0,0);
       cCtx.lineTo(Math.cos(ra)*rLen,Math.sin(ra)*rLen);
       cCtx.strokeStyle=`rgba(255,220,80,${fAlpha})`;
-      cCtx.lineWidth=2;
+      cCtx.lineWidth=rayWidth;
       cCtx.stroke();
     }
+    // Core ring pulse — bigger and brighter for strong bonds
+    cCtx.beginPath();
+    cCtx.arc(0,0,(6+orb2.bind*22)*fAlpha,0,Math.PI*2);
+    cCtx.strokeStyle=`rgba(255,${Math.round(220-orb2.bind*140)},80,${fAlpha*0.8})`;
+    cCtx.lineWidth=2+orb2.bind*3;
+    cCtx.stroke();
     cCtx.restore();
+
+    // Energy-needed label
+    cCtx.font='bold 11px JetBrains Mono,monospace';
+    cCtx.fillStyle=`rgba(255,220,80,${fAlpha})`;
+    cCtx.textAlign='center';
+    cCtx.fillText('releasing ' + orb2.bindLabel.toLowerCase() + ' energy', hx, hy-26);
   }
 
   // ── Ejected electron flying out ──
@@ -456,7 +545,7 @@ function drawConcept() {
 
   // ── IE label (always) ──
   cCtx.font='10px JetBrains Mono,monospace';
-  cCtx.fillStyle='rgba(201,168,76,0.7)';
+  cCtx.fillStyle='rgba(122,90,6,0.85)';
   cCtx.textAlign='left';
   cCtx.fillText('IE = Ephoton − KE', 8, cH-10);
 
@@ -464,11 +553,11 @@ function drawConcept() {
   const detX=cW-12, detY1=cH*0.05, detY2=cH*0.95;
   cCtx.beginPath();
   cCtx.moveTo(detX,detY1); cCtx.lineTo(detX,detY2);
-  cCtx.strokeStyle='rgba(255,255,255,0.15)';
+  cCtx.strokeStyle='rgba(13,17,40,0.18)';
   cCtx.lineWidth=3;
   cCtx.stroke();
   cCtx.font='9px Inter,sans-serif';
-  cCtx.fillStyle='rgba(255,255,255,0.25)';
+  cCtx.fillStyle='rgba(13,17,40,0.35)';
   cCtx.textAlign='right';
   cCtx.fillText('Detector',cW-4,cH*0.5+4);
 }
@@ -485,10 +574,16 @@ function animConcept(ts) {
   if(phase==='eject')  ejectT = phaseT/PHASE_DUR.eject;
   if(phase==='fly')    ejectT = Math.min(1, PHASE_DUR.eject/PHASE_DUR.eject + phaseT/PHASE_DUR.fly);
 
-  if(phaseT >= PHASE_DUR[phase]){
+  const activeDur = (phase === 'hit') ? dynamicHitDur : PHASE_DUR[phase];
+
+  if(phaseT >= activeDur){
     phaseT=0;
     const idx=CYCLE.indexOf(phase);
     phase=CYCLE[(idx+1)%CYCLE.length];
+    if(phase==='hit'){
+      // Stronger bond -> longer, more dramatic flash (more energy being released)
+      dynamicHitDur = Math.round(18 + ORBIT_DATA[ejectedOrbit].bind*75);
+    }
     if(phase==='orbit'){
       ejectCycle=(ejectCycle+1)%ORBIT_DATA.length;
       ejectedOrbit=ejectCycle;
@@ -514,6 +609,7 @@ ELEMENTS.forEach(el => {
     document.querySelectorAll('.el-btn').forEach(b => b.classList.remove('sel'));
     btn.classList.add('sel');
     selectedPeak = null;
+    rebuildConcept();
     updateAll();
   };
   btnWrap.appendChild(btn);
@@ -525,13 +621,6 @@ ELEMENTS.forEach(el => {
 const pesC = document.getElementById('pes');
 const pCtx = pesC.getContext('2d');
 const DPR  = devicePixelRatio || 1;
-
-// Subshell colors
-const SUB_COLORS = {
-  '1s':'#E05A5A','2s':'#E09A30','2p':'#5B6FD4',
-  '3s':'#3CC878','3p':'#3CA0FF','3d':'#B450FF',
-  '4s':'#FF6B6B','4p':'#FFB347',
-};
 
 function setupPes() {
   const wrap = document.getElementById('pes-wrap');
@@ -779,6 +868,7 @@ pesC.addEventListener('click', e => {
   if (hoveredPeak !== null) {
     selectedPeak = (selectedPeak === hoveredPeak) ? null : hoveredPeak;
     renderPeakCards();
+    renderWhyPanel();
     drawPES();
   }
 });
@@ -804,10 +894,77 @@ function renderPeakCards() {
     card.onclick = () => {
       selectedPeak = selectedPeak === i ? null : i;
       renderPeakCards();
+      renderWhyPanel();
       drawPES();
     };
     grid.appendChild(card);
   });
+}
+
+// ─────────────────────────────────────────────────────
+// WHY THIS IE? — connect shell distance / shielding to IE
+// ─────────────────────────────────────────────────────
+function renderWhyPanel() {
+  const peaks = getPeaks();
+  const nOf = sub => parseInt(sub[0], 10);
+  const maxN = Math.max(...peaks.map(p => nOf(p.sub)));
+  const minN = Math.min(...peaks.map(p => nOf(p.sub)));
+
+  const track = document.getElementById('why-distance-track');
+  track.innerHTML = peaks.map((p, i) => {
+    const n = nOf(p.sub);
+    const widthPct = maxN === minN ? 50 : 15 + ((n - minN) / (maxN - minN)) * 75;
+    const col = SUB_COLORS[p.sub] || '#5B6FD4';
+    const isSel = selectedPeak === i;
+    return '<div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;padding:3px 6px;border-radius:6px;' +
+      (isSel ? 'background:var(--gold-lt)' : '') + '">' +
+      '<span style="width:28px;font-family:\'JetBrains Mono\',monospace;font-size:11px;font-weight:600;color:' + col + '">' + p.sub + '</span>' +
+      '<span style="font-size:9px;color:#999;width:56px">nucleus &rarr;</span>' +
+      '<div style="flex:1;height:8px;background:#eef1f8;border-radius:4px;overflow:hidden">' +
+        '<div style="width:' + widthPct.toFixed(0) + '%;height:100%;background:' + col + ';border-radius:4px"></div>' +
+      '</div>' +
+      '<span style="font-family:\'JetBrains Mono\',monospace;font-size:10px;color:' + col + ';width:66px;text-align:right">' + p.ie + ' MJ/mol</span>' +
+    '</div>';
+  }).join('');
+
+  const textEl = document.getElementById('why-text');
+
+  if (selectedPeak === null) {
+    const core = peaks.reduce((a, b) => a.ie > b.ie ? a : b);
+    const val = peaks.reduce((a, b) => a.ie < b.ie ? a : b);
+    textEl.innerHTML =
+      '<strong>' + core.sub + '</strong> sits closest to the nucleus (n=' + nOf(core.sub) + ') with almost no shielding, ' +
+      'so it feels nearly the <strong>full nuclear charge</strong> &rarr; highest IE (' + core.ie + ' MJ/mol). ' +
+      '<strong>' + val.sub + '</strong> is farthest out, shielded by all the inner-shell electrons, so it feels a much weaker ' +
+      '<strong>effective nuclear charge (Z<sub>eff</sub>)</strong> &rarr; lowest IE (' + val.ie + ' MJ/mol), easiest to remove. ' +
+      'Click a peak above to see this reasoning for one specific subshell.';
+  } else {
+    const p = peaks[selectedPeak];
+    const n = nOf(p.sub);
+    const isInnermost = n === minN;
+    const isOutermost = n === maxN;
+    const shieldingElectrons = peaks.filter(x => nOf(x.sub) < n).reduce((s, x) => s + x.e, 0);
+
+    const posText = isInnermost
+      ? 'the innermost shell, right next to the nucleus'
+      : isOutermost
+        ? 'the outermost (valence) shell, farthest from the nucleus'
+        : 'a middle shell, part of the way out';
+
+    const shieldText = isInnermost
+      ? 'almost no inner electrons shield it, so it feels nearly the full nuclear charge (Z<sub>eff</sub> &asymp; Z)'
+      : 'it is shielded by the ' + shieldingElectrons + ' electron' + (shieldingElectrons === 1 ? '' : 's') + ' in the shell' + (shieldingElectrons === 1 ? '' : 's') + ' below it, so it feels a much weaker effective nuclear charge';
+
+    const tail = isInnermost
+      ? ' That is why core electrons are always the hardest to remove.'
+      : isOutermost
+        ? ' That is why valence electrons are the easiest to remove &mdash; and why they determine chemical reactivity.'
+        : '';
+
+    textEl.innerHTML =
+      '<strong>' + p.sub + '</strong> (n=' + n + ') is in ' + posText + '. Because ' + shieldText +
+      ', its IE = <strong>' + p.ie + ' MJ/mol</strong>.' + tail;
+  }
 }
 
 // ─────────────────────────────────────────────────────
@@ -828,6 +985,7 @@ function updateAll() {
   document.getElementById('m-peaks').textContent = peaks.length;
 
   renderPeakCards();
+  renderWhyPanel();
   drawPES();
 }
 
