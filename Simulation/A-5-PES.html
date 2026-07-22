@@ -1,0 +1,842 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Photoelectron Spectroscopy | Nobel Prep AP Chemistry</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --navy:#0D1B3E;--gold:#C9A84C;--gold-lt:#F5E8C0;
+  --bg:#F5F7FA;--card:#fff;--txt:#1A1A2E;--txt2:#4A4E69;--border:#E0E4EF;
+  --peak:#5B6FD4;--valence:#C9A84C;
+}
+body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--txt);
+  min-height:100vh;display:flex;flex-direction:column;align-items:center;padding:24px 16px 60px}
+header{width:100%;max-width:980px;display:flex;align-items:center;gap:14px;
+  margin-bottom:22px;padding-bottom:14px;border-bottom:2px solid var(--gold)}
+.logo{background:var(--navy);color:var(--gold);font-size:12px;font-weight:700;
+  padding:5px 11px;border-radius:4px;letter-spacing:.05em}
+header h1{font-size:17px;font-weight:600;color:var(--navy)}
+.hbadge{background:var(--gold-lt);color:#7a5c00;font-size:11px;font-weight:600;
+  padding:3px 10px;border-radius:3px;margin-left:auto;font-family:'JetBrains Mono',monospace}
+.card{background:var(--card);border-radius:12px;border:1px solid var(--border);
+  padding:22px 26px;width:100%;max-width:980px;margin-bottom:16px}
+
+/* ── CONCEPT DIAGRAM ── */
+.concept-row{display:flex;align-items:center;gap:0;margin-bottom:8px;flex-wrap:wrap;gap:16px}
+canvas#concept{display:block;border-radius:8px;background:#07091a}
+.concept-eq{display:flex;flex-direction:column;gap:8px}
+.eq-box{background:var(--bg);border:1px solid var(--border);border-radius:7px;
+  padding:10px 14px;font-family:'JetBrains Mono',monospace;font-size:13px;color:var(--navy)}
+.eq-box span{color:var(--gold);font-weight:600}
+
+/* ── ELEMENT PICKER ── */
+.picker-row{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:16px}
+.picker-row label{font-size:13px;color:var(--txt2)}
+.el-btn{padding:7px 14px;border-radius:6px;border:1.5px solid var(--border);
+  background:var(--bg);font-family:'JetBrains Mono',monospace;font-size:13px;
+  color:var(--txt2);cursor:pointer;transition:all .13s}
+.el-btn:hover{border-color:var(--gold);color:var(--navy)}
+.el-btn.sel{background:var(--navy);color:var(--gold);border-color:var(--navy)}
+.el-symbol{font-size:22px;font-weight:600;color:var(--navy);font-family:'JetBrains Mono',monospace}
+.el-config{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--txt2)}
+
+/* ── PES CHART ── */
+#pes-wrap{position:relative;width:100%;height:320px}
+canvas#pes{display:block;width:100%;height:100%}
+
+/* ── HOVER TOOLTIP ── */
+#tooltip{position:absolute;background:var(--navy);color:#fff;border-radius:6px;
+  padding:7px 11px;font-size:12px;font-family:'JetBrains Mono',monospace;
+  pointer-events:none;display:none;white-space:nowrap;z-index:10;
+  border:1px solid var(--gold)}
+
+/* ── PEAK INFO CARDS ── */
+.peak-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:10px;margin-top:14px}
+.peak-card{border-radius:8px;border:2px solid var(--border);padding:11px 13px;cursor:pointer;
+  transition:border-color .15s}
+.peak-card:hover{border-color:var(--gold)}
+.peak-card.active{border-color:var(--gold);background:var(--gold-lt)}
+.pc-sub{font-family:'JetBrains Mono',monospace;font-size:14px;font-weight:600;color:var(--navy)}
+.pc-ie{font-size:13px;color:var(--txt2);margin-top:2px;font-family:'JetBrains Mono',monospace}
+.pc-ri{font-size:11px;color:var(--txt2);margin-top:2px}
+.pc-badge{display:inline-block;font-size:10px;font-weight:700;padding:2px 7px;border-radius:3px;
+  margin-top:4px}
+.badge-val{background:#fff3cd;color:#7a5c00;border:1px solid var(--gold)}
+.badge-core{background:#e8ecf8;color:var(--navy);border:1px solid #b0badb}
+
+/* ── METRICS ── */
+.metrics{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:16px}
+.metric{background:var(--bg);border-radius:8px;border:1px solid var(--border);padding:11px 13px}
+.m-lbl{font-size:10px;text-transform:uppercase;letter-spacing:.06em;color:var(--txt2);margin-bottom:3px}
+.m-val{font-family:'JetBrains Mono',monospace;font-size:15px;font-weight:500;color:var(--navy)}
+.m-sub{font-size:11px;color:var(--txt2);margin-top:2px}
+
+/* ── FORMULA ROW ── */
+.formula-row{display:flex;gap:10px;flex-wrap:wrap;margin-top:14px}
+.formula{background:var(--bg);border:1px solid var(--border);border-radius:6px;
+  padding:9px 14px;font-family:'JetBrains Mono',monospace;font-size:12px;
+  color:var(--navy);flex:1;min-width:160px;text-align:center}
+.formula em{color:var(--gold);font-style:normal;font-weight:600}
+
+/* ── THEORY BOX ── */
+.theory{background:var(--bg);border-left:3px solid var(--gold);border-radius:0 8px 8px 0;
+  padding:13px 16px;font-size:13px;color:var(--txt2);line-height:1.7}
+.theory strong{color:var(--navy)}
+
+@media(max-width:620px){
+  .metrics{grid-template-columns:1fr 1fr}
+  #pes-wrap{height:220px}
+}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo">NOBEL PREP</div>
+  <h1>Photoelectron Spectroscopy (PES)</h1>
+  <span class="hbadge">AP Chem Ch.7</span>
+</header>
+
+<!-- CONCEPT -->
+<div class="card">
+  <div style="display:grid;grid-template-columns:1fr 220px;gap:20px;align-items:start">
+    <div>
+      <div style="font-size:12px;font-weight:600;color:var(--txt2);text-transform:uppercase;
+        letter-spacing:.06em;margin-bottom:8px">How PES Works</div>
+      <canvas id="concept" style="display:block;border-radius:10px;width:100%;height:200px"></canvas>
+      <div style="display:flex;gap:14px;margin-top:8px;flex-wrap:wrap">
+        <span style="font-size:11px;color:#4488FF;font-weight:600">━━ X-ray photon (hν)</span>
+        <span style="font-size:11px;color:#C9A84C;font-weight:600">● Orbital electrons</span>
+        <span style="font-size:11px;color:#3CC878;font-weight:600">● Ejected e⁻ (KE)</span>
+        <span style="font-size:11px;color:#FF6B6B;font-weight:600">⚡ Energy released</span>
+      </div>
+    </div>
+    <div class="concept-eq">
+      <div class="eq-box" style="border-left:3px solid #4488FF">
+        <div style="font-size:10px;color:#888;margin-bottom:3px">INCIDENT PHOTON</div>
+        E<sub>photon</sub> = <span>hν</span>
+      </div>
+      <div class="eq-box" style="border-left:3px solid var(--gold)">
+        <div style="font-size:10px;color:#888;margin-bottom:3px">IONIZATION ENERGY</div>
+        IE = <span>E<sub>ph</sub></span> − <span>KE</span>
+      </div>
+      <div class="eq-box" style="border-left:3px solid #3CC878">
+        <div style="font-size:10px;color:#888;margin-bottom:3px">EJECTED ELECTRON</div>
+        KE = ½<span>mv²</span>
+      </div>
+      <div class="eq-box" style="border-left:3px solid #B450FF">
+        <div style="font-size:10px;color:#888;margin-bottom:3px">RELATIVE INTENSITY</div>
+        RI ∝ <span>number of e⁻</span>
+      </div>
+      <div style="font-size:11px;color:var(--txt2);padding:8px 10px;
+        background:var(--bg);border-radius:6px;line-height:1.6">
+        Core e⁻ → high IE (left)<br>
+        Valence e⁻ → low IE (right)
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ELEMENT SELECTOR + PES CHART -->
+<div class="card">
+  <div class="picker-row">
+    <label>Element:</label>
+    <div id="el-btns"></div>
+    <span class="el-symbol" id="el-sym">Na</span>
+    <span class="el-config" id="el-cfg">1s² 2s² 2p⁶ 3s¹</span>
+  </div>
+
+  <div id="pes-wrap">
+    <canvas id="pes"></canvas>
+    <div id="tooltip"></div>
+  </div>
+
+  <!-- Peak info cards -->
+  <div class="peak-grid" id="peak-grid"></div>
+
+  <div class="metrics">
+    <div class="metric">
+      <div class="m-lbl">Element</div>
+      <div class="m-val" id="m-el">Na</div>
+      <div class="m-sub" id="m-z">Z = 11</div>
+    </div>
+    <div class="metric">
+      <div class="m-lbl">Highest IE (core)</div>
+      <div class="m-val" id="m-hie">—</div>
+      <div class="m-sub">innermost subshell</div>
+    </div>
+    <div class="metric">
+      <div class="m-lbl">Lowest IE (valence)</div>
+      <div class="m-val" id="m-lie">—</div>
+      <div class="m-sub">easiest to remove</div>
+    </div>
+    <div class="metric">
+      <div class="m-lbl">Total peaks</div>
+      <div class="m-val" id="m-peaks">—</div>
+      <div class="m-sub">distinct subshells</div>
+    </div>
+  </div>
+</div>
+
+<!-- THEORY -->
+<div class="card">
+  <div class="theory">
+    <strong>Reading a PES spectrum:</strong><br>
+    • <strong>X-axis (IE, MJ/mol)</strong>: decreases left→right. Peaks farther <em>left</em> = higher IE = <strong>core electrons</strong> (harder to remove).<br>
+    • <strong>Y-axis (Relative Intensity)</strong>: proportional to the <strong>number of electrons</strong> in that subshell. s-peak height ≈ 2, p-peak ≈ 6, d-peak ≈ 10.<br>
+    • <strong>Gap between peaks</strong>: reflects the jump in orbital energy between shells (n=1→2→3…).<br>
+    • <strong>Valence electrons</strong>: lowest-IE peaks (rightmost). These determine chemical behavior.
+  </div>
+  <div class="formula-row">
+    <div class="formula">IE = <em>E<sub>photon</sub></em> − KE</div>
+    <div class="formula">RI ∝ <em>number of e⁻</em></div>
+    <div class="formula">Core e⁻ → <em>high IE</em></div>
+    <div class="formula">Valence e⁻ → <em>low IE</em></div>
+  </div>
+</div>
+
+<script>
+// ─────────────────────────────────────────────────────
+// PES DATA: each element has subshells with IE (MJ/mol) and electron count
+// IE values from standard PES data tables
+// ─────────────────────────────────────────────────────
+const PES_DATA = {
+  H:  { Z:1,  config:'1s¹',          peaks:[{sub:'1s', ie:1.31, e:1}] },
+  He: { Z:2,  config:'1s²',          peaks:[{sub:'1s', ie:2.37, e:2}] },
+  Li: { Z:3,  config:'1s² 2s¹',      peaks:[{sub:'1s', ie:6.26, e:2},{sub:'2s', ie:0.52, e:1}] },
+  Be: { Z:4,  config:'1s² 2s²',      peaks:[{sub:'1s', ie:8.99, e:2},{sub:'2s', ie:0.90, e:2}] },
+  B:  { Z:5,  config:'1s² 2s² 2p¹',  peaks:[{sub:'1s', ie:12.13,e:2},{sub:'2s', ie:1.36, e:2},{sub:'2p', ie:0.80, e:1}] },
+  C:  { Z:6,  config:'1s² 2s² 2p²',  peaks:[{sub:'1s', ie:16.59,e:2},{sub:'2s', ie:1.72, e:2},{sub:'2p', ie:1.09, e:2}] },
+  N:  { Z:7,  config:'1s² 2s² 2p³',  peaks:[{sub:'1s', ie:20.33,e:2},{sub:'2s', ie:2.09, e:2},{sub:'2p', ie:1.40, e:3}] },
+  O:  { Z:8,  config:'1s² 2s² 2p⁴',  peaks:[{sub:'1s', ie:27.41,e:2},{sub:'2s', ie:3.12, e:2},{sub:'2p', ie:1.31, e:4}] },
+  F:  { Z:9,  config:'1s² 2s² 2p⁵',  peaks:[{sub:'1s', ie:34.47,e:2},{sub:'2s', ie:3.88, e:2},{sub:'2p', ie:1.68, e:5}] },
+  Ne: { Z:10, config:'1s² 2s² 2p⁶',  peaks:[{sub:'1s', ie:48.47,e:2},{sub:'2s', ie:4.68, e:2},{sub:'2p', ie:2.08, e:6}] },
+  Na: { Z:11, config:'1s² 2s² 2p⁶ 3s¹', peaks:[{sub:'1s',ie:52.0,e:2},{sub:'2s',ie:6.84,e:2},{sub:'2p',ie:3.67,e:6},{sub:'3s',ie:0.50,e:1}] },
+  Mg: { Z:12, config:'1s² 2s² 2p⁶ 3s²', peaks:[{sub:'1s',ie:58.99,e:2},{sub:'2s',ie:8.82,e:2},{sub:'2p',ie:5.31,e:6},{sub:'3s',ie:0.74,e:2}] },
+  Al: { Z:13, config:'1s² 2s² 2p⁶ 3s² 3p¹', peaks:[{sub:'1s',ie:65.3,e:2},{sub:'2s',ie:10.6,e:2},{sub:'2p',ie:7.19,e:6},{sub:'3s',ie:1.09,e:2},{sub:'3p',ie:0.58,e:1}] },
+  Si: { Z:14, config:'1s² 2s² 2p⁶ 3s² 3p²', peaks:[{sub:'1s',ie:72.9,e:2},{sub:'2s',ie:12.7,e:2},{sub:'2p',ie:9.20,e:6},{sub:'3s',ie:1.46,e:2},{sub:'3p',ie:0.79,e:2}] },
+  P:  { Z:15, config:'1s² 2s² 2p⁶ 3s² 3p³', peaks:[{sub:'1s',ie:80.5,e:2},{sub:'2s',ie:14.9,e:2},{sub:'2p',ie:11.2,e:6},{sub:'3s',ie:1.84,e:2},{sub:'3p',ie:1.01,e:3}] },
+  S:  { Z:16, config:'1s² 2s² 2p⁶ 3s² 3p⁴', peaks:[{sub:'1s',ie:88.3,e:2},{sub:'2s',ie:17.1,e:2},{sub:'2p',ie:13.3,e:6},{sub:'3s',ie:2.05,e:2},{sub:'3p',ie:1.00,e:4}] },
+  Cl: { Z:17, config:'1s² 2s² 2p⁶ 3s² 3p⁵', peaks:[{sub:'1s',ie:104.8,e:2},{sub:'2s',ie:20.2,e:2},{sub:'2p',ie:15.6,e:6},{sub:'3s',ie:2.44,e:2},{sub:'3p',ie:1.25,e:5}] },
+  Ar: { Z:18, config:'1s² 2s² 2p⁶ 3s² 3p⁶', peaks:[{sub:'1s',ie:117.8,e:2},{sub:'2s',ie:24.1,e:2},{sub:'2p',ie:18.6,e:6},{sub:'3s',ie:2.82,e:2},{sub:'3p',ie:1.52,e:6}] },
+};
+
+const ELEMENTS = Object.keys(PES_DATA);
+let currentEl = 'Na';
+let hoveredPeak = null;
+let selectedPeak = null;
+
+// ─────────────────────────────────────────────────────
+// CONCEPT ANIMATION — rich version
+// ─────────────────────────────────────────────────────
+const conC = document.getElementById('concept');
+const cCtx = conC.getContext('2d');
+let cW, cH, cDPR = devicePixelRatio||1;
+
+function setupConcept(){
+  const cs = conC.style;
+  cW = conC.parentElement.clientWidth - 0;
+  cH = 200;
+  conC.width  = cW * cDPR;
+  conC.height = cH * cDPR;
+  conC.style.width  = cW+'px';
+  conC.style.height = cH+'px';
+  cCtx.setTransform(cDPR,0,0,cDPR,0,0);
+}
+
+// Orbital ring data: {r, electrons, color, label}
+const ORBIT_DATA = [
+  {r:0.10, e:2,  col:'#E05A5A', lbl:'1s',  eAngle:[0, Math.PI]},
+  {r:0.17, e:2,  col:'#E09A30', lbl:'2s',  eAngle:[Math.PI/4, 5*Math.PI/4]},
+  {r:0.24, e:6,  col:'#5B6FD4', lbl:'2p',  eAngle:[0,Math.PI/3,2*Math.PI/3,Math.PI,4*Math.PI/3,5*Math.PI/3]},
+  {r:0.32, e:2,  col:'#3CC878', lbl:'3s',  eAngle:[Math.PI/6, 7*Math.PI/6]},
+  {r:0.40, e:1,  col:'#3CA0FF', lbl:'3p*', eAngle:[3*Math.PI/4]},
+];
+
+// Animation state machine
+// phase: 'orbit' → photon enters → hit → eject → fly → reset
+let phase = 'orbit';
+let phaseT = 0;
+let photonT = 0;       // 0→1 photon travel
+let ejectT  = 0;       // 0→1 ejected electron travel
+let hitFlash = 0;      // flash on impact
+let ejectedOrbit = 2;  // which orbit's electron gets ejected (cycle)
+let ejectCycle = 0;
+let orbitAngles = ORBIT_DATA.map(o=>o.eAngle.map(a=>a)); // mutable copy
+let globalT = 0;
+
+const PHASE_DUR = { orbit:80, photon:50, hit:15, eject:70, fly:30 };
+
+function lerp(a,b,t){ return a+(b-a)*t; }
+function easeIn(t){ return t*t; }
+function easeOut(t){ return 1-(1-t)*(1-t); }
+
+function drawConcept() {
+  cCtx.clearRect(0,0,cW,cH);
+
+  // Dark bg with subtle gradient
+  const bgGrad = cCtx.createRadialGradient(cW*0.45,cH*0.5,0,cW*0.45,cH*0.5,cW*0.5);
+  bgGrad.addColorStop(0,'#0d1128');
+  bgGrad.addColorStop(1,'#07091a');
+  cCtx.fillStyle=bgGrad;
+  cCtx.fillRect(0,0,cW,cH);
+
+  const cx = cW*0.44, cy = cH*0.5;
+  const baseR = Math.min(cW,cH)*0.5;
+
+  // ── Orbital rings ──
+  ORBIT_DATA.forEach((orb, oi)=>{
+    const r = baseR * orb.r;
+    // Ring
+    cCtx.beginPath();
+    cCtx.arc(cx,cy,r,0,Math.PI*2);
+    cCtx.strokeStyle = orb.col+'55';
+    cCtx.lineWidth = 1;
+    cCtx.setLineDash([2,3]);
+    cCtx.stroke();
+    cCtx.setLineDash([]);
+
+    // Label
+    cCtx.font='bold 9px JetBrains Mono,monospace';
+    cCtx.fillStyle = orb.col+'AA';
+    cCtx.textAlign='left';
+    cCtx.fillText(orb.lbl, cx+r+3, cy-r*0.3);
+
+    // Electrons on this ring
+    const isEjectOrb = (oi === ejectedOrbit);
+    orb.eAngle.forEach((a,ei)=>{
+      // Rotate slowly
+      const angle = a + globalT*0.008*(1+oi*0.3);
+      const ex2 = cx + r*Math.cos(angle);
+      const ey2 = cy + r*Math.sin(angle);
+
+      // Skip the ejected electron after ejection starts
+      if(isEjectOrb && ei===0 && (phase==='eject'||phase==='fly')) return;
+
+      // Draw electron
+      const eR = 3.5;
+      cCtx.beginPath();
+      cCtx.arc(ex2,ey2,eR,0,Math.PI*2);
+      // Glow
+      const grd = cCtx.createRadialGradient(ex2,ey2,0,ex2,ey2,eR*3);
+      grd.addColorStop(0,orb.col+'CC');
+      grd.addColorStop(1,orb.col+'00');
+      cCtx.fillStyle=grd; cCtx.arc(ex2,ey2,eR*3,0,Math.PI*2); cCtx.fill();
+      cCtx.beginPath(); cCtx.arc(ex2,ey2,eR,0,Math.PI*2);
+      cCtx.fillStyle=orb.col; cCtx.fill();
+    });
+  });
+
+  // ── Nucleus ──
+  const nucR = baseR*0.065;
+  const nucGrd = cCtx.createRadialGradient(cx,cy,0,cx,cy,nucR);
+  nucGrd.addColorStop(0,'#FFE090');
+  nucGrd.addColorStop(0.5,'#C9A84C');
+  nucGrd.addColorStop(1,'#8a6020');
+  cCtx.beginPath(); cCtx.arc(cx,cy,nucR,0,Math.PI*2);
+  cCtx.fillStyle=nucGrd; cCtx.fill();
+  cCtx.font='bold 9px Inter,sans-serif';
+  cCtx.fillStyle='#0d1128';
+  cCtx.textAlign='center';
+  cCtx.fillText('N',cx,cy+3);
+
+  // ── Photon wave beam ──
+  if(phase==='photon'||phase==='hit'){
+    const t2 = phase==='hit' ? 1 : easeOut(photonT);
+    const startX = 0, endX = cx - baseR*ORBIT_DATA[ejectedOrbit].r - 4;
+    const curEnd = lerp(startX, endX, t2);
+    const beamY = cy - baseR*ORBIT_DATA[ejectedOrbit].r*0.6;
+    // Sine wave photon
+    cCtx.beginPath();
+    const waveLen = 16;
+    for(let x=0; x<=curEnd; x+=1){
+      const y = beamY + Math.sin((x/waveLen)*Math.PI*2)*5;
+      x===0?cCtx.moveTo(x,y):cCtx.lineTo(x,y);
+    }
+    const pGrd=cCtx.createLinearGradient(0,0,curEnd,0);
+    pGrd.addColorStop(0,'#4488FF00');
+    pGrd.addColorStop(0.3,'#4488FFFF');
+    pGrd.addColorStop(1,'#88CCFFFF');
+    cCtx.strokeStyle=pGrd;
+    cCtx.lineWidth=2.5;
+    cCtx.stroke();
+
+    // Photon arrow head
+    if(t2>0.8){
+      const hx=curEnd, hy=beamY;
+      cCtx.beginPath();
+      cCtx.moveTo(hx,hy);
+      cCtx.lineTo(hx-10,hy-4);
+      cCtx.lineTo(hx-10,hy+4);
+      cCtx.closePath();
+      cCtx.fillStyle='#88CCFF';
+      cCtx.fill();
+    }
+
+    // hν label near photon
+    const lx = Math.min(curEnd*0.5, 80);
+    cCtx.font='11px JetBrains Mono,monospace';
+    cCtx.fillStyle='#88CCFF';
+    cCtx.textAlign='center';
+    cCtx.fillText('hν', lx, beamY-10);
+  }
+
+  // ── Hit flash ──
+  if(phase==='hit'){
+    const fAlpha = Math.max(0,1-hitFlash/PHASE_DUR.hit);
+    const orb2=ORBIT_DATA[ejectedOrbit];
+    const hitR=baseR*orb2.r;
+    const hx=cx+hitR*Math.cos(orb2.eAngle[0]+globalT*0.008);
+    const hy=cy+hitR*Math.sin(orb2.eAngle[0]+globalT*0.008);
+    // Starburst
+    cCtx.save();
+    cCtx.translate(hx,hy);
+    for(let ray=0;ray<8;ray++){
+      const ra=ray*Math.PI/4;
+      const rLen=(12+Math.sin(globalT*0.3+ray)*4)*fAlpha;
+      cCtx.beginPath();
+      cCtx.moveTo(0,0);
+      cCtx.lineTo(Math.cos(ra)*rLen,Math.sin(ra)*rLen);
+      cCtx.strokeStyle=`rgba(255,220,80,${fAlpha})`;
+      cCtx.lineWidth=2;
+      cCtx.stroke();
+    }
+    cCtx.restore();
+  }
+
+  // ── Ejected electron flying out ──
+  if(phase==='eject'||phase==='fly'){
+    const t3 = easeOut(ejectT);
+    const orb2=ORBIT_DATA[ejectedOrbit];
+    const startR=baseR*orb2.r;
+    // Eject diagonally up-right
+    const startAngle=orb2.eAngle[0]+globalT*0.008;
+    const esx=cx+startR*Math.cos(startAngle);
+    const esy=cy+startR*Math.sin(startAngle);
+    const targetX=cW-18, targetY=cH*0.15;
+    const ex3=lerp(esx,targetX,t3);
+    const ey3=lerp(esy,targetY,t3);
+
+    // Trail
+    for(let tr=1;tr<=8;tr++){
+      const tt=Math.max(0,t3-(tr*0.06));
+      const tx=lerp(esx,targetX,easeOut(tt));
+      const ty2=lerp(esy,targetY,easeOut(tt));
+      cCtx.beginPath();
+      cCtx.arc(tx,ty2,3*(1-tr/8),0,Math.PI*2);
+      cCtx.fillStyle=`rgba(60,200,120,${(1-tr/8)*0.5})`;
+      cCtx.fill();
+    }
+
+    // Electron
+    const eGrd=cCtx.createRadialGradient(ex3,ey3,0,ex3,ey3,14);
+    eGrd.addColorStop(0,'#3CC878');
+    eGrd.addColorStop(0.5,'#3CC87888');
+    eGrd.addColorStop(1,'#3CC87800');
+    cCtx.beginPath(); cCtx.arc(ex3,ey3,14,0,Math.PI*2);
+    cCtx.fillStyle=eGrd; cCtx.fill();
+    cCtx.beginPath(); cCtx.arc(ex3,ey3,5,0,Math.PI*2);
+    cCtx.fillStyle='#3CC878'; cCtx.fill();
+    cCtx.font='bold 10px Inter,sans-serif';
+    cCtx.fillStyle='#fff';
+    cCtx.textAlign='center';
+    cCtx.fillText('e⁻',ex3,ey3+4);
+
+    // KE label near electron
+    if(t3>0.4){
+      cCtx.font='10px JetBrains Mono,monospace';
+      cCtx.fillStyle='#3CC878';
+      cCtx.textAlign='left';
+      cCtx.fillText('KE = ½mv²',ex3+14,ey3-4);
+    }
+  }
+
+  // ── IE label (always) ──
+  cCtx.font='10px JetBrains Mono,monospace';
+  cCtx.fillStyle='rgba(201,168,76,0.7)';
+  cCtx.textAlign='left';
+  cCtx.fillText('IE = Ephoton − KE', 8, cH-10);
+
+  // ── Detector on right ──
+  const detX=cW-12, detY1=cH*0.05, detY2=cH*0.95;
+  cCtx.beginPath();
+  cCtx.moveTo(detX,detY1); cCtx.lineTo(detX,detY2);
+  cCtx.strokeStyle='rgba(255,255,255,0.15)';
+  cCtx.lineWidth=3;
+  cCtx.stroke();
+  cCtx.font='9px Inter,sans-serif';
+  cCtx.fillStyle='rgba(255,255,255,0.25)';
+  cCtx.textAlign='right';
+  cCtx.fillText('Detector',cW-4,cH*0.5+4);
+}
+
+let cfr = 0;
+const CYCLE = ['orbit','photon','hit','eject','fly'];
+function animConcept(ts) {
+  globalT++;
+  phaseT++;
+
+  if(phase==='orbit') { photonT=0; ejectT=0; hitFlash=0; }
+  if(phase==='photon') photonT = phaseT/PHASE_DUR.photon;
+  if(phase==='hit')    hitFlash++;
+  if(phase==='eject')  ejectT = phaseT/PHASE_DUR.eject;
+  if(phase==='fly')    ejectT = Math.min(1, PHASE_DUR.eject/PHASE_DUR.eject + phaseT/PHASE_DUR.fly);
+
+  if(phaseT >= PHASE_DUR[phase]){
+    phaseT=0;
+    const idx=CYCLE.indexOf(phase);
+    phase=CYCLE[(idx+1)%CYCLE.length];
+    if(phase==='orbit'){
+      ejectCycle=(ejectCycle+1)%ORBIT_DATA.length;
+      ejectedOrbit=ejectCycle;
+    }
+  }
+
+  drawConcept();
+  requestAnimationFrame(animConcept);
+}
+setupConcept();
+requestAnimationFrame(animConcept);
+
+// ─────────────────────────────────────────────────────
+// ELEMENT BUTTONS
+// ─────────────────────────────────────────────────────
+const btnWrap = document.getElementById('el-btns');
+ELEMENTS.forEach(el => {
+  const btn = document.createElement('button');
+  btn.className = 'el-btn' + (el === currentEl ? ' sel' : '');
+  btn.textContent = el;
+  btn.onclick = () => {
+    currentEl = el;
+    document.querySelectorAll('.el-btn').forEach(b => b.classList.remove('sel'));
+    btn.classList.add('sel');
+    selectedPeak = null;
+    updateAll();
+  };
+  btnWrap.appendChild(btn);
+});
+
+// ─────────────────────────────────────────────────────
+// PES CHART
+// ─────────────────────────────────────────────────────
+const pesC = document.getElementById('pes');
+const pCtx = pesC.getContext('2d');
+const DPR  = devicePixelRatio || 1;
+
+// Subshell colors
+const SUB_COLORS = {
+  '1s':'#E05A5A','2s':'#E09A30','2p':'#5B6FD4',
+  '3s':'#3CC878','3p':'#3CA0FF','3d':'#B450FF',
+  '4s':'#FF6B6B','4p':'#FFB347',
+};
+
+function setupPes() {
+  const wrap = document.getElementById('pes-wrap');
+  pesC.style.width  = wrap.clientWidth + 'px';
+  pesC.style.height = wrap.clientHeight + 'px';
+  pesC.width  = wrap.clientWidth  * DPR;
+  pesC.height = wrap.clientHeight * DPR;
+  pCtx.setTransform(DPR, 0, 0, DPR, 0, 0);
+}
+
+function getPeaks() { return PES_DATA[currentEl].peaks; }
+
+// Map IE to x-axis (reversed: high IE = left)
+function ieToX(ie, maxIE, padL, plotW) {
+  return padL + plotW * (1 - ie / (maxIE * 1.08));
+}
+
+function drawPES() {
+  const W = pesC.width / DPR, H = pesC.height / DPR;
+  pCtx.clearRect(0, 0, W, H);
+  pCtx.fillStyle = '#F8F9FC';
+  pCtx.fillRect(0, 0, W, H);
+
+  const peaks = getPeaks();
+  const padL = 52, padR = 28, padT = 28, padB = 52;
+  const plotW = W - padL - padR;
+  const plotH = H - padT - padB;
+
+  const maxIE = Math.max(...peaks.map(p => p.ie));
+  const maxRI = Math.max(...peaks.map(p => p.e));
+
+  // Grid
+  pCtx.strokeStyle = '#E8ECF5';
+  pCtx.lineWidth = 1;
+  for (let i = 0; i <= 4; i++) {
+    const y = padT + (i / 4) * plotH;
+    pCtx.beginPath();
+    pCtx.moveTo(padL, y);
+    pCtx.lineTo(W - padR, y);
+    pCtx.stroke();
+  }
+
+  // Axes
+  pCtx.strokeStyle = '#B0BAD8';
+  pCtx.lineWidth = 1.5;
+  pCtx.beginPath();
+  pCtx.moveTo(padL, padT);
+  pCtx.lineTo(padL, padT + plotH);
+  pCtx.lineTo(W - padR, padT + plotH);
+  pCtx.stroke();
+
+  // X-axis ticks & labels (IE in MJ/mol)
+  // Auto-scale ticks based on maxIE
+  const tickStep = maxIE > 80 ? 20 : maxIE > 30 ? 10 : maxIE > 10 ? 5 : 2;
+  const numTicks = Math.ceil((maxIE * 1.08) / tickStep);
+  pCtx.font = '10px JetBrains Mono,monospace';
+  pCtx.fillStyle = '#888';
+  pCtx.textAlign = 'center';
+  for (let t = 0; t <= numTicks; t++) {
+    const ie = t * tickStep;
+    const x = ieToX(ie, maxIE, padL, plotW);
+    if (x < padL || x > W - padR) continue;
+    pCtx.beginPath();
+    pCtx.moveTo(x, padT + plotH);
+    pCtx.lineTo(x, padT + plotH + 5);
+    pCtx.strokeStyle = '#B0BAD8';
+    pCtx.lineWidth = 1;
+    pCtx.stroke();
+    pCtx.fillText(ie.toFixed(0), x, padT + plotH + 17);
+  }
+  pCtx.fillStyle = '#555';
+  pCtx.textAlign = 'center';
+  pCtx.font = '11px Inter,sans-serif';
+  pCtx.fillText('Ionization Energy (MJ/mol)  ←  high IE  |  low IE  →', padL + plotW / 2, H - 8);
+
+  // Y-axis label
+  pCtx.save();
+  pCtx.translate(14, padT + plotH / 2);
+  pCtx.rotate(-Math.PI / 2);
+  pCtx.textAlign = 'center';
+  pCtx.font = '11px Inter,sans-serif';
+  pCtx.fillStyle = '#555';
+  pCtx.fillText('Relative Intensity', 0, 0);
+  pCtx.restore();
+
+  // Valence marker (lowest IE)
+  const valIE = Math.min(...peaks.map(p => p.ie));
+  const valX = ieToX(valIE, maxIE, padL, plotW);
+  pCtx.strokeStyle = '#C9A84C';
+  pCtx.lineWidth = 1.5;
+  pCtx.setLineDash([4, 3]);
+  pCtx.beginPath();
+  pCtx.moveTo(valX + 30, padT);
+  pCtx.lineTo(valX + 30, padT + plotH);
+  pCtx.stroke();
+  pCtx.setLineDash([]);
+  pCtx.font = 'bold 10px Inter,sans-serif';
+  pCtx.fillStyle = '#C9A84C';
+  pCtx.textAlign = 'center';
+  pCtx.fillText('Valence', valX + 30, padT - 8);
+
+  // ── Compute raw x positions ──
+  const PEAK_HALF = 3;   // half-width in px (sharp, narrow)
+  const MIN_GAP   = 18;  // minimum px between adjacent peak centres
+
+  // Build position array, then nudge to avoid overlap
+  let pxPos = peaks.map(p => ieToX(p.ie, maxIE, padL, plotW));
+
+  // Sort by x ascending, nudge neighbours that are too close
+  const order = pxPos.map((x,i)=>({x,i})).sort((a,b)=>a.x-b.x);
+  for (let k = 1; k < order.length; k++) {
+    if (order[k].x - order[k-1].x < MIN_GAP) {
+      order[k].x = order[k-1].x + MIN_GAP;
+    }
+  }
+  // Write back
+  const adjX = new Array(peaks.length);
+  order.forEach(o => adjX[o.i] = o.x);
+
+  // ── Draw peaks (sharp triangles, no overlap) ──
+  peaks.forEach((p, i) => {
+    const x   = adjX[i];
+    const rawX = ieToX(p.ie, maxIE, padL, plotW); // true position
+    const peakH = (p.e / maxRI) * plotH * 0.82;
+    const y0  = padT + plotH;
+    const y1  = y0 - peakH;
+    const col = SUB_COLORS[p.sub] || '#5B6FD4';
+    const isHov = hoveredPeak === i;
+    const isSel = selectedPeak === i;
+    const hw  = isHov || isSel ? PEAK_HALF + 2 : PEAK_HALF;
+
+    // Glow halo (hover/select)
+    if (isHov || isSel) {
+      pCtx.beginPath();
+      pCtx.moveTo(x - hw * 4, y0);
+      pCtx.lineTo(x, y1 - 4);
+      pCtx.lineTo(x + hw * 4, y0);
+      pCtx.closePath();
+      pCtx.fillStyle = col + '28';
+      pCtx.fill();
+    }
+
+    // Sharp triangle peak
+    pCtx.beginPath();
+    pCtx.moveTo(x - hw, y0);
+    pCtx.lineTo(x,      y1);
+    pCtx.lineTo(x + hw, y0);
+    pCtx.closePath();
+    pCtx.fillStyle = col + (isHov || isSel ? 'FF' : 'DD');
+    pCtx.fill();
+    pCtx.strokeStyle = col;
+    pCtx.lineWidth   = isHov || isSel ? 2 : 1;
+    pCtx.stroke();
+
+    // Subshell label above peak
+    pCtx.font      = `${isHov || isSel ? '600' : '500'} 11px JetBrains Mono,monospace`;
+    pCtx.fillStyle = col;
+    pCtx.textAlign = 'center';
+    pCtx.fillText(p.sub, x, y1 - 7);
+
+    // IE label below x-axis (stagger to avoid clash)
+    pCtx.font      = '9px JetBrains Mono,monospace';
+    pCtx.fillStyle = col;
+    const rowOff = (i % 2 === 0) ? 28 : 40; // alternate rows
+    pCtx.fillText(p.ie.toFixed(2), x, y0 + rowOff);
+
+    // Hover detail
+    if (isHov || isSel) {
+      pCtx.font      = '10px JetBrains Mono,monospace';
+      pCtx.fillStyle = '#333';
+      pCtx.fillText(`e⁻=${p.e}`, x, y1 - 20);
+    }
+
+    // Thin guide line from true x to adjusted x (if nudged)
+    if (Math.abs(x - rawX) > 2) {
+      pCtx.beginPath();
+      pCtx.moveTo(rawX, y0 + 2);
+      pCtx.lineTo(x, y0 + 2);
+      pCtx.strokeStyle = col + '55';
+      pCtx.lineWidth   = 1;
+      pCtx.setLineDash([2, 3]);
+      pCtx.stroke();
+      pCtx.setLineDash([]);
+    }
+  });
+}
+
+// ─────────────────────────────────────────────────────
+// HOVER
+// ─────────────────────────────────────────────────────
+pesC.addEventListener('mousemove', e => {
+  const rect = pesC.getBoundingClientRect();
+  const mx = (e.clientX - rect.left);
+  const my = (e.clientY - rect.top);
+
+  const peaks = getPeaks();
+  const W = pesC.width / DPR, H = pesC.height / DPR;
+  const padL=52,padR=28,padT=28,padB=52;
+  const plotW=W-padL-padR, plotH=H-padT-padB;
+  const maxIE=Math.max(...peaks.map(p=>p.ie));
+  const maxRI=Math.max(...peaks.map(p=>p.e));
+
+  // Recompute adjusted x for hit-testing
+  const MIN_GAP2 = 18;
+  const pxPos2 = peaks.map(p => ieToX(p.ie, maxIE, padL, plotW));
+  const order2 = pxPos2.map((x,i)=>({x,i})).sort((a,b)=>a.x-b.x);
+  for (let k=1;k<order2.length;k++) {
+    if(order2[k].x - order2[k-1].x < MIN_GAP2) order2[k].x = order2[k-1].x + MIN_GAP2;
+  }
+  const adjX2 = new Array(peaks.length);
+  order2.forEach(o=>adjX2[o.i]=o.x);
+
+  let found = null;
+  peaks.forEach((p, i) => {
+    const x = adjX2[i];
+    const peakH=(p.e/maxRI)*plotH*0.82;
+    const y0=padT+plotH, y1=y0-peakH;
+    if (Math.abs(mx - x) < 12 && my >= y1 - 20 && my <= y0) found = i;
+  });
+
+  if (found !== null) {
+    hoveredPeak = found;
+    const p = peaks[found];
+    const tip = document.getElementById('tooltip');
+    tip.style.display = 'block';
+    tip.style.left = (e.clientX - rect.left + 12) + 'px';
+    tip.style.top  = (e.clientY - rect.top  - 10) + 'px';
+    tip.innerHTML = `<b>${p.sub}</b>  IE = ${p.ie} MJ/mol<br>Electrons: ${p.e}  (RI = ${p.e})`;
+    pesC.style.cursor = 'pointer';
+  } else {
+    hoveredPeak = null;
+    document.getElementById('tooltip').style.display = 'none';
+    pesC.style.cursor = 'default';
+  }
+  drawPES();
+});
+
+pesC.addEventListener('mouseleave', () => {
+  hoveredPeak = null;
+  document.getElementById('tooltip').style.display = 'none';
+  drawPES();
+});
+
+pesC.addEventListener('click', e => {
+  if (hoveredPeak !== null) {
+    selectedPeak = (selectedPeak === hoveredPeak) ? null : hoveredPeak;
+    renderPeakCards();
+    drawPES();
+  }
+});
+
+// ─────────────────────────────────────────────────────
+// PEAK CARDS
+// ─────────────────────────────────────────────────────
+function renderPeakCards() {
+  const peaks = getPeaks();
+  const valIE = Math.min(...peaks.map(p => p.ie));
+  const grid = document.getElementById('peak-grid');
+  grid.innerHTML = '';
+  peaks.forEach((p, i) => {
+    const isVal = p.ie === valIE;
+    const card = document.createElement('div');
+    card.className = 'peak-card' + (selectedPeak === i ? ' active' : '');
+    card.innerHTML = `
+      <div class="pc-sub" style="color:${SUB_COLORS[p.sub]||'#5B6FD4'}">${p.sub}</div>
+      <div class="pc-ie">IE = ${p.ie} MJ/mol</div>
+      <div class="pc-ri">Relative Intensity = ${p.e}  (${p.e} e⁻)</div>
+      <span class="pc-badge ${isVal?'badge-val':'badge-core'}">${isVal?'Valence':'Core'}</span>
+    `;
+    card.onclick = () => {
+      selectedPeak = selectedPeak === i ? null : i;
+      renderPeakCards();
+      drawPES();
+    };
+    grid.appendChild(card);
+  });
+}
+
+// ─────────────────────────────────────────────────────
+// UPDATE ALL
+// ─────────────────────────────────────────────────────
+function updateAll() {
+  const data = PES_DATA[currentEl];
+  const peaks = data.peaks;
+  document.getElementById('el-sym').textContent = currentEl;
+  document.getElementById('el-cfg').textContent = data.config;
+  document.getElementById('m-el').textContent = currentEl;
+  document.getElementById('m-z').textContent = 'Z = ' + data.Z;
+
+  const maxIE = Math.max(...peaks.map(p => p.ie));
+  const minIE = Math.min(...peaks.map(p => p.ie));
+  document.getElementById('m-hie').textContent = maxIE.toFixed(2) + ' MJ/mol';
+  document.getElementById('m-lie').textContent = minIE.toFixed(2) + ' MJ/mol';
+  document.getElementById('m-peaks').textContent = peaks.length;
+
+  renderPeakCards();
+  drawPES();
+}
+
+// ─────────────────────────────────────────────────────
+// INIT
+// ─────────────────────────────────────────────────────
+window.addEventListener('resize', () => { setupConcept(); setupPes(); drawPES(); });
+setupPes();
+updateAll();
+</script>
+</body>
+</html>
