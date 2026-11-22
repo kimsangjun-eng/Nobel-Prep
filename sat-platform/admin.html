@@ -336,13 +336,14 @@
     window.location.href = 'index.html';
   }
 
-  // 학생 추가 (안내 메시지 — Service Role 없이는 Auth 계정 생성 불가)
+  // 학생 추가 — create-student Edge Function 호출로 즉시 계정 생성
   async function addStudent() {
     const name     = document.getElementById('new-name').value.trim();
     const school   = document.getElementById('new-school').value.trim();
     const email    = document.getElementById('new-email').value.trim();
     const password = document.getElementById('new-password').value.trim();
     const msgEl    = document.getElementById('add-msg');
+    const btn      = document.querySelector('.add-btn');
     msgEl.style.display = 'none';
 
     if (!name || !email || !password) {
@@ -352,19 +353,50 @@
       return;
     }
 
-    msgEl.className = 'msg success';
-    msgEl.innerHTML = `
-      ✓ 학생 정보 확인 완료.<br>
-      <strong>Supabase 대시보드</strong>에서 직접 계정 생성 필요:<br>
-      Authentication → Add user → Email: <strong>${email}</strong> / PW: <strong>${password}</strong><br>
-      생성 후 student_profiles에 INSERT (이름: ${name}${school ? ', 학교: ' + school : ''})
-    `;
-    msgEl.style.display = 'block';
+    btn.disabled = true;
+    btn.textContent = 'Creating...';
 
-    document.getElementById('new-name').value = '';
-    document.getElementById('new-school').value = '';
-    document.getElementById('new-email').value = '';
-    document.getElementById('new-password').value = '';
+    try {
+      const { data: { session } } = await sb.auth.getSession();
+      if (!session) {
+        throw new Error('로그인이 만료되었습니다. 다시 로그인해 주세요.');
+      }
+
+      const res = await fetch(`${SUPABASE_URL}/functions/v1/create-student`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${session.access_token}`
+        },
+        body: JSON.stringify({ name, school, email, password })
+      });
+
+      const result = await res.json();
+
+      if (!res.ok) {
+        throw new Error(result.error || `서버 오류 (${res.status})`);
+      }
+
+      msgEl.className = 'msg success';
+      msgEl.innerHTML = `✓ ${result.message || name + ' 계정 생성 완료'}<br>
+        이메일: <strong>${email}</strong> / 비밀번호: <strong>${password}</strong><br>
+        학생에게 바로 전달하시면 로그인해서 시험을 볼 수 있습니다.`;
+      msgEl.style.display = 'block';
+
+      document.getElementById('new-name').value = '';
+      document.getElementById('new-school').value = '';
+      document.getElementById('new-email').value = '';
+      document.getElementById('new-password').value = '';
+
+      loadStudents();
+    } catch (err) {
+      msgEl.className = 'msg error';
+      msgEl.textContent = '계정 생성 실패: ' + err.message;
+      msgEl.style.display = 'block';
+    } finally {
+      btn.disabled = false;
+      btn.textContent = '+ Add Student';
+    }
   }
 
   // 학생 목록 + 전 모듈 결과 조회
