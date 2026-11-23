@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Nobel Prep — Admin</title>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
 <style>
   :root {
     --navy: #1B2A4A;
@@ -338,6 +339,7 @@
         <!-- 회차 추가 시 여기에 option 추가 -->
       </select>
       <button class="refresh-btn" onclick="loadStudents()">↻ Refresh</button>
+      <button class="refresh-btn" onclick="exportExcel()">⬇ Excel 내보내기</button>
     </div>
 
     <div id="student-table-wrap">
@@ -762,6 +764,89 @@
 
   function closeDetail() {
     document.getElementById('detail-modal').classList.remove('open');
+  }
+
+  // Excel 내보내기 (요약 + 모듈별 문항 상세)
+  function exportExcel() {
+    const cache = window.__detailCache;
+    if (!cache) { alert('먼저 학생 결과를 불러와 주세요.'); return; }
+    const { cfg, resultMap, profiles } = cache;
+    const mockLabel = document.getElementById('mock-select').selectedOptions[0].textContent;
+
+    // ── 요약 시트 ──
+    const summaryRows = profiles.map(p => {
+      const res = resultMap[p.id] || {};
+      const rwM1 = res[cfg.rw_m1], rwM2 = res[cfg.rw_m2];
+      const mthM1 = res[cfg.math_m1], mthM2 = res[cfg.math_m2];
+      const rwRaw = (rwM1?.rw_m1_raw ?? 0) + (rwM2?.rw_m2_raw ?? 0);
+      const mathRaw = (mthM1?.math_m1_raw ?? 0) + (mthM2?.math_m2_raw ?? 0);
+      const rwDone = rwM1?.completed && rwM2?.completed;
+      const mathDone = mthM1?.completed && mthM2?.completed;
+      const rwScaled = rwDone ? convertRW(rwRaw) : null;
+      const mathScaled = mathDone ? convertMath(mathRaw) : null;
+      const lastSubmit = [rwM1, rwM2, mthM1, mthM2].filter(Boolean).map(r => r.submitted_at).sort().pop();
+      return {
+        '이름': p.name,
+        '학교': p.school || '',
+        'RW M1': rwM1?.completed ? (rwM1.rw_m1_raw ?? 0) : '',
+        'RW M2': rwM2?.completed ? (rwM2.rw_m2_raw ?? 0) : '',
+        'RW Raw': rwDone ? rwRaw : '',
+        'RW 환산점수': rwScaled ?? '',
+        'Math M1': mthM1?.completed ? (mthM1.math_m1_raw ?? 0) : '',
+        'Math M2': mthM2?.completed ? (mthM2.math_m2_raw ?? 0) : '',
+        'Math Raw': mathDone ? mathRaw : '',
+        'Math 환산점수': mathScaled ?? '',
+        'Total': (rwScaled && mathScaled) ? rwScaled + mathScaled : '',
+        '제출일': lastSubmit ? new Date(lastSubmit).toLocaleDateString('ko-KR') : ''
+      };
+    });
+
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(summaryRows), '요약');
+
+    // ── 모듈별 문항 상세 시트 ──
+    const moduleDefs = [
+      { key: 'rw_m1', sheetName: 'RW_M1_상세' },
+      { key: 'rw_m2', sheetName: 'RW_M2_상세' },
+      { key: 'math_m1', sheetName: 'Math_M1_상세' },
+      { key: 'math_m2', sheetName: 'Math_M2_상세' }
+    ];
+
+    moduleDefs.forEach(({ key, sheetName }) => {
+      const examId = cfg[key];
+      const answerKey = ANSWER_KEY_MAP[examId] || {};
+      const sprIds = SPR_IDS_MAP[examId] || [];
+      const qids = Object.keys(answerKey);
+      if (qids.length === 0) return;
+
+      const detailRows = profiles.map(p => {
+        const row = (resultMap[p.id] || {})[examId];
+        const r = { '이름': p.name };
+        if (!row?.completed) {
+          qids.forEach(qid => { r['Q' + qid] = ''; });
+          return r;
+        }
+        const studentAnswers = row.answers || {};
+        qids.forEach(qid => {
+          const correct = answerKey[qid];
+          const given = studentAnswers[qid] ?? studentAnswers[String(qid)];
+          const givenDisplay = (given === undefined || given === null || given === '') ? '미응답' : given;
+          if (correct === 'OPEN') {
+            r['Q' + qid] = '서술형';
+          } else {
+            const isCorrect = sprIds.includes(Number(qid)) ? sprMatch(given, correct) : (given === correct);
+            r['Q' + qid] = isCorrect ? givenDisplay : `${givenDisplay}→정답:${correct}`;
+          }
+        });
+        return r;
+      });
+
+      XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(detailRows), sheetName);
+    });
+
+    const dateStr = new Date().toISOString().slice(0, 10);
+    const mockNumForFile = mockLabel.match(/\d+/)?.[0] || '';
+    XLSX.writeFile(wb, `NobelPrep_MockTest${mockNumForFile}_결과_${dateStr}.xlsx`);
   }
 
   checkAdmin();
