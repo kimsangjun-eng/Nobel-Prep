@@ -424,6 +424,14 @@
     math_m2: 'Math — Module 2'
   };
 
+  // Excel 셀 값용 짧은 모듈명
+  const EXCEL_MODULE_LABELS = {
+    rw_m1: 'R&W— Module 1',
+    rw_m2: 'R&W— Module 2',
+    math_m1: 'Math — Module 1',
+    math_m2: 'Math — Module 2'
+  };
+
   // SPR 채점 로직 (math1.html/math2.html의 sprMatch와 동일하게 유지할 것)
   function sprMatch(u, k) {
     if (!u) return false;
@@ -841,7 +849,7 @@
         qids.forEach(qid => {
           const correct = answerKey[qid];
           if (!row?.completed) {
-            studentRows.push({ '모듈': MODULE_LABELS[key], '문항': 'Q' + qid, '학생답안': '', '정답': correct === 'OPEN' ? '—' : correct, '결과': '미응시' });
+            studentRows.push({ '모듈': EXCEL_MODULE_LABELS[key], '문항': 'Q' + qid, '학생답안': '', '결과': '미응시' });
             return;
           }
           const given = studentAnswers[qid] ?? studentAnswers[String(qid)];
@@ -852,7 +860,7 @@
             const isCorrect = sprIds.includes(Number(qid)) ? sprMatch(given, correct) : (given === correct);
             result = isCorrect ? 'O' : 'X';
           }
-          studentRows.push({ '모듈': MODULE_LABELS[key], '문항': 'Q' + qid, '학생답안': givenDisplay, '정답': correct === 'OPEN' ? '—' : correct, '결과': result });
+          studentRows.push({ '모듈': EXCEL_MODULE_LABELS[key], '문항': 'Q' + qid, '학생답안': givenDisplay, '결과': result });
         });
       });
 
