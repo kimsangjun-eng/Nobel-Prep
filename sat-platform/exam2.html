@@ -621,12 +621,17 @@ async function initExam() {
   currentUser = session.user;
 
   // RW Module 1을 먼저 풀었는지 확인
-  const { data: m1 } = await sb
+  const { data: m1, error: m1Error } = await sb
     .from('exam_results')
     .select('completed')
     .eq('user_id', currentUser.id)
     .eq('exam_id', 'sat-aug2024-us-rw-m1')
     .single();
+
+  if (m1Error && m1Error.code !== 'PGRST116') {
+    showLoadErrorScreen(m1Error.message);
+    return;
+  }
 
   if (!m1?.completed) {
     showNeedModule1Screen();
@@ -649,6 +654,18 @@ async function initExam() {
   // 정상 시작
   renderQuestion(0);
   startTimer();
+}
+
+function showLoadErrorScreen(msg) {
+  document.body.innerHTML = `
+    <div style="min-height:100vh; display:flex; align-items:center; justify-content:center; background:#F0F2F5; font-family: Arial, sans-serif;">
+      <div style="background:white; border-radius:16px; padding:48px 40px; max-width:420px; text-align:center; box-shadow:0 8px 40px rgba(27,42,74,0.15);">
+        <div style="font-family: Georgia, serif; font-size:22px; font-weight:bold; color:#DC2626; margin-bottom:6px;">Temporary Error</div>
+        <div style="font-size:13px; color:#6B7280; margin-bottom:24px; line-height:1.6;">Could not check your progress. Please refresh, or contact the academy if this continues.<br><span style="font-size:11px; color:#9BA3AF;">${msg || ''}</span></div>
+        <button onclick="window.location.reload()" style="background:#1B2A4A; color:white; border:none; border-radius:10px; padding:13px 28px; font-size:14px; font-weight:bold; cursor:pointer;">Refresh →</button>
+      </div>
+    </div>
+  `;
 }
 
 function showNeedModule1Screen() {
@@ -1160,7 +1177,7 @@ async function submitExam(timeUp) {
 
   // Supabase 저장 (결과는 백그라운드 저장만, 화면에는 표시하지 않음)
   if (currentUser) {
-    await sb.from('exam_results').upsert({
+    const { error: saveError } = await sb.from('exam_results').upsert({
       user_id: currentUser.id,
       exam_id: EXAM_ID,
       completed: true,
@@ -1168,6 +1185,10 @@ async function submitExam(timeUp) {
       answers: userAnswers,
       submitted_at: new Date().toISOString()
     }, { onConflict: 'user_id,exam_id' });
+    if (saveError) {
+      console.error('Module 2 save failed:', saveError);
+      alert('⚠️ 제출 저장 중 오류가 발생했습니다.\n\n오류: ' + saveError.message + '\n\n이 화면을 캡처해서 학원에 즉시 알려주세요.');
+    }
   }
 
   // RW 섹션 완료 → 10분 휴식 화면으로 전환

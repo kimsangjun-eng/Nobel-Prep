@@ -1150,7 +1150,7 @@ async function submitExam(timeUp) {
 
   // Supabase 저장 (결과는 백그라운드 저장만, 화면에는 표시하지 않음)
   if (currentUser) {
-    await sb.from('exam_results').upsert({
+    const { error: saveError } = await sb.from('exam_results').upsert({
       user_id: currentUser.id,
       exam_id: EXAM_ID,
       completed: true,
@@ -1158,6 +1158,10 @@ async function submitExam(timeUp) {
       answers: userAnswers,
       submitted_at: new Date().toISOString()
     }, { onConflict: 'user_id,exam_id' });
+    if (saveError) {
+      console.error('Module 1 save failed:', saveError);
+      alert('⚠️ 제출 저장 중 오류가 발생했습니다.\n\n오류: ' + saveError.message + '\n\n이 화면을 캡처해서 학원에 즉시 알려주세요.');
+    }
   }
 
   // 결과 화면 없이 즉시 Module 2로 자동 전환 (실제 Digital SAT와 동일)

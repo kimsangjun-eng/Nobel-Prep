@@ -205,11 +205,16 @@ async function initExam(){
   const{data:{session}}=await sb.auth.getSession();
   if(!session){window.location.href='index.html';return;}
   currentUser=session.user;
-  const{data:prev}=await sb.from('exam_results').select('completed').eq('user_id',currentUser.id).eq('exam_id',PREV_EXAM_ID).single();
+  const{data:prev,error:prevErr}=await sb.from('exam_results').select('completed').eq('user_id',currentUser.id).eq('exam_id',PREV_EXAM_ID).single();
+  if(prevErr && prevErr.code!=='PGRST116'){showLoadErrorScreen(prevErr.message);return;}
   if(!prev?.completed){showNeedPrevScreen();return;}
   const{data:existing}=await sb.from('exam_results').select('completed').eq('user_id',currentUser.id).eq('exam_id',EXAM_ID).single();
   if(existing?.completed){await showFinalResults();return;}
   renderQuestion(0);startTimer();
+}
+
+function showLoadErrorScreen(msg){
+  document.body.innerHTML=`<div style="min-height:100vh;display:flex;align-items:center;justify-content:center;background:#1B2A4A;"><div style="background:white;border-radius:16px;padding:48px 40px;max-width:420px;text-align:center;"><div style="font-size:36px;margin-bottom:16px;">&#9888;&#65039;</div><h2 style="font-family:Arial,sans-serif;color:#DC2626;margin-bottom:12px;">Temporary Error</h2><p style="font-family:Arial,sans-serif;color:#6B7280;font-size:14px;margin-bottom:24px;">Could not check your progress. Please refresh, or contact the academy if this continues.<br><span style="font-size:11px;color:#9BA3AF;">${msg||''}</span></p><button onclick="window.location.reload()" style="background:#1B2A4A;color:white;border:none;padding:12px 28px;border-radius:8px;font-family:Arial,sans-serif;font-weight:bold;cursor:pointer;">Refresh</button></div></div>`;
 }
 
 function showNeedPrevScreen(){
@@ -278,10 +283,14 @@ async function submitExam(timeUp){
     else if(ANSWER_KEY[q.id]!=='OPEN'){if(sprMatch(userAnswers[q.id],String(ANSWER_KEY[q.id])))correct++;}
   });
   if(currentUser){
-    await sb.from('exam_results').upsert({
+    const{error:saveError}=await sb.from('exam_results').upsert({
       user_id:currentUser.id,exam_id:EXAM_ID,completed:true,
       math_m2_raw:correct,answers:userAnswers,submitted_at:new Date().toISOString()
     },{onConflict:'user_id,exam_id'});
+    if(saveError){
+      console.error('Math 2 save failed:',saveError);
+      alert('⚠️ 제출 저장 중 오류가 발생했습니다.\n\n오류: '+saveError.message+'\n\n이 화면을 캡처해서 학원에 즉시 알려주세요.');
+    }
   }
   await showFinalResults(correct);
 }
