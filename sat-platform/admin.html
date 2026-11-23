@@ -804,44 +804,60 @@
     const wb = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(summaryRows), '요약');
 
-    // ── 모듈별 문항 상세 시트 ──
+    // ── 학생별 상세 시트 (탭 하나 = 학생 한 명, 전 과목 세로 나열) ──
     const moduleDefs = [
-      { key: 'rw_m1', sheetName: 'RW_M1_상세' },
-      { key: 'rw_m2', sheetName: 'RW_M2_상세' },
-      { key: 'math_m1', sheetName: 'Math_M1_상세' },
-      { key: 'math_m2', sheetName: 'Math_M2_상세' }
+      { key: 'rw_m1' },
+      { key: 'rw_m2' },
+      { key: 'math_m1' },
+      { key: 'math_m2' }
     ];
 
-    moduleDefs.forEach(({ key, sheetName }) => {
-      const examId = cfg[key];
-      const answerKey = ANSWER_KEY_MAP[examId] || {};
-      const sprIds = SPR_IDS_MAP[examId] || [];
-      const qids = Object.keys(answerKey);
-      if (qids.length === 0) return;
+    const usedSheetNames = new Set(['요약']);
+    function uniqueSheetName(name) {
+      // 엑셀 시트명 금지문자(\ / ? * [ ] :) 제거 + 31자 제한
+      let base = String(name).replace(/[\\/?*\[\]:]/g, '').trim() || '학생';
+      base = base.slice(0, 28);
+      let candidate = base, n = 2;
+      while (usedSheetNames.has(candidate)) {
+        candidate = `${base}(${n})`;
+        n++;
+      }
+      usedSheetNames.add(candidate);
+      return candidate;
+    }
 
-      const detailRows = profiles.map(p => {
+    profiles.forEach(p => {
+      const studentRows = [];
+      moduleDefs.forEach(({ key }) => {
+        const examId = cfg[key];
+        const answerKey = ANSWER_KEY_MAP[examId] || {};
+        const sprIds = SPR_IDS_MAP[examId] || [];
+        const qids = Object.keys(answerKey);
+        if (qids.length === 0) return;
+
         const row = (resultMap[p.id] || {})[examId];
-        const r = { '이름': p.name };
-        if (!row?.completed) {
-          qids.forEach(qid => { r['Q' + qid] = ''; });
-          return r;
-        }
-        const studentAnswers = row.answers || {};
+        const studentAnswers = row?.answers || {};
+
         qids.forEach(qid => {
           const correct = answerKey[qid];
+          if (!row?.completed) {
+            studentRows.push({ '모듈': MODULE_LABELS[key], '문항': 'Q' + qid, '학생답안': '', '정답': correct === 'OPEN' ? '—' : correct, '결과': '미응시' });
+            return;
+          }
           const given = studentAnswers[qid] ?? studentAnswers[String(qid)];
           const givenDisplay = (given === undefined || given === null || given === '') ? '미응답' : given;
-          if (correct === 'OPEN') {
-            r['Q' + qid] = '서술형';
-          } else {
+          let result;
+          if (correct === 'OPEN') result = '서술형';
+          else {
             const isCorrect = sprIds.includes(Number(qid)) ? sprMatch(given, correct) : (given === correct);
-            r['Q' + qid] = isCorrect ? givenDisplay : `${givenDisplay}→정답:${correct}`;
+            result = isCorrect ? 'O' : 'X';
           }
+          studentRows.push({ '모듈': MODULE_LABELS[key], '문항': 'Q' + qid, '학생답안': givenDisplay, '정답': correct === 'OPEN' ? '—' : correct, '결과': result });
         });
-        return r;
       });
 
-      XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(detailRows), sheetName);
+      if (studentRows.length === 0) return;
+      XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(studentRows), uniqueSheetName(p.name));
     });
 
     const dateStr = new Date().toISOString().slice(0, 10);
