@@ -835,7 +835,23 @@
     }
 
     profiles.forEach(p => {
-      const studentRows = [];
+      const res = resultMap[p.id] || {};
+      const rwM1 = res[cfg.rw_m1], rwM2 = res[cfg.rw_m2];
+      const mthM1 = res[cfg.math_m1], mthM2 = res[cfg.math_m2];
+      const rwRawTot = (rwM1?.rw_m1_raw ?? 0) + (rwM2?.rw_m2_raw ?? 0);
+      const mathRawTot = (mthM1?.math_m1_raw ?? 0) + (mthM2?.math_m2_raw ?? 0);
+      const rwDoneTot = rwM1?.completed && rwM2?.completed;
+      const mathDoneTot = mthM1?.completed && mthM2?.completed;
+      const rwScaledTot = rwDoneTot ? convertRW(rwRawTot) : null;
+      const mathScaledTot = mathDoneTot ? convertMath(mathRawTot) : null;
+      const grandTotal = (rwScaledTot && mathScaledTot) ? rwScaledTot + mathScaledTot : null;
+
+      const studentRows = [
+        { '모듈': '점수 요약', '문항': '영어(R&W) 점수', '학생답안': rwScaledTot ?? '—', '결과': '' },
+        { '모듈': '점수 요약', '문항': '수학 점수', '학생답안': mathScaledTot ?? '—', '결과': '' },
+        { '모듈': '점수 요약', '문항': '총점 (/1600)', '학생답안': grandTotal ?? '—', '결과': '' },
+        { '모듈': '', '문항': '', '학생답안': '', '결과': '' }
+      ];
       moduleDefs.forEach(({ key }) => {
         const examId = cfg[key];
         const answerKey = ANSWER_KEY_MAP[examId] || {};
