@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Nobel Prep — SAT Vocabulary Quiz B (Mock Test 46)</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
+  :root {
+    --navy:#1B2A4A; --navy2:#243660; --gold:#C9A84C; --gold2:#e8c56a;
+    --white:#FFFFFF; --off:#F7F8FA; --gray1:#E8EAF0; --gray2:#9AA0B2;
+    --gray3:#555D72; --green:#2D7D46; --green-bg:#EBF7EF;
+    --red:#C0392B; --red-bg:#FDECEA; --radius:10px;
+    --shadow:0 2px 12px rgba(27,42,74,0.10);
+  }
+  * { box-sizing:border-box; margin:0; padding:0; }
+  body { font-family:'Inter',sans-serif; background:var(--off); color:var(--navy); min-height:100vh; }
+  header { background:var(--navy); padding:18px 28px; display:flex; align-items:center; justify-content:space-between; position:sticky; top:0; z-index:100; box-shadow:0 2px 10px rgba(0,0,0,0.25); }
+  .logo { display:flex; align-items:center; gap:12px; }
+  .logo-badge { width:38px; height:38px; background:var(--gold); border-radius:8px; display:flex; align-items:center; justify-content:center; font-weight:700; font-size:15px; color:var(--navy); }
+  .logo-text h1 { font-size:16px; font-weight:700; color:var(--white); }
+  .logo-text p  { font-size:11px; color:var(--gold); margin-top:1px; }
+  .header-right { display:flex; flex-direction:column; align-items:flex-end; gap:4px; }
+  .timer { background:rgba(255,255,255,0.12); color:var(--white); border-radius:8px; padding:7px 14px; font-family:'JetBrains Mono',monospace; font-size:15px; }
+  .quiz-badge { background:var(--gold); color:var(--navy); font-size:10px; font-weight:700; padding:3px 10px; border-radius:20px; letter-spacing:0.8px; }
+  .progress-bar-wrap { width:100%; height:3px; background:rgba(255,255,255,0.15); }
+  .progress-bar { height:3px; background:var(--gold); transition:width 0.4s ease; width:0%; }
+  .container { max-width:760px; margin:0 auto; padding:28px 20px 60px; }
+  .info-card { background:var(--white); border-radius:var(--radius); box-shadow:var(--shadow); padding:24px 28px; margin-bottom:20px; border-top:3px solid var(--gold); }
+  .info-card h2 { font-size:16px; font-weight:700; margin-bottom:4px; }
+  .info-card p  { font-size:13px; color:var(--gray3); margin-bottom:18px; }
+  .form-row { display:flex; gap:14px; flex-wrap:wrap; }
+  .form-group { flex:1; min-width:180px; }
+  .form-group label { display:block; font-size:11px; font-weight:600; color:var(--gray3); margin-bottom:6px; text-transform:uppercase; letter-spacing:0.5px; }
+  .form-group input, .form-group select { width:100%; padding:10px 13px; border:1.5px solid var(--gray1); border-radius:7px; font-size:14px; font-family:'Inter',sans-serif; color:var(--navy); background:var(--off); outline:none; transition:border-color 0.2s; }
+  .form-group input:focus, .form-group select:focus { border-color:var(--gold); background:var(--white); }
+  .instructions { background:var(--white); border-radius:var(--radius); padding:16px 20px; margin-bottom:20px; box-shadow:var(--shadow); font-size:13px; color:var(--gray3); border-left:3px solid var(--gold); line-height:1.7; }
+  .q-card { background:var(--white); border-radius:var(--radius); box-shadow:var(--shadow); padding:20px 24px; margin-bottom:12px; border-left:4px solid var(--gray1); transition:border-color 0.2s; }
+  .q-card:focus-within { border-left-color:var(--gold); }
+  .q-card.correct   { border-left-color:var(--green); background:var(--green-bg); }
+  .q-card.incorrect { border-left-color:var(--red);   background:var(--red-bg); }
+  .q-header { display:flex; align-items:flex-start; gap:14px; margin-bottom:14px; }
+  .q-num { min-width:28px; height:28px; background:var(--navy); color:var(--white); border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:12px; font-weight:700; flex-shrink:0; margin-top:2px; }
+  .q-num.correct   { background:var(--green); }
+  .q-num.incorrect { background:var(--red); }
+  .q-word { font-size:19px; font-weight:700; color:var(--navy); margin-bottom:2px; font-family:'JetBrains Mono',monospace; }
+  .q-text { font-size:13px; color:var(--gray3); }
+  .answer-input { width:100%; padding:10px 14px; border:1.5px solid var(--gray1); border-radius:7px; font-size:14px; font-family:'Inter',sans-serif; color:var(--navy); background:var(--off); outline:none; transition:border-color 0.2s; margin-top:10px; }
+  .answer-input:focus    { border-color:var(--navy); background:var(--white); }
+  .answer-input.correct  { border-color:var(--green); background:var(--green-bg); }
+  .answer-input.incorrect{ border-color:var(--red);   background:var(--red-bg); }
+  .answer-input:disabled { cursor:not-allowed; }
+  .feedback { margin-top:10px; padding:8px 12px; border-radius:6px; font-size:13px; display:none; }
+  .feedback.correct   { display:block; background:rgba(45,125,70,0.12); color:var(--green); }
+  .feedback.incorrect { display:block; background:rgba(192,57,43,0.10); color:var(--red); }
+  .submit-wrap { text-align:center; margin-top:28px; }
+  .submit-wrap p { font-size:12px; color:var(--gray2); margin-top:10px; }
+  .btn-primary { background:var(--gold); color:var(--navy); font-size:15px; font-weight:700; padding:14px 36px; border:none; border-radius:8px; cursor:pointer; transition:background 0.2s; }
+  .btn-primary:hover { background:var(--gold2); }
+  .btn-primary:disabled { opacity:0.5; cursor:not-allowed; }
+  .btn-secondary { background:var(--navy); color:var(--white); font-size:14px; font-weight:600; padding:12px 28px; border:none; border-radius:8px; cursor:pointer; }
+  #results-section { display:none; }
+  .results-card { background:var(--navy); border-radius:14px; padding:32px; text-align:center; color:var(--white); margin-bottom:20px; }
+  .score-ring { width:110px; height:110px; border-radius:50%; border:5px solid var(--gold); display:flex; flex-direction:column; align-items:center; justify-content:center; margin:0 auto 18px; }
+  .score-ring .big   { font-size:30px; font-weight:700; color:var(--gold); }
+  .score-ring .denom { font-size:12px; color:var(--gray2); }
+  .results-card h2   { font-size:20px; font-weight:700; margin-bottom:4px; }
+  .results-card .sub { font-size:13px; color:var(--gray2); }
+  .pass-banner { margin-top:14px; padding:12px 20px; border-radius:8px; font-size:15px; font-weight:700; }
+  .pass-banner.pass { background:var(--green); color:var(--white); }
+  .pass-banner.fail { background:var(--red);   color:var(--white); }
+  .breakdown-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:10px; margin-bottom:20px; }
+  .breakdown-item { background:var(--white); border-radius:var(--radius); padding:14px; text-align:center; box-shadow:var(--shadow); }
+  .breakdown-item .val { font-size:20px; font-weight:700; }
+  .breakdown-item .lbl { font-size:11px; color:var(--gray2); margin-top:2px; text-transform:uppercase; }
+  .sheet-status { margin-top:12px; padding:10px 16px; border-radius:7px; font-size:13px; display:none; }
+  .sheet-status.sending { display:block; background:#EEF2FF; color:#3B5BDB; }
+  .sheet-status.success { display:block; background:var(--green-bg); color:var(--green); }
+  .sheet-status.error   { display:block; background:var(--red-bg);   color:var(--red); }
+  .results-actions { display:flex; gap:12px; justify-content:center; margin-top:18px; flex-wrap:wrap; }
+  .progress-text { font-size:11px; color:var(--gray2); }
+  @media(max-width:560px){ .container{padding:16px 14px 50px;} header{padding:14px 16px;} }
+</style>
+</head>
+<body>
+<header>
+  <div class="logo">
+    <div class="logo-badge">NP</div>
+    <div class="logo-text">
+      <h1>Nobel Prep</h1>
+      <p>SAT Vocabulary &middot; Mock Test 46 (R&amp;W)</p>
+    </div>
+  </div>
+  <div class="header-right">
+    <div class="timer" id="timer">00:00</div>
+    <div class="quiz-badge">VOCAB QUIZ B</div>
+    <div class="progress-text" id="progress-text">0 / 30 answered</div>
+  </div>
+</header>
+<div class="progress-bar-wrap"><div class="progress-bar" id="progress-bar"></div></div>
+
+<div class="container">
+  <div class="info-card">
+    <h2>Student Information</h2>
+    <p>Enter your information before starting the quiz.</p>
+    <div class="form-row">
+      <div class="form-group">
+        <label>Full Name</label>
+        <input type="text" id="student-name" placeholder="e.g. Kim Minjun">
+      </div>
+      <div class="form-group">
+        <label>Period / Class</label>
+        <select id="student-period">
+          <option value="">Select period</option>
+          <option>Period 1</option><option>Period 2</option>
+          <option>Period 3</option><option>Period 4</option>
+          <option>Period 5</option><option>Afternoon</option><option>Weekend</option>
+        </select>
+      </div>
+    </div>
+  </div>
+
+  <div class="instructions">
+    <strong>Directions:</strong> For each word below, type its meaning <strong>in Korean or English</strong>.
+    Pass standard: <strong>24/30 (80%) or above</strong>.
+    If you do not pass Quiz B, please retake with <strong>Quiz A</strong>.
+  </div>
+
+  <div id="quiz-form"></div>
+
+  <div class="submit-wrap">
+    <button class="btn-primary" id="submit-btn" onclick="submitQuiz()">Submit Quiz B</button>
+    <p>Once submitted, your answers cannot be changed.</p>
+  </div>
+
+  <div id="results-section">
+    <div class="results-card">
+      <div class="score-ring">
+        <span class="big" id="res-score">&mdash;</span>
+        <span class="denom">/ 30</span>
+      </div>
+      <h2 id="res-name">&mdash;</h2>
+      <p class="sub" id="res-period">&mdash;</p>
+      <div class="pass-banner" id="pass-banner">&mdash;</div>
+    </div>
+    <div class="breakdown-grid">
+      <div class="breakdown-item"><div class="val" id="bd-correct" style="color:var(--green)">&mdash;</div><div class="lbl">Correct</div></div>
+      <div class="breakdown-item"><div class="val" id="bd-wrong" style="color:var(--red)">&mdash;</div><div class="lbl">Incorrect</div></div>
+      <div class="breakdown-item"><div class="val" id="bd-pct">&mdash;</div><div class="lbl">Score %</div></div>
+    </div>
+    <div class="sheet-status" id="sheet-status"></div>
+    <div class="results-actions">
+      <button class="btn-secondary" onclick="reviewAnswers()">Review Answers</button>
+      <button class="btn-primary" onclick="retakeQuiz()">Retake Quiz B</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// 기존 Google Sheet / Apps Script 웹앱(Mock Test 41부터 사용 중)을 재사용합니다.
+// quizId를 "42A"/"42B"로 구분해 같은 시트 안에서도 어느 Mock Test 결과인지 알 수 있게 했습니다.
+const SHEET_URL  = "https://script.google.com/macros/s/AKfycby0zkbo5tF7m0Xic3aagKH2pYwCOKselDjD8odu2qozlaA7t_joXTbuxIC5lZGUy_-xaQ/exec";
+const QUIZ_ID    = "46B";
+const PASS_SCORE = 24;
+const TOTAL_Q    = 30;
+
+// 정답은 SHA-256 해시로만 저장 (평문 노출 금지). 화면 표시용 뜻은 base64로만 보관하고
+// 채점 후에만 디코딩해서 보여줍니다.
+const questions = [
+  { id:1, word:"dazed", hashes:["01fc586674e3b1dc921dae350baca4dec468036180081c05a7ba37b123fc16e2", "e35b44b8ac6ce3744fa592ecc2a9ba62d1453c752b5ca0864c3a30ae892e2a3b", "7ae22a60d86a91fcdb11035e3c34658c865a12181a0f125ff491d310f346ddee", "98f00c1969b8c6f0e7c0355814f9531e301c8397f944941190889e4327bfd0b7"], displayB64:"66mN7ZWcLCDslrTrpqzrkaXsoIjtlZwgIChzdHVubmVkLCBiZXdpbGRlcmVkKQ==" },
+  { id:2, word:"recall", hashes:["b487ca82816b3f617ff9398de88dfd2441f7ed1ba3ce6ea67281576c92d421a1", "2a97a0355b9e18b5a9f99ab07176890594a7e86184bb660fee7d44fcbe070b64", "35379d9c009e290d702b72abf3f5f9bdbaa7e00a63fc37b5174fc3825c8095e3", "be358794cb1ad0a930e5a8c49e81368148bb8258111442d317ed70c81b703c9e"], displayB64:"6riw7Ja17ZW0IOuCtOuLpCwg7ZqM7IOB7ZWY64ukICAocmVtZW1iZXIsIHJlY29sbGVjdCk=" },
+  { id:3, word:"corpora", hashes:["39117c10f2b47916f7e00aa914f981e0b710c20a8e8b9662c635e4c136bdece6", "e2a969eb4c923e58b392623d61b52bc978a96cefc6cf15d26570c3edff6da3c4", "12b2cfef5d1aef262c48f6fd8f8517c6d32a62be272d19d8f780bd62cbccbf50", "7f05f815424139bba025a6121daa2ad41c59fe10b56a0801fd329c237e41411b"], displayB64:"66eQ662J7LmY65OkLCDthY3siqTtirgg7KeR7ZWp7LK065OkICAodGV4dCBjb2xsZWN0aW9ucywgZGF0YWJhc2VzIG9mIGxhbmd1YWdlKQ==" },
+  { id:4, word:"incidence", hashes:["dddf22b55cf4b9ce538e93845453ea499dd948678229ff89ada49aeda7c90ee3", "25aefdd571e0ed413388b72400d1dff59b1932c4cb8a50b2639f145bd1fc6b91", "2e9089fefc7aaa5c45a2bb971e07f119c408f758b1b8f09cdf9c4210a0780376", "1bb0054ad3d7822cc716245ece26167b3e079e15355a3168357463828066ce7a"], displayB64:"67Cc7IOd66WgLCDruYjrj4QgIChmcmVxdWVuY3ksIG9jY3VycmVuY2UgcmF0ZSk=" },
+  { id:5, word:"profound", hashes:["0907a02a3c2ef86d389b8fdf481ac05a3bc4c67b76edfd8e31d89d15a5bb1e50", "e99fe10ed785d30e6d07feaadf8e15653b4b6268c42db8ae75117d5cdff9e135", "74611c1d6455b534323a21f8133a6f43dc3a8188e7b946f96dcc28dde932fcb2", "d0d092b83d4aefab43b6c1ba0d766d7e1a0d2677ab9abe374d6d5fe83a1ee641", "1cf6168ee1be3d04c6f20f034c0c92ecedfa53463383994533b226c29bfae3c1"], displayB64:"6rmK7J2ALCDsi6zsmKTtlZwgIChkZWVwLCBpbnRlbnNlLCBmYXItcmVhY2hpbmcp" },
+  { id:6, word:"assertive", hashes:["508db7a83bb634e597b309caf31c9f42a03424a6931470b28de5fa07c9df8f83", "348ecb8bbc82ea34c346ecd79c427add4515a797c8bb4dd145e507caadb66592", "26c8cca6e668df65cc08a02e604c296eb60303b62a87e05f5b77826a88853ad2", "eb76c7d97bb8a6e685cd139b66aae6d2f4334b8cabe13d5144d1dcfd14e95c27", "e0007a5bca8d915862749b39bc77cb33e0f6fe5ff504191587e1ba59d8251315"], displayB64:"7J6Q6riw7KO87J6l7J20IOqwle2VnCwg64uo7KCV7KCB7J24ICAoY29uZmlkZW50LCBmb3JjZWZ1bCwgYm9sZCk=" },
+  { id:7, word:"prestige", hashes:["dfe2bf1360ec3890f5f9269e8a15f1fb88a611788bec34b121685636d787ec55", "19d46c102497766069ac235f5d0461d80f66b6a18c79003b2a2645ccafc098e9", "556ec7485db6ec2596054ef0374f50e4dfbcc3962c879e9464cdca80ebdfc34e", "a27d4c91b0366afaee1e091159b673d8f160810ccc82dc77c4a82f8ec38eaac4", "073c1634c496cdb649d1afe0a312bbb4b7e1741b271542e4a436c3b8824b1761"], displayB64:"66qF7ISxLCDsnITsi6AgIChyZXB1dGF0aW9uLCByZW5vd24sIHN0YXR1cyk=" },
+  { id:8, word:"interdependent", hashes:["d0941666f64298dd9bf6053352cdcdaaf99aa3630c70285e4092484c5dffc305", "0390ddcaa0994173df1d3caef5221a9f82c58f8512a0226fa4cc4e3de52e4243", "3cb29a739d633f7907ebbbb5a7e1711507debda2eacc82fb78e1a7be5a2e7e8e"], displayB64:"7IOB7Zi4IOydmOyhtOyggeyduCAgKG11dHVhbGx5IGRlcGVuZGVudCwgaW50ZXJyZWxhdGVkKQ==" },
+  { id:9, word:"unyielding", hashes:["6fd387bab94dd8b3b7e6cdce66253340cee2ae6f497cc07da3f01fb2bf38d60a", "a76eac2cca58911495879ede50426eaedaecf56257762bdc561c03004ff7619c", "f4361dcf890825a6da781bb860d8e5bd0ac0a8a4cfea88908b3b6ca4fe44adb2", "3f62550731d942f8bb6b5deb60037847212ca7092c2f2d0d932bce230a0caf26", "4bab36ce40d3a7f543a27d5d3554dbff91321711a30481253bc8bccfe143c3e6"], displayB64:"6rW97Z6I7KeAIOyViuuKlCwg64uo7Zi47ZWcICAoaW5mbGV4aWJsZSwgZmlybSwgcmlnaWQp" },
+  { id:10, word:"flourished", hashes:["fa5888dc41b1d742e9975419095e32854cf09393c34c76c8d559c8f48b1ac72c", "fe8e23e482fa6f384776b0c7dbd7d8a27a8622c591f815eb2dfb843ef52de090", "0b53237eb53041dbb9d75f34f27c95844836791780f7622b8ee63dd987788b45", "bc9c8a0c077d58702c4454519be4f284a459c1c2f17b0f3d352569d39f4c6658", "4495fb40f66a12786f1bfd4a2d3bbcbdedb40944c147acdd3ee5ebd1d85558d4"], displayB64:"67KI7ISx7ZaI64ukLCDrsojssL3tlojri6QgICh0aHJpdmVkLCBwcm9zcGVyZWQsIGJsb3Nzb21lZCk=" },
+  { id:11, word:"unsurprising", hashes:["1249e89421e632ae55da9ba7abbf4f0b8e5e66ebee2eff5309ca0a291850a7b3", "9216ec851b37a65fa3a9664444f496c781b3084a1f6f0535cb967db9db3d2315", "cea23dd4b87e8b00d19fb9ccaaef93e97353c7353e2070f3baf05aeb3995dff4", "022fea2b63ec7a6782532f3ab018aaa7e4e42f2c7321460f193e700e4cb940c9"], displayB64:"64aA656N7KeAIOyViuydgCwg7JiI7IOB65CcICAoZXhwZWN0ZWQsIHByZWRpY3RhYmxlKQ==" },
+  { id:12, word:"acknowledges", hashes:["3226597a4296c34d3b6342da4d72d04c8960bc540accdd9ddb1e5aae8390d312", "94e8220b7036cca26381a0944cc245d29480de5bf7e828695a3cf290fad5bf20", "3214faca50a776cb328d1aca67f25de5428588356bdff9df938ae07d8442f882", "15ee0f40bdd73cde07f5577e662a6b9bcf6961c7b51a5c5baa8efe32ed452c6b"], displayB64:"7J247KCV7ZWY64ukICAoYWRtaXRzLCByZWNvZ25pemVzLCBjb25jZWRlcyk=" },
+  { id:13, word:"counterexample", hashes:["84d64390bd0d066da4d13e779a859f3cad210e50224cb73f1ed9f009627fa011", "b5a858328c991a6ffff2d722f6ae1c682686b1f4f1627e89735245a4661e1e7f", "2104e56ef446302ca000d565b208f9f5b58b8d98585879da089b8940f50e40a0"], displayB64:"67CY7KadIOyCrOuhgCAgKGNvbnRyYWRpY3RpbmcgY2FzZSwgZXhjZXB0aW9uKQ==" },
+  { id:14, word:"proximity", hashes:["43d9a75555774e22a970848a22915cad519e6f3b7d2603047126082b651dc93b", "da95d1cead3c0481bb0449bfd7e7cb41a69cb318d3768e89445b5a09a88eee1c", "e070e2f6883c4cf973e61e14114e60dae140486f603724c10ab3644e9a289e34", "0da48c43850c80e92a83e78a077e042efcb75f402443150cff9f7db3828e7fac"], displayB64:"6re87KCR7ISxLCDqsIDquYzsm4AgIChjbG9zZW5lc3MsIG5lYXJuZXNzKQ==" },
+  { id:15, word:"musty", hashes:["5b03131ee6dc5e04ffbcb27588482b7b9f000515e356177b24d12800d7c28dc5", "f040b8f62dae4466c0606ec177d5f50fe3f99c0d74df5e5bc73b9a98c45ad3f1", "a03f2386ae06b21109577020844df367857b72c2fcce384c1896fed98a89c82b", "32f5405c26b3284ffc5719f57fec55f0dad1cbe599eb8773e2ae6dbe7ee9fe53", "c353f7dabebea3a68d632fb0faddc010090f1e2fa454a7272e4f8e9e29f2a41d"], displayB64:"6rOw7Yyh64K0IOuCmOuKlCwg7YC07YC07ZWcICAoc3RhbGUsIG1vbGR5LCBkYW5rKQ==" },
+  { id:16, word:"recollections", hashes:["8706b8f9e84b5748adb8ae0d660fa50a3315ab75c3ceeae1096a0cade32e9e5e", "603669bd762779d981692da6277555a7202a7dd987bdc5dda3c9ca733bbdba8b", "75c374cb4cf3cb2dd5f9db26beccf098e7c170f02d11b429c10366d3ad383bb6", "9bba47565e5684ed6d084ca4066c5cf146d384e258ed8ac3d606fcf961b9f11d"], displayB64:"7ZqM7IOBLCDquLDslrUgIChtZW1vcmllcywgcmVtaW5pc2NlbmNlcyk=" },
+  { id:17, word:"enchantment", hashes:["097f1aa8be5b256c267bd6ff581b405d5d6f9c74c37207bd6c82001e7bb87dc4", "930f9f9d0e4633dc1a78cfd62faa183a605a0807a00d902ee10a58d76154b059", "315393e576685d59a397279e85965d573529c7ac4d0a3836f7a84af23844bdaf", "e55eb0745a11ff1c638c3366c21f6b692fbc878fff4692cf93cba129fadf3612", "3be7a505483c0050243c5cbad4700da13925aa4137a55e9e33efd8bc4d05850f"], displayB64:"66ek7Zi5LCDtmantmYDtlaggIChkZWxpZ2h0LCBmYXNjaW5hdGlvbiwgbWFnaWMp" },
+  { id:18, word:"streetscape", hashes:["9c7294df7306d70b7efaf7742636d99dcbafe3ee2713d415f11cf5d8798915c6", "506ae07f69ec9abaf4ceba54d501c48d98ab7ab98b201781000c1b3d0ca8e5b0", "6011f12f587e803f9f03a8d0bc58c35d9e1a2352119b23d7bf03f1b7890884e1"], displayB64:"6rGw66asIOqyveq0gCAgKHN0cmVldCB2aWV3LCB1cmJhbiBzY2VuZSk=" },
+  { id:19, word:"robust", hashes:["a9016865ce38a260f01b9055b92b43f607eb83199df283264fa5856245abd742", "41df1c6c6481a0707891e2d574abe7e0bb51044b82b68a44d489bd1702a15027", "eda15ce4834ac303532bc6973df5ff8a5deb75d7dfceb9fc2cdf1bb450a01cf5", "25a5c452fb9585d5c81a63b29d537d5505a91ed9722eb95e8e80f42c005041e8", "4b3d4a0dd732f791ca897e95488b5d63caf128d8691b6f5bbc54f866b9b97054"], displayB64:"7YOE7YOE7ZWcLCDqsqzqs6DtlZwgIChzdHJvbmcsIHN0dXJkeSwgc29saWQp" },
+  { id:20, word:"induce", hashes:["1cb130c84be89a4501d34bd9e6537757d5f5324deb7e262659259a16a4521204", "86af4ee1208686716b276983adc89ecafb65b4bb505b5e64529f58cb57c00fc6", "6a7ef1ed9f15c2f59ab7bfaf50f5b51f695d736a7f2e5ada6470e695190b8f83", "96f8ae05d8b01c2be0a7ad137216e730948edd2fe96784b50245f34d41c7d01f", "cf07194ee232eb531e15f690000d19846dea69cf05504782658afcfacb9228a2"], displayB64:"7Jyg67Cc7ZWY64ukLCDsnKDrj4TtlZjri6QgIChjYXVzZSwgYnJpbmcgYWJvdXQsIHByb21wdCk=" },
+  { id:21, word:"illustrates", hashes:["e8fe7443f2c51b707882b05d06ce58c963bf981d30e578440663380d510cf41d", "c82e2f4887d4be700a3874e62c7b0aa2b981cfd2adab002992271f25bc3eacf9", "722cac41a5d2f99a23eb8299a40350de8fa463472a05e12e18bedd1cec674fdb", "bfdcf16fb0237831d01c39294ab3058c263a4400707d149ab52e941a278c06af", "c093955cebfac85b136d4eb53ac1968f90c9197bc992cb1befd365ec3f2a9649"], displayB64:"7JiI7Kad7ZWY64ukLCDshKTrqoXtlZjri6QgIChkZW1vbnN0cmF0ZXMsIGV4ZW1wbGlmaWVzLCBzaG93cyk=" },
+  { id:22, word:"thrill", hashes:["8a2de2728e6766a1712d693435ef43ff389f0bf9c924823ad6bf73f533a8902c", "2cf48fe318a763220255c533da0783c6e1d17cdfc220a8ce944e77cf21cbcc6f", "80f5846485aa518c92418bc7b0f2afe8eae6b65a20ec92362802346ec5a83cbe", "bb7230b246a58fafe2defb112ace0d0626fcaf034dd881046ec98bbaf5eccc07"], displayB64:"7KCE7JyoLCDshKTroJggIChleGNpdGVtZW50LCBleGhpbGFyYXRpb24p" },
+  { id:23, word:"reclined", hashes:["1834f9568d3bd789290d6135c73eae62f70baece6fdbf8aab30191cc161e91ca", "bcd7f421ef5b3681940c3b57f64d30d07ad4caf9c52cfa0b3c19bb66ec1d8b43", "72af5723090e2f0107f5e40b271c17bc9d31ad216f8072b592b94ebdbb8e69b1", "05784c45465046f7ffe1865270b3d7b3e476b8bf1f1a54adf010d88eaf7cd247"], displayB64:"6riw64yA7Ja0IOuIhOyatCwg67mE7Iqk65Os7Z6IIOuIhOyatCAgKGxlYW5lZCBiYWNrLCBsYXkgYmFjayk=" },
+  { id:24, word:"colonies", hashes:["ec55b2013b6349f0c5d14c1b0e69ebb8e3f99a0a59dc0eced82867f0f0519eff", "9feac3588bafa05534b3d3402716f0b83a24dcb55e72eee43c231bad06de884b", "4ed379d418bb86290a01117e9ceb0debffc4d1b7087db6c04882fbc4e50132f4", "eb7e1d753aa71fd7efd90159d5e4eda1f35f9963d6000ac9f4791be36d37a1e7", "6f2e8a147ba8faaf06769cb02267796e92ee393e68d5ce477dd5a0756f527654"], displayB64:"6rWw7LK0LCDsp5Hri6gg7ISc7Iud7KeAICAoZ3JvdXBzLCBjbHVzdGVycywgY29tbXVuaXRpZXMp" },
+  { id:25, word:"straightforward", hashes:["74025fd28836f76ca2066462aeb6ba7bb1ce603ea25c9597a50de036ebbfb194", "6fa13aef05ead33449eac4d281f717b213515dbdae7b713921ac8edd35dc9cfb", "a7a39b72f29718e653e73503210fbb597057b7a1c77d1fe321a1afcff041d4e1", "d15690f08a575024650b01ffac892cfd2b93e6c57c140f1b6d9e47753cabd579", "0694c0c311f45420444d14538619bce3b3c9ee854c60b5ce7e1821ca2b9ed1e2"], displayB64:"6rCE64uo7ZWcLCDrs7XsnqHtlZjsp4Ag7JWK7J2AICAoc2ltcGxlLCBkaXJlY3QsIHVuY29tcGxpY2F0ZWQp" },
+  { id:26, word:"microscopic", hashes:["284b39d1c47a0235318f57f7cb53f5aac03c8c188d3c1feaa782040df826e693", "81bd0d38bdd34af4be8911e3863b2fc5cdb470eef0b21665744056915f951043", "8950abfda7b727630760dd35bcf5c3daa7631aff223a90f7728c0d2521dde10c", "91c032683b0598f6d3052576bf2becf65130112c4cda40aa93d5b05d2ead5d29"], displayB64:"66+47IS47ZWcLCDtmITrr7jqsr3snLzroZzrp4wg67O07J2064qUICAodGlueSwgbWludXNjdWxlKQ==" },
+  { id:27, word:"toxin", hashes:["b9cedd850f7b6c62c134ab64caabe4d3e8bf9ebe0dcfa9c5e56f1f5e72917367", "5743abddddfa08c1e3a99fdebc2e8f3f1108fa12dcd2a8f58a42f141418c22ec", "6e48a35e9a36e1405dad7fb5311090f02680182bc8c323738542e4abfa8d5c20"], displayB64:"64+F7IaMICAocG9pc29uLCB2ZW5vbSk=" },
+  { id:28, word:"welded", hashes:["9735c272b162cb29534fd72ddcf03b54a805ad61634f2fe7001926de1ed48a77", "e5a24816c17e8d4854aef2bab3edfc2d2d54a5cf01694eb9b488d5c2b3e6784f", "128c5ce9f51616a96440b03c4ed7605f6d39ca0b62667f5765425453a2216c22"], displayB64:"7Jqp7KCR65CcICAoZnVzZWQsIGpvaW5lZCBieSBoZWF0KQ==" },
+  { id:29, word:"molar", hashes:["a75738de1f2066c0fca077296aff993172c5f5b4cb299a5bee35844777ee1557", "32f498c4901784fd24b58a28b0fb602bddcf43e873c79d07332a6bdeafe5d1ba", "c15e11bfeb3c20f01e3f770a252f61622c93d02b14d559c240c3ab40500dcc92"], displayB64:"66qw7J2YLCDrqrDrho3rj4TsnZgo7ZmU7ZWZIOyaqeyWtCkgIChtb2xlLXJlbGF0ZWQgKGNoZW1pc3RyeSkp" },
+  { id:30, word:"reactants", hashes:["031d1fc48cc5a8147a474b2b7263eb9c08e346d9fb15e2a7ec59b0b377243055", "390f70ceaaacad3d17a388be37a0a64e2e2494c0ff6b22ffc719943d7be560f4"], displayB64:"67CY7J2R66y8ICAocmVhY3Rpbmcgc3Vic3RhbmNlcyk=" }
+];
+
+let timerInterval, seconds=0, submitted=false;
+function startTimer(){ timerInterval=setInterval(()=>{ seconds++; const m=String(Math.floor(seconds/60)).padStart(2,'0'),s=String(seconds%60).padStart(2,'0'); document.getElementById('timer').textContent=`${m}:${s}`; },1000); }
+
+function buildQuiz(){
+  const form=document.getElementById('quiz-form');
+  questions.forEach(q=>{
+    const card=document.createElement('div'); card.className='q-card'; card.id=`card-${q.id}`;
+    card.innerHTML=`<div class="q-header"><div class="q-num" id="num-${q.id}">${q.id}</div><div class="q-meta" style="flex:1">
+        <div class="q-word">${q.word}</div>
+      </div></div>
+      <input class="answer-input" type="text" id="ans-${q.id}" placeholder="Type your answer" autocomplete="off" autocorrect="off" spellcheck="false" oninput="updateProgress()">
+      <div class="feedback" id="fb-${q.id}"></div>`;
+    form.appendChild(card);
+  });
+  startTimer();
+}
+
+function updateProgress(){
+  let filled=0;
+  questions.forEach(q=>{ const e=document.getElementById(`ans-${q.id}`); if(e&&e.value.trim()!=='') filled++; });
+  document.getElementById('progress-text').textContent=`${filled} / ${TOTAL_Q} answered`;
+  document.getElementById('progress-bar').style.width=`${(filled/TOTAL_Q)*100}%`;
+}
+
+function normalize(str){
+  return str.trim().toLowerCase().replace(/[\s,./·\-()]/g,'');
+}
+
+async function sha256Hex(message){
+  const data = new TextEncoder().encode(message);
+  const hashBuffer = await crypto.subtle.digest('SHA-256', data);
+  return Array.from(new Uint8Array(hashBuffer)).map(b=>b.toString(16).padStart(2,'0')).join('');
+}
+
+async function submitQuiz(){
+  if(submitted)return;
+  const name=document.getElementById('student-name').value.trim();
+  const period=document.getElementById('student-period').value;
+  if(!name){ document.getElementById('student-name').style.borderColor='var(--red)'; alert('Please enter your name before submitting.'); return; }
+  clearInterval(timerInterval); submitted=true;
+  document.getElementById('submit-btn').disabled=true;
+  let correct=0; const details=[];
+
+  for(const q of questions){
+    const card=document.getElementById(`card-${q.id}`);
+    const numEl=document.getElementById(`num-${q.id}`);
+    const fb=document.getElementById(`fb-${q.id}`);
+    const input=document.getElementById(`ans-${q.id}`);
+    const studentAns=input.value.trim();
+    const studentHash= studentAns==='' ? '' : await sha256Hex(normalize(studentAns));
+    const isOK = studentAns!=='' && q.hashes.includes(studentHash);
+    const displayAns = decodeURIComponent(escape(atob(q.displayB64)));
+
+    input.disabled=true;
+    input.classList.add(isOK?'correct':'incorrect');
+
+    if(isOK){ correct++; card.classList.add('correct'); numEl.classList.add('correct'); fb.className='feedback correct'; fb.innerHTML=`&#10003; Correct! <small>${displayAns}</small>`; }
+    else { card.classList.add('incorrect'); numEl.classList.add('incorrect'); fb.className='feedback incorrect'; fb.innerHTML=`&#10007; Incorrect &mdash; Answer: <strong>${displayAns}</strong>`; }
+    details.push({ qNum:q.id, word:q.word, studentAns: studentAns||'(no answer)', correctAns:displayAns, result:isOK?'O':'X' });
+  }
+
+  const pct=Math.round((correct/TOTAL_Q)*100);
+  const passed=correct>=PASS_SCORE;
+  const mm=String(Math.floor(seconds/60)).padStart(2,'0'), ss=String(seconds%60).padStart(2,'0');
+  const timeStr=`${mm}:${ss}`;
+  document.getElementById('submit-btn').style.display='none';
+  const rs=document.getElementById('results-section'); rs.style.display='block';
+  document.getElementById('res-score').textContent=correct;
+  document.getElementById('res-name').textContent=name;
+  document.getElementById('res-period').textContent=`${period||'No period'} &middot; Time: ${timeStr}`;
+  const banner=document.getElementById('pass-banner');
+  banner.className=`pass-banner ${passed?'pass':'fail'}`;
+  banner.textContent=passed?`PASS — Great work! (${correct}/${TOTAL_Q})`:`FAIL — Please take Quiz A (${correct}/${TOTAL_Q})`;
+  document.getElementById('bd-correct').textContent=correct;
+  document.getElementById('bd-wrong').textContent=TOTAL_Q-correct;
+  document.getElementById('bd-pct').textContent=pct+'%';
+  rs.scrollIntoView({behavior:'smooth'});
+  sendToSheets(name,period,correct,pct,passed,timeStr,details);
+}
+
+function sendToSheets(name,period,score,pct,passed,time,details){
+  if(SHEET_URL.indexOf('REPLACE_WITH')===0){ showSheetStatus('error','⚠️ Google Sheets 연동 URL이 아직 설정되지 않았습니다. (SHEET_URL을 교체해 주세요)'); return; }
+  showSheetStatus('sending','⏳ 결과를 Google Sheets에 저장하는 중...');
+  const now=new Date().toLocaleString('ko-KR',{timeZone:'Asia/Seoul'});
+  fetch(SHEET_URL,{ method:'POST', mode:'no-cors', headers:{'Content-Type':'application/json'}, body:JSON.stringify({name,period,score,pct,passed:passed?'PASS':'FAIL',quizId:QUIZ_ID,time,date:now,details}) })
+  .then(()=>showSheetStatus('success','✅ 결과가 Google Sheets에 저장되었습니다.'))
+  .catch(()=>showSheetStatus('error','⚠️ Sheets 저장 실패'));
+}
+function showSheetStatus(t,m){ const el=document.getElementById('sheet-status'); el.className=`sheet-status ${t}`; el.textContent=m; }
+function reviewAnswers(){ document.querySelector('.q-card').scrollIntoView({behavior:'smooth'}); }
+function retakeQuiz(){ if(confirm('모든 답안이 초기화됩니다. 다시 시작할까요?')) location.reload(); }
+buildQuiz();
+</script>
+</body>
+</html>
