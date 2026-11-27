@@ -109,6 +109,7 @@ git push origin main
   - Quiz B: https://nobel-prep.vercel.app/vocab-quiz/mock-test-{N}-vocab-quiz-b.html
   ```
 - `SendUserFile`로 3개 파일 전달: 단어 리스트 PDF, Quiz A HTML, Quiz B HTML
+  - **반드시 `mock-test-{N}-vocab-quiz-{a/b}.html`로 리네임한 복사본을 전달한다.** `vocab{N}/vocab_quiz_a.html` 같은 작업용 원본 파일명 그대로 SendUserFile 하지 않는다 (사용자가 받는 파일 목록에서 어떤 Mock Test인지 구분이 안 됨 — 2026-11-27 실수 재발 방지).
 - 마지막 채팅 응답은 **한 줄 요약 + 산출물/링크/완료작업** 3블록 구조로, 과정 설명 없이 결과만 간결하게 보고.
 
 ## 절대 하지 말아야 할 것
